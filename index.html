@@ -248,21 +248,36 @@
   .provaempty h2{margin:16px 0 8px;font-size:26px}
   .provaempty p{color:var(--mut);font-size:15px}
   .provaempty .tag{display:inline-block;margin-top:18px;font-size:12.5px;color:var(--mut2);border:1px dashed var(--line);border-radius:999px;padding:6px 16px}
-  /* Prova A tabs (isoladas) */
-  .atabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 18px;position:sticky;top:0;z-index:4;
-    background:rgba(11,15,23,.92);backdrop-filter:blur(8px);padding:12px 0;border-bottom:1px solid var(--line)}
-  .atab{font-size:13px;color:var(--mut);border:1px solid var(--line);background:var(--card);
-    padding:7px 13px;border-radius:9px;cursor:pointer;user-select:none;line-height:1.2;text-align:center}
+  /* Prova A tabs & componentes */
+  .atabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+  .atab{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);
+    color:var(--mut);padding:10px 15px;border-radius:12px 12px 0 0;cursor:pointer;font-size:14px;font-weight:600;
+    border-bottom:none;position:relative;top:1px;user-select:none}
   .atab:hover{color:var(--txt);border-color:var(--acc2)}
-  .atab.active{background:#0e2336;color:var(--acc2);border-color:var(--acc2);font-weight:600}
-  .atab .pt{display:block;font-size:9px;opacity:.7}
-  .apanel{display:none} .apanel.active{display:block}
+  .atab.active{background:var(--bg);color:var(--txt);border-color:var(--line)}
+  .atab .ic{font-size:16px}
+  .atab.active .ic{filter:drop-shadow(0 0 8px var(--acc))}
+  .apanel{display:none;padding:28px 0 60px} .apanel.active{display:block}
   .os{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:middle}
   .os.win{background:#10243a;color:#5eb3f5;border:1px solid #1d4e7a}
   .os.lin{background:#0e2a20;color:var(--acc);border:1px solid #1f5e44}
   .os.net{background:#241c3a;color:var(--info);border:1px solid #3b2e63}
-  .h fazer, .h verif{}
+  .os.pki{background:#2a220e;color:var(--warn);border:1px solid #634d1d}
+  .os.log{background:#1c2536;color:var(--acc2);border:1px solid #2b4563}
   .h.faz .d{background:var(--warn)} .h.ver .d{background:var(--acc)}
+  .aprog{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut)}
+  .aprog .bar{flex:0 0 180px;height:7px;background:var(--card2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .aprog .bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .25s}
+  .trainbtn.done{background:#0e2a20;color:var(--acc);border-color:var(--acc)}
+  .chklist{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+  .chkitem{display:flex;align-items:flex-start;gap:11px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px 14px;cursor:pointer;transition:.12s}
+  .chkitem:hover{border-color:var(--acc2)}
+  .chkitem input{margin-top:3px;accent-color:var(--acc);width:16px;height:16px;cursor:pointer;flex:0 0 auto}
+  .chkitem.checked{border-color:#1f5e44;background:#0e1f1a}
+  .chkitem.checked b{color:var(--acc)}
+  .chkitem .cd{font-size:13px;color:var(--mut);margin-top:2px}
+  .jumpcard{cursor:pointer;transition:.12s}
+  .jumpcard:hover{border-color:var(--acc)!important;background:#15203a}
 </style>
 </head>
 <body>
@@ -270,7 +285,7 @@
 <nav class="provanav">
   <div class="wrap">
     <span class="lbl">Provas</span>
-    <button class="pbtn" data-prova="provaA" type="button">Prova A <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaA" type="button">Prova A <span class="st">Enterprise Security</span></button>
     <button class="pbtn active" data-prova="provaB" type="button">Prova B <span class="st">Security Assessment</span></button>
     <button class="pbtn" data-prova="provaC" type="button">Prova C <span class="st">em breve</span></button>
     <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">em breve</span></button>
@@ -1569,403 +1584,1370 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <div class="prova-content" id="provaA">
 <header>
   <div class="wrap">
-    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · WorldSkills Skill 54 · Prova A — Enterprise Security</div>
-    <h1>Prova A: <span class="g">Enterprise Security (Hardening)</span></h1>
-    <p class="sub">Módulo A1 do WorldSkills Cyber Security: aplicar políticas de segurança a uma infraestrutura Windows Server + Linux (RHEL/CentOS 9) + pfSense. 7 tarefas, 100 pontos. Base criada por Thaylon R. M. da Silva — pode mudar a cada edição.</p>
-    <div style="margin-top:10px;color:var(--mut2);font-size:12.5px">⚠️ Material de treino. As tarefas de nuvem/GUI (ADCS, pfSense) têm passos de interface; as de Linux trazem os comandos prontos.</div>
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · Instrutor Rafael Reis · Prova A — Enterprise Security</div>
+    <h1>Enterprise Security &amp; Hardening: <span class="g">conceitos, defesa e prática</span></h1>
+    <p class="sub">Guia completo de segurança e endurecimento de infraestrutura corporativa (Linux, Windows/AD, Serviços &amp; PKI, Rede/VPN e Logs). Comece pelos <b>Fundamentos</b> para dominar os princípios e depois treine cada controle na prática — preparado para qualquer ambiente ou variação de cenário.</p>
+
+    <div class="aprog" id="aProg">
+      <span>🎯 Progresso nos treinos práticos: <b id="aProgTxt">0 / 34</b></span>
+      <span class="bar"><i id="aProgBar"></i></span>
+    </div>
+
+    <div class="atabs" id="atabs">
+      <div class="atab active" data-ap="a-fund"><span class="ic">📚</span> Fundamentos</div>
+      <div class="atab" data-ap="a-linux"><span class="ic">🐧</span> Linux</div>
+      <div class="atab" data-ap="a-win"><span class="ic">🪟</span> Windows &amp; AD</div>
+      <div class="atab" data-ap="a-svc"><span class="ic">🌐</span> Serviços &amp; PKI</div>
+      <div class="atab" data-ap="a-net"><span class="ic">🛡️</span> Rede &amp; VPN</div>
+      <div class="atab" data-ap="a-logs"><span class="ic">📋</span> Logs &amp; Tempo</div>
+      <div class="atab" data-ap="a-tools"><span class="ic">🧰</span> Ferramentas</div>
+    </div>
   </div>
 </header>
 
 <div class="wrap">
-  <div class="atabs" id="atabs">
-    <span class="atab active" data-ap="a-vg">Visão geral</span>
-    <span class="atab" data-ap="a-t1">T1 · Infra<span class="pt">28 pts</span></span>
-    <span class="atab" data-ap="a-t2">T2 · CA/Serviços<span class="pt">10 pts</span></span>
-    <span class="atab" data-ap="a-t3">T3 · Cripto<span class="pt">12 pts</span></span>
-    <span class="atab" data-ap="a-t4">T4 · SSH<span class="pt">10 pts</span></span>
-    <span class="atab" data-ap="a-t5">T5 · IAM/SELinux<span class="pt">10 pts</span></span>
-    <span class="atab" data-ap="a-t6">T6 · Logs<span class="pt">10 pts</span></span>
-    <span class="atab" data-ap="a-t7">T7 · VPN<span class="pt">20 pts</span></span>
-  </div>
 
-  <!-- ============ VISÃO GERAL ============ -->
-  <div class="apanel active" id="a-vg">
-    <div class="disc" style="border-color:var(--acc)">🎯 <b>Objetivo:</b> os serviços já estão no ar, mas sem segurança. Você aplica as políticas de hardening seguindo as melhores práticas. Entregue um Word com prints no desktop (ex.: <code class="inl">AM_João_Ninguem</code>). Deixe as VMs ligadas e acessíveis para avaliação.</div>
-    <h3 style="margin:18px 0 6px">Topologia (Tabela 1.0)</h3>
-    <table class="ftable">
-      <thead><tr><th>VM</th><th>IP</th><th>Login</th></tr></thead>
-      <tbody>
-        <tr><td>WinServer (HQ)</td><td class="id">10.6.6.2 / 10.6.7.1</td><td>Administrator / P@ssw0rd</td></tr>
-        <tr><td>Manager (Win10)</td><td class="id">10.6.7.2</td><td>Skills / P@ssw0rd</td></tr>
-        <tr><td>LinuxServer</td><td class="id">10.8.7.1 / 10.8.8.2</td><td>root / P@ssw0rd</td></tr>
-        <tr><td>Staff1 (CentOS 9)</td><td class="id">10.8.7.2</td><td>Skills / P@ssw0rd</td></tr>
-        <tr><td>FW1 (pfSense)</td><td class="id">10.8.8.1 / 10.6.6.1 / 100.10.1.10</td><td>admin / pfsense</td></tr>
-        <tr><td>FW2 (pfSense)</td><td class="id">100.20.1.10 / 10.0.2.1</td><td>admin / pfsense</td></tr>
-        <tr><td>Staff2 / RemoteUser (Win10)</td><td class="id">10.0.2.10 / 100.30.1.10</td><td>Skills / P@ssw0rd</td></tr>
-      </tbody>
-    </table>
-    <h3 style="margin:22px 0 6px">Resumo de pontuação</h3>
-    <div class="owl">
-      <div class="owi"><span class="c">T1</span><div class="t"><b>Infrastructure Setup &amp; Hardening</b><div class="d">28 pts</div></div></div>
-      <div class="owi"><span class="c">T2</span><div class="t"><b>Certificate Authority &amp; Public service protection</b><div class="d">10 pts</div></div></div>
-      <div class="owi"><span class="c">T3</span><div class="t"><b>Cryptography</b><div class="d">12 pts</div></div></div>
-      <div class="owi"><span class="c">T4</span><div class="t"><b>SSH service hardening</b><div class="d">10 pts</div></div></div>
-      <div class="owi"><span class="c">T5</span><div class="t"><b>IAM (SELinux)</b><div class="d">10 pts</div></div></div>
-      <div class="owi"><span class="c">T6</span><div class="t"><b>Logging &amp; Log security</b><div class="d">10 pts</div></div></div>
-      <div class="owi"><span class="c">T7</span><div class="t"><b>Secure communication (VPN)</b><div class="d">20 pts</div></div></div>
+<!-- ===================== A · FUNDAMENTOS ===================== -->
+<div class="apanel active" id="a-fund">
+  <div class="disc" style="margin-top:4px">📚 Esta aba constrói a <b>base conceitual de um especialista em defesa corporativa</b>. Em ambientes reais (e em qualquer cenário de Enterprise Security), sistemas, IPs e ferramentas mudam — o que permanece são os <b>princípios de hardening</b>: reduzir superfície, impor menor privilégio, cifrar comunicações, monitorar eventos e <b>manter os serviços funcionando</b>.</div>
+
+  <div class="mgroup" style="margin-top:24px"><span class="d"></span>1 · Conceitos-chave de defesa corporativa <span style="font-size:11px;color:var(--mut2);text-transform:none;letter-spacing:0">— clique em cada card para aprofundar</span></div>
+  <div class="gloss">
+    <div class="gi click popc" data-t="Hardening (Endurecimento)">
+      <b>Hardening</b> — reduzir fraquezas de sistemas, serviços e redes. <span class="more">ⓘ detalhes</span>
+      <div class="gx"><b>Hardening</b> é o processo sistemático de configurar um sistema operacional, servidor ou ativo de rede de forma segura, eliminando padrões inseguros ("defaults"), desativando recursos desnecessários e aplicando controles técnicos (políticas de senha, firewall, TLS, controle de acesso).<br><br><b>Regra de ouro:</b> um sistema recém-instalado é otimizado para <i>funcionar rápido</i>, não para <i>resistir a ataques</i>. Hardening transforma o padrão "aberto" em um baseline defensivo sem derrubar o serviço legítimo.</div>
+    </div>
+    <div class="gi click popc" data-t="Princípio do Menor Privilégio (Least Privilege)">
+      <b>Menor Privilégio</b> — dar só a permissão estritamente necessária. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Todo usuário, serviço ou processo deve rodar com o <b>mínimo de permissões</b> necessárias para cumprir sua função — e pelo menor tempo possível.<br><br><b>Na prática:</b> servidor web rodando como <code class="inl">apache</code>/<code class="inl">www-data</code> (nunca <code class="inl">root</code>), conta de banco só com permissão no schema da aplicação, SSH sem login de root, usuários comuns sem <code class="inl">NOPASSWD: ALL</code> no sudo e administradores usando contas dedicadas no AD. Se um serviço for invadido, o estrago fica contido.</div>
+    </div>
+    <div class="gi click popc" data-t="Defesa em Profundidade (Defense in Depth)">
+      <b>Defesa em Profundidade</b> — múltiplas camadas independentes de proteção. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Nunca confie em um único controle de segurança. A <b>Defesa em Profundidade</b> empilha barreiras complementares: se o atacante passar pelo firewall de perímetro, encontra segmentação de DMZ; se explorar uma aplicação, esbarra em usuário não-root e SELinux; se tentar movimentação lateral, encontra SMB Signing, firewall de host e logs centralizados que disparam alerta.<br><br><b>Mentalidade:</b> uma camada falhar é possível; todas falharem ao mesmo tempo é extremamente difícil.</div>
+    </div>
+    <div class="gi click popc" data-t="Zero Trust (Confiança Zero)">
+      <b>Zero Trust</b> — nunca confiar implicitamente; verificar sempre. <span class="more">ⓘ detalhes</span>
+      <div class="gx">O modelo clássico confiava em tudo que estivesse "dentro da rede interna". O <b>Zero Trust</b> parte da premissa de que <i>a rede pode já estar comprometida</i>: cada acesso exige autenticação forte, autorização explícita, criptografia em trânsito (TLS/VPN) e segmentação mínima.<br><br><b>Exemplos práticos:</b> exigir TLS até em serviços internos (FTPS/HTTPS/LDAPS), firewall ativo no host mesmo atrás do perímetro, certificados individuais por usuário na VPN e bloqueio de movimento lateral.</div>
+    </div>
+    <div class="gi click popc" data-t="Superfície de Ataque &amp; Minimização">
+      <b>Superfície de Ataque</b> — tudo que está exposto e pode ser atacado. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Cada porta aberta, serviço rodando, protocolo antigo habilitado (SMBv1, TLS 1.0, FTP sem criptografia) ou conta ociosa amplia a <b>superfície de ataque</b>.<br><br><b>Como reduzir:</b> audite o que está escutando (<code class="inl">ss -tulpn</code> / <code class="inl">Get-NetTCPConnection</code>), desligue serviços não usados (ex.: Print Spooler em servidor, servidores de teste), desative listagem de diretórios e oculte banners de versão. O serviço desligado não pode ser explorado.</div>
+    </div>
+    <div class="gi click popc" data-t="DAC vs. MAC (SELinux / AppArmor)">
+      <b>DAC vs. MAC</b> — permissões comuns vs. confinamento obrigatório. <span class="more">ⓘ detalhes</span>
+      <div class="gx"><b>DAC (Discretionary Access Control)</b> são as permissões tradicionais (<code class="inl">chmod</code>/<code class="inl">chown</code>, ACLs): o dono do arquivo decide quem acessa, e o <code class="inl">root</code> pode quase tudo.<br><br><b>MAC (Mandatory Access Control)</b> — como <b>SELinux</b> (RHEL/CentOS/Rocky/Fedora) e <b>AppArmor</b> (Ubuntu/Debian) — impõe políticas centrais no kernel que confinam cada processo ao seu domínio. Mesmo que um invasor explore o Apache ou vsftpd, o SELinux bloqueia leitura de arquivos ou portas fora do contexto permitido.</div>
+    </div>
+    <div class="gi click popc" data-t="AAA — Autenticação, Autorização e Auditoria">
+      <b>AAA</b> — quem é você, o que pode fazer e o que fez. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Os três pilares do controle de acesso:<br>• <b>Authentication (Autenticação):</b> provar identidade (senha forte, chave SSH, certificado cliente, MFA).<br>• <b>Authorization (Autorização):</b> definir permissões (grupos, RBAC, GPO, sudoers, SELinux).<br>• <b>Accounting / Auditing (Auditoria):</b> registrar ações em logs íntegros e centralizados (<code class="inl">rsyslog</code>, <code class="inl">auditd</code>, Windows Event Log) com horário sincronizado (NTP).</div>
+    </div>
+    <div class="gi click popc" data-t="PKI &amp; Cadeia de Confiança (CA, CSR, CRL)">
+      <b>PKI &amp; CA</b> — infraestrutura que garante identidade e criptografia. <span class="more">ⓘ detalhes</span>
+      <div class="gx"><b>PKI (Public Key Infrastructure)</b> usa criptografia assimétrica e certificados digitais X.509 para provar que um servidor ou usuário é realmente quem diz ser.<br><br><b>Peças-chave:</b><br>• <b>CA (Certificate Authority):</b> entidade confiável que assina certificados (ex.: OpenSSL CA ou Windows ADCS).<br>• <b>CSR:</b> pedido de assinatura contendo a chave pública e o nome/SAN do serviço.<br>• <b>CRL / OCSP:</b> listas/serviços para revogar certificados comprometidos antes do vencimento.</div>
+    </div>
+    <div class="gi click popc" data-t="TLS 1.2/1.3, PFS e HSTS">
+      <b>TLS, PFS &amp; HSTS</b> — proteger dados em trânsito contra interceptação. <span class="more">ⓘ detalhes</span>
+      <div class="gx"><b>TLS 1.2 e 1.3</b> protegem a comunicação contra escuta (sniffing) e adulteração (MITM). Versões antigas (SSLv2/v3, TLS 1.0/1.1) têm falhas conhecidas e devem ser desabilitadas.<br><br>• <b>PFS (Perfect Forward Secrecy):</b> usa troca efêmera de chaves (ECDHE) para que, mesmo se a chave privada vazar no futuro, o tráfego gravado antes continue indecifrável.<br>• <b>HSTS:</b> cabeçalho HTTP que obriga o navegador a usar apenas HTTPS, bloqueando ataques de downgrade.</div>
+    </div>
+    <div class="gi click popc" data-t="Segmentação de Rede &amp; DMZ">
+      <b>Segmentação &amp; DMZ</b> — isolar zonas de confiança diferentes. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Em vez de colocar todos os servidores na mesma rede plana, divide-se a infraestrutura em <b>zonas</b> controladas por firewall com política <b>default-deny</b> (bloqueia tudo por padrão e libera só o necessário):<br>• <b>WAN:</b> internet / redes não confiáveis.<br>• <b>DMZ:</b> servidores expostos ao público (Web, proxy reverso, FTP).<br>• <b>LAN / Interna:</b> estações, AD, banco de dados.<br>• <b>Management:</b> acesso administrativo restrito.<br>Se um servidor na DMZ for comprometido, o firewall bloqueia o salto direto para a LAN.</div>
+    </div>
+    <div class="gi click popc" data-t="Simétrica vs. Assimétrica vs. Hash">
+      <b>Criptografia</b> — quando usar simétrica, assimétrica ou hash. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>Simétrica (AES-256-GCM, ChaCha20):</b> mesma chave cifra e decifra — muito rápida; usada para cifrar o volume de dados em TLS, IPsec, OpenVPN e discos (LUKS/BitLocker).<br>• <b>Assimétrica (RSA 4096, Ed25519/ECDSA):</b> par de chaves pública/privada — usada em autenticação (SSH, certificados X.509) e troca inicial de chaves.<br>• <b>Hash (SHA-256, Argon2/bcrypt):</b> função de mão única — usada para integridade e armazenamento seguro de senhas (com <i>salt</i>).</div>
+    </div>
+    <div class="gi click popc" data-t="Disponibilidade no Hardening (Não quebrar o negócio)">
+      <b>Segurança + Disponibilidade</b> — endurecer sem derrubar serviços. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Um erro clássico ao endurecer servidores é bloquear o tráfego legítimo (ex.: mudar porta do SSH sem liberar SELinux/firewall e perder acesso, ativar TLS no FTP sem abrir portas/contextos, ou travar o acesso ao site com regra errada).<br><br><b>Regra profissional:</b> faça backup do arquivo de config antes de editar, valide a sintaxe (<code class="inl">sshd -t</code>, <code class="inl">httpd -t</code>), teste a conexão em uma <b>segunda sessão</b> antes de fechar a atual e verifique sempre se o serviço continua respondendo como esperado.</div>
     </div>
   </div>
 
-  <!-- ============ TASK 1 ============ -->
-  <div class="apanel" id="a-t1">
-    <div class="disc">🔐 <b>Políticas de login, senha, usuários e grupos</b> no WinServer (GPO) e LinuxServer (local). 28 pontos. Aqui o foco é <b>entender o risco que cada política fecha</b> — é isso que o WorldSkills avalia como "melhores práticas".</div>
-
-    <!-- expiração -->
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Expiração de senha</h3><div class="cat">trocar a cada 14 dias · 3 de aviso · 1 após expirar</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
-          <p>Define por quanto tempo uma senha é válida. Senhas que <b>nunca expiram</b> aumentam a janela de comprometimento: se uma vaza, o atacante a usa por tempo indefinido. Forçar a troca periódica limita esse prazo; o aviso evita que o usuário seja pego de surpresa.</p></div>
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># padrão p/ novos usuários — /etc/login.defs
-PASS_MAX_DAYS 14
-PASS_WARN_AGE 3
-useradd -D -f 1            # inativa 1 dia após expirar
-# usuário existente:
-chage -M 14 -W 3 -I 1 User01</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>chage -l User01</pre></div>
-        <div class="interp"><div class="rr">
-          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Maximum number of days: <code>99999</code> — a senha nunca expira.</div>
-          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Maximum: <code>14</code> · Warning: <code>3</code> · Inactive: <code>1</code>.</div>
-        </div></div>
-        <button class="trainbtn" data-ta1="0" type="button">🎮 Treinar</button>
-      </div>
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>2 · Padrões, baselines e frameworks de defesa</div>
+  <p style="color:var(--mut2);font-size:12px;margin:0 0 6px">clique em cada padrão para aprofundar</p>
+  <div class="stdgrid two">
+    <div class="std popc" data-t="CIS Benchmarks (Center for Internet Security)"><div class="sh"><span class="ab">CIS</span><span class="full">Center for Internet Security Benchmarks</span><span class="more">ⓘ</span></div><p>Guias passo a passo de hardening por tecnologia (Linux, Windows, Apache, Docker, pfSense).</p>
+      <div class="gx">Os <b>CIS Benchmarks</b> são a referência mais usada no mundo para configurar sistemas de forma segura. Dividem recomendações em:<br>• <b>Level 1:</b> segurança prática essencial, baixo impacto operacional (base obrigatória).<br>• <b>Level 2:</b> ambientes de alta segurança (defesa em profundidade mais rígida, pode restringir funcionalidades).<br><br>São usados por ferramentas automatizadas como <b>OpenSCAP</b> e <b>CIS-CAT</b> para auditar conformidade.</div>
     </div>
-
-    <!-- complexidade -->
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Complexidade de senha (pwquality)</h3><div class="cat">min 10 · maiúscula+minúscula+dígito · 3 iguais seguidos</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
-          <p>Impõe força mínima à senha. Senhas curtas ou simples caem rápido em <b>ataques de dicionário e força bruta</b>. Exigir comprimento e variedade de caracteres aumenta muito o esforço do atacante para adivinhá-las.</p></div>
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># /etc/security/pwquality.conf
-minlen = 10          # comprimento mínimo
-dcredit = -1         # exige >=1 dígito
-ucredit = -1         # exige >=1 maiúscula
-lcredit = -1         # exige >=1 minúscula
-maxclassrepeat = 3   # máx. 3 caracteres consecutivos da mesma classe
-authselect enable-feature with-pwquality; authselect apply-changes</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>echo 'abc' | pwscore        # nota baixa / tente: passwd User01 com uma senha fraca</pre></div>
-        <div class="interp"><div class="rr">
-          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>A senha <code>abc</code> é aceita — sem política de força.</div>
-          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>BAD PASSWORD: it is too short</code> — senha fraca rejeitada.</div>
-        </div></div>
-        <button class="trainbtn" data-ta1="1" type="button">🎮 Treinar</button>
-      </div>
+    <div class="std popc" data-t="NIST CSF 2.0 &amp; SP 800-123"><div class="sh"><span class="ab">NIST</span><span class="full">CSF 2.0 &amp; SP 800-123 (Server Security)</span><span class="more">ⓘ</span></div><p>Framework de gestão de segurança (Govern, Identify, Protect, Detect, Respond, Recover).</p>
+      <div class="gx">O <b>NIST Cybersecurity Framework (CSF 2.0)</b> organiza a defesa em 6 funções: <b>Governar, Identificar, Proteger, Detectar, Responder e Recuperar</b>. O foco de Enterprise Security / Hardening concentra-se especialmente em <b>Proteger</b> e <b>Detectar</b>.<br><br>Já o <b>NIST SP 800-123</b> é o guia clássico específico de segurança de servidores: planejamento, instalação mínima, hardening de SO/serviços, monitoramento contínuo e manutenção de patches.</div>
     </div>
-
-    <!-- histórico -->
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Histórico de senhas</h3><div class="cat">lembrar das 15 anteriores</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
-          <p>Impede reutilizar senhas antigas. Sem isso, o usuário troca a senha e volta para a de sempre, <b>anulando a política de expiração</b> e mantendo viva uma senha que pode já ter vazado.</p></div>
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># em /etc/pam.d/system-auth e /etc/pam.d/password-auth,
-# logo após pam_pwquality.so:
-password requisite pam_pwhistory.so use_authtok remember=15</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>passwd User01  → tente repetir a senha anterior</pre></div>
-        <div class="interp"><div class="rr">
-          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>A senha anterior é reaceita sem problema.</div>
-          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Password has been already used. Choose another.</code></div>
-        </div></div>
-        <button class="trainbtn" data-ta1="2" type="button">🎮 Treinar</button>
-      </div>
+    <div class="std popc" data-t="DISA STIG"><div class="sh"><span class="ab">STIG</span><span class="full">Security Technical Implementation Guides</span><span class="more">ⓘ</span></div><p>Baselines rígidos de configuração segura publicados pelo DoD (EUA).</p>
+      <div class="gx">Os <b>DISA STIGs</b> trazem controles detalhados com classificação de impacto (CAT I, II, III) e comandos exatos de verificação e correção para RHEL, Windows Server, IIS, Apache, bancos de dados e dispositivos de rede. Muito usados como referência complementar aos CIS Benchmarks e suportados pelo <b>OpenSCAP</b>.</div>
     </div>
-
-    <!-- faillock -->
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Bloqueio de conta (faillock)</h3><div class="cat">3 tentativas → bloqueia 25 min</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
-          <p>Trava a conta após várias senhas erradas. É a principal defesa contra <b>força bruta online</b> (o atacante testando milhares de senhas no login): com bloqueio, poucas tentativas já travam o ataque.</p></div>
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># /etc/security/faillock.conf
-deny = 3
-unlock_time = 1500          # 25 min
-authselect enable-feature with-faillock; authselect apply-changes</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>faillock --user User01          # lista falhas · --reset para destravar</pre></div>
-        <div class="interp"><div class="rr">
-          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Tentativas ilimitadas — força bruta livre.</div>
-          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>The account is locked due to 3 failed logins</code> (25 min).</div>
-        </div></div>
-        <button class="trainbtn" data-ta1="3" type="button">🎮 Treinar</button>
-      </div>
+    <div class="std popc" data-t="ISO/IEC 27001 &amp; 27002"><div class="sh"><span class="ab">ISO 27001</span><span class="full">Sistema de Gestão de Segurança da Informação</span><span class="more">ⓘ</span></div><p>Padrão internacional de gestão e controles organizacionais/tecnológicos (Anexo A).</p>
+      <div class="gx">A <b>ISO/IEC 27001</b> define requisitos de um SGSI e a <b>ISO 27002</b> detalha os controles práticos (controle de acesso, gestão de configuração, criptografia, logging, segurança de redes e backup). Conectar cada ação técnica ao controle correspondente ajuda a justificar decisões de arquitetura e relatórios.</div>
     </div>
-
-    <!-- banner/timeout/cache -->
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Banner legal, timeout e grupos/usuários</h3><div class="cat">aviso · 20 min inativo · User01-03, developer/technical</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
-          <p>O <b>banner legal</b> avisa que o acesso é restrito (tem valor jurídico em um incidente). O <b>timeout</b> encerra sessões esquecidas abertas (risco de alguém assumir o terminal). Criar usuários/grupos corretos aplica o <b>menor privilégio</b>.</p></div>
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># banner:
-echo 'Apenas usuários autorizados' > /etc/issue; cp /etc/issue /etc/issue.net
-# timeout de inatividade (20 min):
-echo 'TMOUT=1200; readonly TMOUT; export TMOUT' > /etc/profile.d/timeout.sh
-# grupos e usuários:
-groupadd developer; groupadd technical
-for u in User01 User02 User03; do useradd -m $u; echo "$u:P@ssw0rd" | chpasswd; done</pre></div>
-      </div>
+    <div class="std popc" data-t="MITRE D3FEND"><div class="sh"><span class="ab">D3FEND</span><span class="full">Knowledge Graph of Cybersecurity Countermeasures</span><span class="more">ⓘ</span></div><p>O "lado defensivo" do ATT&amp;CK: mapeia contramedidas técnicas contra cada ataque.</p>
+      <div class="gx">Enquanto o <b>MITRE ATT&amp;CK</b> descreve como atacantes agem, o <b>MITRE D3FEND</b> organiza as <b>contramedidas defensivas</b> em táticas: <b>Model, Harden, Detect, Isolate, Deceive, Evict, Restore</b>.<br><br>Na prática, o trabalho de hardening mapeia diretamente para <i>Harden</i> (políticas, criptografia, configuração), <i>Isolate</i> (firewall, SELinux, segmentação) e <i>Detect</i> (logs, IDS, auditd).</div>
     </div>
-
-    <!-- windows GPO -->
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">WINDOWS</span>GPO de domínio (mesmas políticas)</h3><div class="cat">Default Domain Policy</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
-          <p>No Windows de domínio, as mesmas proteções são aplicadas via <b>Política de Grupo (GPO)</b>, que distribui a configuração para todas as máquinas do domínio de forma centralizada — garantindo consistência.</p></div>
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer (gpmc.msc)</div>
-<pre>Computer Config &gt; Windows Settings &gt; Security Settings:
-• Password Policy: Min length=10 · History=15 · Max age=14 · Complexity=Enabled
-• Account Lockout: Threshold=3 · Duration=25 min
-• Security Options: banner (Message text/title)
-• "Number of previous logons to cache" = 0   (sem credenciais em cache)
-gpupdate /force</pre></div>
-        <div class="blk"><div class="h what"><span class="d"></span>Por que "cache = 0"</div>
-          <p>Credenciais em cache permitem login mesmo sem o controlador de domínio — útil para notebooks, mas um risco: se roubadas do disco, podem ser quebradas offline. Zerar o cache fecha esse vetor (como a tarefa pede).</p></div>
-      </div>
+    <div class="std popc" data-t="OWASP &amp; Mozilla TLS Guidelines"><div class="sh"><span class="ab">TLS / Web</span><span class="full">Mozilla SSL Config &amp; OWASP Cheat Sheets</span><span class="more">ⓘ</span></div><p>Referências práticas para ciphers TLS modernos e cabeçalhos HTTP de segurança.</p>
+      <div class="gx">O <b>Mozilla SSL Configuration Generator</b> entrega blocos prontos e atualizados de TLS (Modern / Intermediate) para Apache, Nginx e outros servidores. Já os <b>OWASP Cheat Sheets</b> (HTTP Headers, Transport Layer Security, Authentication) definem as melhores práticas para blindar serviços web publicados.</div>
     </div>
   </div>
 
-  <div class="apanel" id="a-t2">
-    <div class="disc">📜 <b>ADCS + IIS</b> (certificados no Windows) e <b>vsftpd com FTPS</b> (Linux). 10 pontos.</div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">WINDOWS</span>ADCS + certificado no IIS</h3><div class="cat">cert de servidor e de cliente, vincular ao site</div></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Passos</div>
-<pre>1. Server Manager &gt; Add Roles &gt; Active Directory Certificate Services
-   (Certification Authority + Web Enrollment) → configurar como Enterprise CA.
-2. IIS &gt; servidor &gt; Server Certificates &gt; Create Domain Certificate (cert de servidor web).
-3. Para o cert de cliente: certmgr / web enrollment (http://winserver/certsrv).
-4. IIS &gt; Default Web Site &gt; Bindings &gt; Add &gt; https &gt; escolher o certificado.</pre></div></div>
-    </div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>vsftpd com SSL/TLS, sem anônimo</h3><div class="cat">FTPS obrigatório</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># gerar cert (ou usar a CA):
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout /etc/ssl/private/vsftpd.key -out /etc/ssl/certs/vsftpd.pem
-# /etc/vsftpd/vsftpd.conf
-anonymous_enable=NO
-ssl_enable=YES
-force_local_logins_ssl=YES
-force_local_data_ssl=YES
-rsa_cert_file=/etc/ssl/certs/vsftpd.pem
-rsa_private_key_file=/etc/ssl/private/vsftpd.key
-systemctl restart vsftpd</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>ftp (deve recusar texto claro) · openssl s_client -connect IP:21 -starttls ftp</pre></div>
-      </div>
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>3 · Visão visual — Camadas da Defesa em Profundidade</div>
+  <div class="vfig">
+    <svg viewBox="0 0 880 185" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,monospace">
+      <rect x="10" y="10" width="860" height="165" rx="12" fill="#0b1220" stroke="#223049"/>
+      <rect x="26" y="24" width="142" height="136" rx="10" fill="#241c3a" stroke="#a78bfa"/>
+      <text x="97" y="50" fill="#a78bfa" font-size="11" font-weight="700" text-anchor="middle">1. PERÍMETRO</text>
+      <text x="97" y="74" fill="#e3ebf6" font-size="11" text-anchor="middle">Firewall Default-Deny</text>
+      <text x="97" y="94" fill="#97a6c0" font-size="10.5" text-anchor="middle">Zonas WAN/DMZ/LAN</text>
+      <text x="97" y="114" fill="#97a6c0" font-size="10.5" text-anchor="middle">VPN IPsec / OpenVPN</text>
+      <text x="97" y="134" fill="#97a6c0" font-size="10.5" text-anchor="middle">IDS/IPS (Suricata)</text>
+
+      <rect x="184" y="24" width="150" height="136" rx="10" fill="#0e2a20" stroke="#36d399"/>
+      <text x="259" y="50" fill="#36d399" font-size="11" font-weight="700" text-anchor="middle">2. HOST &amp; KERNEL</text>
+      <text x="259" y="74" fill="#e3ebf6" font-size="11" text-anchor="middle">Firewall local</text>
+      <text x="259" y="94" fill="#97a6c0" font-size="10.5" text-anchor="middle">SELinux / AppArmor</text>
+      <text x="259" y="114" fill="#97a6c0" font-size="10.5" text-anchor="middle">sysctl &amp; patches</text>
+      <text x="259" y="134" fill="#97a6c0" font-size="10.5" text-anchor="middle">Superfície mínima</text>
+
+      <rect x="350" y="24" width="154" height="136" rx="10" fill="#10243a" stroke="#38bdf8"/>
+      <text x="427" y="50" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle">3. IDENTIDADE (IAM)</text>
+      <text x="427" y="74" fill="#e3ebf6" font-size="11" text-anchor="middle">PAM / GPO Políticas</text>
+      <text x="427" y="94" fill="#97a6c0" font-size="10.5" text-anchor="middle">Chaves SSH / LAPS</text>
+      <text x="427" y="114" fill="#97a6c0" font-size="10.5" text-anchor="middle">Bloqueio força bruta</text>
+      <text x="427" y="134" fill="#97a6c0" font-size="10.5" text-anchor="middle">Menor privilégio</text>
+
+      <rect x="520" y="24" width="162" height="136" rx="10" fill="#2a220e" stroke="#fbbf24"/>
+      <text x="601" y="50" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">4. SERVIÇOS &amp; PKI</text>
+      <text x="601" y="74" fill="#e3ebf6" font-size="11" text-anchor="middle">CA Interna (TLS/PKI)</text>
+      <text x="601" y="94" fill="#97a6c0" font-size="10.5" text-anchor="middle">Web HTTPS + HSTS</text>
+      <text x="601" y="114" fill="#97a6c0" font-size="10.5" text-anchor="middle">FTPS / SFTP / DB</text>
+      <text x="601" y="134" fill="#97a6c0" font-size="10.5" text-anchor="middle">Sem protocolos fracos</text>
+
+      <rect x="698" y="24" width="156" height="136" rx="10" fill="#131c2b" stroke="#5eb3f5"/>
+      <text x="776" y="50" fill="#5eb3f5" font-size="11" font-weight="700" text-anchor="middle">5. VISIBILIDADE</text>
+      <text x="776" y="74" fill="#e3ebf6" font-size="11" text-anchor="middle">rsyslog Centralizado</text>
+      <text x="776" y="94" fill="#97a6c0" font-size="10.5" text-anchor="middle">auditd / Event Log</text>
+      <text x="776" y="114" fill="#97a6c0" font-size="10.5" text-anchor="middle">logrotate &amp; retenção</text>
+      <text x="776" y="134" fill="#97a6c0" font-size="10.5" text-anchor="middle">NTP / Chrony preciso</text>
+    </svg>
+    <div class="cap">Cada camada contém o atacante mesmo que a camada anterior falhe — essa é a essência de Enterprise Security.</div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>4 · Metodologia de Hardening (as 5 fases em qualquer ambiente)</div>
+  <div class="flow">
+    <div class="st"><div class="n">01</div><b>Inventariar</b><div class="d">mapear hosts, IPs, zonas, portas abertas, usuários e serviços críticos.</div></div>
+    <div class="st"><div class="n">02</div><b>Minimizar</b><div class="d">desligar serviços/portas inúteis e protocolos legados (SMBv1, SSL/TLS antigo).</div></div>
+    <div class="st"><div class="n">03</div><b>Endurecer</b><div class="d">aplicar políticas de senha/IAM, SSH, SELinux, GPO, PKI/TLS, firewall e VPN.</div></div>
+    <div class="st"><div class="n">04</div><b>Monitorar</b><div class="d">centralizar logs, ativar auditoria (auditd/Events), IDS e sincronizar relógios (NTP).</div></div>
+    <div class="st"><div class="n">05</div><b>Validar</b><div class="d">testar bloqueios <i>e</i> confirmar que todos os serviços legítimos seguem funcionando.</div></div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>5 · Trilhas práticas — clique para ir direto ao domínio</div>
+  <div class="owl">
+    <div class="owi jumpcard" data-jump="a-linux"><span class="c" style="color:var(--acc)">🐧</span><div class="t"><b>Linux Hardening</b><div class="d">PAM (expiração, complexidade, histórico, faillock), SSH, SELinux, firewalld e kernel (sysctl).</div></div></div>
+    <div class="owi jumpcard" data-jump="a-win"><span class="c" style="color:var(--acc2)">🪟</span><div class="t"><b>Windows &amp; Active Directory</b><div class="d">GPOs de domínio, cache=0, SMB Signing / sem SMBv1/LLMNR, RDP NLA, LAPS/gMSA, Firewall e Auditoria.</div></div></div>
+    <div class="owi jumpcard" data-jump="a-svc"><span class="c" style="color:var(--warn)">🌐</span><div class="t"><b>Serviços &amp; PKI</b><div class="d">Autoridade Certificadora (OpenSSL e ADCS), Apache/IIS HTTPS+SNI+HSTS, não-root, FTPS/SFTP e Banco de Dados.</div></div></div>
+    <div class="owi jumpcard" data-jump="a-net"><span class="c" style="color:var(--info)">🛡️</span><div class="t"><b>Rede, Firewall &amp; VPN</b><div class="d">Segmentação LAN/DMZ/WAN, default-deny, NAT seguro, VPN IPsec IKEv2, OpenVPN com certificado e IDS/IPS.</div></div></div>
+    <div class="owi jumpcard" data-jump="a-logs"><span class="c" style="color:#5eb3f5">📋</span><div class="t"><b>Logs, Auditoria &amp; Tempo</b><div class="d">rsyslog centralizado, journald/logrotate, auditd, controle de recursos (limits/nice) e NTP (chrony).</div></div></div>
+    <div class="owi jumpcard" data-jump="a-tools"><span class="c" style="color:var(--acc)">🧰</span><div class="t"><b>Ferramentas &amp; Checklist</b><div class="d">Lynis, OpenSCAP, testssl.sh, HardeningKitty, CIS Benchmarks + checklist interativo de validação final.</div></div></div>
+  </div>
+</div>
+
+<!-- ===================== A · LINUX HARDENING ===================== -->
+<div class="apanel" id="a-linux">
+  <div class="filters" id="af-linux">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="ident">Identidade &amp; PAM</span>
+    <span class="pill" data-f="ssh">SSH</span>
+    <span class="pill" data-f="mac">SELinux / MAC</span>
+    <span class="pill" data-f="fw">Firewall</span>
+    <span class="pill" data-f="kernel">Kernel &amp; Superfície</span>
+  </div>
+  <div class="count" id="ac-linux"></div>
+
+  <div class="disc" style="border-color:var(--acc);background:#0e1f1a">
+    🚀 <b>Auditoria rápida inicial em qualquer servidor Linux</b> (rode antes de começar a endurecer):
+<pre style="margin-top:8px"><span class="k">hostnamectl</span>; <span class="k">cat</span> /etc/os-release | head -2      <span class="c"># distro e versão (RHEL/Rocky vs Debian/Ubuntu)</span>
+<span class="k">ss</span> -tulpn                                         <span class="c"># portas e serviços escutando agora</span>
+<span class="k">getenforce</span> 2&gt;/dev/null || <span class="k">aa-status</span> --enabled    <span class="c"># SELinux ou AppArmor ativo?</span>
+<span class="k">firewall-cmd</span> --list-all 2&gt;/dev/null || <span class="k">ufw</span> status <span class="c"># firewall de host ativo?</span>
+<span class="k">sshd</span> -T | grep -Ei 'port|rootlogin|passwordauth|x11|forwarding' <span class="c"># estado real do SSH</span></pre>
+  </div>
+
+  <!-- 1 Expiração -->
+  <div class="v" data-cat="ident">
+    <div class="top"><div class="ttl"><h3><span class="os lin">PAM / IAM</span>Expiração de senha e inativação de conta</h3><div class="cat">login.defs · useradd -D · chage · limita janela de senha vazada</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Define validade máxima, aviso prévio e prazo para inativar contas com senha vencida. Senhas que <b>nunca expiram</b> (<code>99999</code>) aumentam indefinidamente a janela de abuso caso uma credencial vaze. Aplicar no <code>/etc/login.defs</code> vale para <b>novos usuários</b>; usar <code>chage</code> aplica para <b>usuários já existentes</b>.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) Padrão para NOVOS usuários — /etc/login.defs</span>
+PASS_MAX_DAYS   30    <span class="c"># ou o prazo exigido pela política (ex.: 14, 30, 90)</span>
+PASS_MIN_DAYS   1     <span class="c"># evita trocar e voltar imediatamente</span>
+PASS_WARN_AGE   7     <span class="c"># dias de aviso antes de expirar</span>
+
+<span class="c"># 2) Inativar conta N dias após a senha expirar (padrão de useradd):</span>
+<span class="k">useradd</span> -D -f 1
+
+<span class="c"># 3) Aplicar em um usuário JÁ EXISTENTE:</span>
+<span class="k">chage</span> -M 30 -m 1 -W 7 -I 1 &lt;usuario&gt;</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">chage</span> -l &lt;usuario&gt;
+<span class="k">grep</span> -E '^PASS_(MAX|MIN|WARN)' /etc/login.defs</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>Maximum number of days: 99999</code> · <code>Password inactive: never</code> — senha eterna.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Maximum: 30</code> (ou política definida) · <code>Warning: 7</code> · <code>Inactive: 1</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-exp" type="button">🎮 Treinar</button>
     </div>
   </div>
 
-  <!-- ============ TASK 3 ============ -->
-  <div class="apanel" id="a-t3">
-    <div class="disc">🔑 <b>Apache com RSA 4096 autoassinado</b>, redirect HTTP→HTTPS, SNI, sem listagem, não-root, HSTS, .htaccess e <code class="inl">.bak</code> → 403. 12 pontos.</div>
+  <!-- 2 Complexidade -->
+  <div class="v" data-cat="ident">
+    <div class="top"><div class="ttl"><h3><span class="os lin">PAM / IAM</span>Complexidade de senha (pam_pwquality)</h3><div class="cat">comprimento mínimo · classes de caracteres · anti-repetição</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Impõe força mínima na criação/troca de senhas pelo módulo PAM <code>pam_pwquality</code>. Sem complexidade, usuários escolhem senhas curtas ou previsíveis que caem em segundos em ataques de <b>dicionário e força bruta</b>. Note que valores <b>negativos</b> em <code>dcredit/ucredit/lcredit/ocredit</code> significam <i>quantidade mínima obrigatória</i> daquela classe.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># /etc/security/pwquality.conf</span>
+minlen = 12          <span class="c"># comprimento mínimo (ex.: 10, 12 ou 14)</span>
+dcredit = -1         <span class="c"># exige pelo menos 1 dígito</span>
+ucredit = -1         <span class="c"># exige pelo menos 1 maiúscula</span>
+lcredit = -1         <span class="c"># exige pelo menos 1 minúscula</span>
+ocredit = -1         <span class="c"># exige pelo menos 1 caractere especial (quando exigido)</span>
+maxclassrepeat = 3   <span class="c"># máx. caracteres consecutivos da mesma classe</span>
+enforce_for_root     <span class="c"># aplica a regra também para o root</span>
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Certificado RSA 4096 + vhosts (SNI)</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre>openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
-  -keyout /etc/pki/tls/private/wsc.key -out /etc/pki/tls/certs/wsc.crt
-mkdir -p /var/www/site /var/www/files
-echo 'Hello World' > /var/www/site/index.html; touch /var/www/site/backup.bak
-# vhost (SNI por ServerName): /etc/httpd/conf.d/sites.conf
-# &lt;VirtualHost *:443&gt; ServerName site.wsc.local  ... SSLEngine on
-#   SSLCertificateFile /etc/pki/tls/certs/wsc.crt ...
-# &lt;VirtualHost *:443&gt; ServerName files.wsc.local ...</pre></div></div>
-    </div>
-
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Redirect HTTP→HTTPS, HSTS, sem listagem</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># no &lt;VirtualHost *:80&gt;:
-Redirect permanent / https://site.wsc.local/
-# no vhost 443:
-Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-&lt;Directory /var/www/files&gt;
-    Options -Indexes            # desabilita directory listing
-    AllowOverride All
-&lt;/Directory&gt;
-# firewall:
-firewall-cmd --add-service=http --add-service=https --permanent; firewall-cmd --reload</pre></div></div>
-    </div>
-
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Apache não-root · .htaccess · bloquear .bak</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># rodar como usuário não-root: /etc/httpd/conf/httpd.conf
-User apache
-Group apache
-# .htaccess auth em files.wsc.local:
-htpasswd -c /etc/httpd/.htpasswd usuario     # senha: pwd123
-#   AuthType Basic / AuthUserFile /etc/httpd/.htpasswd / Require valid-user
-# bloquear .bak com 403 (mas permitir .bak em query string):
-&lt;FilesMatch "\.bak$"&gt;
-    Require all denied
-&lt;/FilesMatch&gt;
-systemctl restart httpd</pre></div></div>
+<span class="c"># RHEL/CentOS/Rocky 8/9 — garantir ativação no PAM:</span>
+<span class="k">authselect</span> enable-feature with-pwquality
+<span class="k">authselect</span> apply-changes</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">echo</span> 'abc123' | <span class="k">pwscore</span>            <span class="c"># testa se a senha fraca é rejeitada</span>
+<span class="k">grep</span> -vE '^\s*(#|$)' /etc/security/pwquality.conf</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Senhas curtas como <code>abc123</code> passam sem restrição de classes ou tamanho.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Password quality check failed: The password is shorter than 12 characters</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-pwq" type="button">🎮 Treinar</button>
     </div>
   </div>
 
-  <!-- ============ TASK 4 ============ -->
-  <div class="apanel" id="a-t4">
-    <div class="disc">🛡️ <b>Hardening do SSH</b> no LinuxServer. 10 pontos. Edite <code class="inl">/etc/ssh/sshd_config</code> e rode <code class="inl">systemctl restart sshd</code>.</div>
+  <!-- 3 Histórico -->
+  <div class="v" data-cat="ident">
+    <div class="top"><div class="ttl"><h3><span class="os lin">PAM / IAM</span>Histórico de senhas (pam_pwhistory)</h3><div class="cat">impede reutilização de senhas antigas</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Guarda os hashes das últimas N senhas em <code>/etc/security/opasswd</code> e bloqueia reutilização. Sem histórico, o usuário troca a senha quando expira e volta para a mesma de antes — <b>anulando a expiração</b> e mantendo ativa uma credencial possivelmente comprometida.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># RHEL/CentOS/Rocky — /etc/security/pwhistory.conf (RHEL 9+) ou /etc/pam.d/system-auth e password-auth:</span>
+<span class="c"># pwhistory.conf:</span>
+remember = 15
+enforce_for_root
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Banner, idle logout e logging verbose</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre>echo 'acesso não autorizado a este sistema não permitido' > /etc/ssh/banner
-# sshd_config:
-Banner /etc/ssh/banner
-ClientAliveInterval 1200     # 20 min
-ClientAliveCountMax 0
-LogLevel VERBOSE</pre></div></div>
+<span class="c"># Ou diretamente no PAM (logo após pam_pwquality.so):</span>
+password requisite pam_pwhistory.so use_authtok remember=15 retry=3
+
+<span class="c"># Debian/Ubuntu — /etc/pam.d/common-password (na linha do pam_unix.so ou pam_pwhistory.so):</span>
+password required pam_pwhistory.so remember=15 use_authtok</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">grep</span> -R "pwhistory" /etc/pam.d/ /etc/security/pwhistory.conf 2&gt;/dev/null
+<span class="c"># Teste prático: rodar passwd como usuário comum e tentar repetir uma senha anterior</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>O usuário consegue repetir a mesma senha logo após a troca.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Password has been already used. Choose another.</code></div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-hist" type="button">🎮 Treinar</button>
     </div>
+  </div>
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Match por usuário/grupo · desabilitar X11/túnel</h3><div class="cat">User02 · grupo developer</div></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># config global:
+  <!-- 4 Faillock -->
+  <div class="v" data-cat="ident">
+    <div class="top"><div class="ttl"><h3><span class="os lin">PAM / IAM</span>Bloqueio de conta contra força bruta (pam_faillock)</h3><div class="cat">bloqueia temporariamente após N falhas de login</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Bloqueia a conta automaticamente após poucas senhas incorretas consecutivas (substitui o antigo <code>pam_tally2</code>). É a principal defesa local contra <b>força bruta online</b> e <b>password spraying</b>. Cuidado para não bloquear a si mesmo sem saber destravar via <code>faillock --reset</code>.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># /etc/security/faillock.conf</span>
+deny = 3               <span class="c"># tentativas antes de bloquear (ex.: 3 a 5)</span>
+fail_interval = 900    <span class="c"># janela de contagem (15 min)</span>
+unlock_time = 1500     <span class="c"># tempo bloqueado em segundos (ex.: 1500 = 25 min)</span>
+audit                  <span class="c"># registra tentativas no log de sistema</span>
+
+<span class="c"># RHEL/CentOS/Rocky 8/9:</span>
+<span class="k">authselect</span> enable-feature with-faillock
+<span class="k">authselect</span> apply-changes</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">faillock</span> --user &lt;usuario&gt;           <span class="c"># exibe contagem de falhas</span>
+<span class="k">faillock</span> --user &lt;usuario&gt; --reset   <span class="c"># desbloqueia manualmente quando necessário</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Tentativas de login ilimitadas — atacante pode testar milhares de senhas.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>The account is locked due to 3 failed logins</code> (desbloqueio automático após 25 min).</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-faillock" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Banner, Timeout, Grupos e Sudoers -->
+  <div class="v" data-cat="ident">
+    <div class="top"><div class="ttl"><h3><span class="os lin">IAM</span>Banner legal, timeout de sessão (TMOUT), grupos e sudoers</h3><div class="cat">/etc/issue · TMOUT · menor privilégio em grupos e sudo</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>• <b>Banner legal:</b> informa explicitamente que o acesso é monitorado e restrito a autorizados (requisito legal/compliance — nunca revele versão do SO no banner!).<br>• <b>Timeout (<code>TMOUT</code>):</b> encerra sessões de terminal esquecidas abertas.<br>• <b>Grupos e <code>sudoers</code>:</b> aplica menor privilégio delegando apenas o comando necessário sem <code>NOPASSWD: ALL</code>.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) Banner legal (local e rede — sem dados do kernel/SO):</span>
+<span class="k">echo</span> 'Acesso restrito a usuarios autorizados. Todas as acoes sao monitoradas.' &gt; /etc/issue
+<span class="k">cp</span> /etc/issue /etc/issue.net
+
+<span class="c"># 2) Timeout de inatividade no shell (ex.: 15 ou 20 min):</span>
+<span class="k">cat</span> &lt;&lt;'EOF' &gt; /etc/profile.d/timeout.sh
+TMOUT=900
+readonly TMOUT
+export TMOUT
+EOF
+<span class="k">chmod</span> 644 /etc/profile.d/timeout.sh
+
+<span class="c"># 3) Criar grupos/usuários organizados e sudo mínimo (sempre via visudo):</span>
+<span class="k">groupadd</span> equipe_ops
+<span class="k">useradd</span> -m -G equipe_ops &lt;usuario&gt;
+<span class="c"># /etc/sudoers.d/ops (editado com visudo -f):</span>
+%equipe_ops ALL=(root) /usr/bin/systemctl restart httpd</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">cat</span> /etc/issue /etc/profile.d/timeout.sh
+<span class="k">visudo</span> -c                     <span class="c"># valida sintaxe do sudoers sem risco de travar</span>
+<span class="k">id</span> &lt;usuario&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Banner padrão expõe distro/kernel; sessões ficam abertas eternamente; usuários com <code>(ALL) NOPASSWD: ALL</code>.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Banner jurídico limpo, shell desconecta após inatividade e <code>sudo</code> restrito a comandos específicos.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-banner" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 SSH Chaves / Sem Root / Sem Senha -->
+  <div class="v" data-cat="ssh">
+    <div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Autenticação por chave Ed25519 · sem root · sem senha</h3><div class="cat">elimina força bruta de senha e acesso direto como root</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>O SSH é o alvo nº 1 de varreduras e força bruta em servidores Linux. Exigir <b>chaves criptográficas (Ed25519)</b>, desabilitar <b>login direto de <code>root</code></b> e desligar <b>autenticação por senha</b> elimina praticamente todos os ataques automatizados de credenciais. <b>Sempre copie e teste a chave antes</b> de desativar senhas!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) No cliente — gerar chave moderna e copiar para o servidor:</span>
+<span class="k">ssh-keygen</span> -t ed25519 -C "admin@empresa"
+<span class="k">ssh-copy-id</span> &lt;usuario&gt;@&lt;IP_SERVIDOR&gt;
+<span class="c"># Teste o login por chave ANTES de alterar o sshd_config!</span>
+
+<span class="c"># 2) No servidor — /etc/ssh/sshd_config.d/99-hardening.conf (ou /etc/ssh/sshd_config):</span>
+PermitRootLogin no
+PubkeyAuthentication yes
+PasswordAuthentication no
+PermitEmptyPasswords no
+MaxAuthTries 3
+
+<span class="c"># 3) Validar sintaxe e recarregar (mantenha uma sessão aberta para testar em outra):</span>
+<span class="k">sshd</span> -t &amp;&amp; <span class="k">systemctl</span> reload sshd</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">sshd</span> -T | <span class="k">grep</span> -Ei 'permitrootlogin|passwordauthentication|pubkeyauthentication|maxauthtries'</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>permitrootlogin yes</code> e <code>passwordauthentication yes</code> — root exposto a força bruta.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>permitrootlogin no</code> · <code>passwordauthentication no</code> · login só com chave Ed25519.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-ssh-key" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 7 SSH Banner, Idle, Log, Forwarding e Match -->
+  <div class="v" data-cat="ssh">
+    <div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Banner, timeout, logging, bloqueio de túneis e regras Match</h3><div class="cat">bloqueia pivoting por túnel SSH e personaliza por usuário/grupo</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Mesmo após autenticado, um invasor pode abusar de recursos do SSH para fazer <b>pivoting</b> (encaminhamento de portas TCP/túneis) ou sequestrar interface gráfica (X11). Desativar forwarding/túneis, encerrar sessões ociosas e elevar o log para <code>VERBOSE</code> (registra o fingerprint da chave usada) fecha essas brechas. Blocos <code>Match</code> permitem exceções finas no <b>final</b> do arquivo.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># /etc/ssh/sshd_config (configuração global):</span>
+Banner /etc/issue.net
+ClientAliveInterval 900       <span class="c"># 15 min (ou 1200 = 20 min)</span>
+ClientAliveCountMax 0         <span class="c"># desconecta imediatamente ao expirar</span>
+LogLevel VERBOSE              <span class="c"># registra fingerprint da chave utilizada</span>
 X11Forwarding no
 AllowTcpForwarding no
 PermitTunnel no
-# regras específicas (no fim do arquivo):
-Match User User02
-    Banner /etc/ssh/banner_user02
-Match Group developer
-    X11Forwarding no</pre></div></div>
-    </div>
+AllowAgentForwarding no
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>TCP Wrappers · porta 22222</h3><div class="cat">permitir só 192.168.10.5</div></div><div class="chev">›</div></div>
-      <div class="body">
-        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># TCP Wrappers:
-echo 'sshd: 192.168.10.5' >> /etc/hosts.allow
-echo 'sshd: ALL' >> /etc/hosts.deny
-# porta: sshd_config
+<span class="c"># Regras específicas SEMPRE no final do arquivo:</span>
+Match Group desenvolvedores
+    X11Forwarding no
+    AllowTcpForwarding no
+
+<span class="k">sshd</span> -t &amp;&amp; <span class="k">systemctl</span> reload sshd</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">sshd</span> -T | <span class="k">grep</span> -Ei 'banner|clientalive|loglevel|x11|forwarding|permittunnel'</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>x11forwarding yes</code>, <code>allowtcpforwarding yes</code>, sem timeout e log raso (<code>INFO</code>).</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Banner exibido, sessão ociosa encerrada, túneis bloqueados e <code>loglevel VERBOSE</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-ssh-hard" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 8 SSH Porta Alternativa e Restrição de IP -->
+  <div class="v" data-cat="ssh">
+    <div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Porta personalizada e restrição por IP (RHEL 9+ e legado)</h3><div class="cat">Port + semanage port + firewalld rich rule / AllowUsers</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Restringir <b>de quais IPs</b> o SSH aceita conexão (ex.: apenas da rede de gerência ou bastion) reduz drasticamente o risco de acesso não autorizado. Mudar a porta padrão (ex.: 22 → 22222) reduz ruído de bots, mas exige ajustar <b>SELinux + Firewall</b> antes de reiniciar o <code>sshd</code>.<br>⚠️ <b>Atenção de especialista (RHEL/CentOS 8/9+):</b> <code>tcp_wrappers</code> (<code>/etc/hosts.allow</code> e <code>hosts.deny</code>) foi <b>removido</b> do OpenSSH moderno — use <code>firewalld</code> rich rules ou <code>AllowUsers usuario@IP</code> no <code>sshd_config</code>!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) Definir porta e restringir usuário/IP no /etc/ssh/sshd_config:</span>
 Port 22222
-# SELinux + firewall para a porta nova:
-semanage port -a -t ssh_port_t -p tcp 22222
-firewall-cmd --add-port=22222/tcp --permanent; firewall-cmd --reload</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>ssh -p 22222 user@IP</pre></div>
-      </div>
-    </div>
+AllowUsers admin@10.0.10.0/24
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Só chave · sem root · login sem senha</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># no cliente:
-ssh-keygen -t ed25519
-ssh-copy-id -p 22222 user@IP
-# sshd_config:
-PubkeyAuthentication yes
-PasswordAuthentication no
-PermitRootLogin no
-systemctl restart sshd</pre></div></div>
+<span class="c"># 2) Liberar a nova porta no SELinux (obrigatório em RHEL/CentOS/Rocky!):</span>
+<span class="k">semanage</span> port -a -t ssh_port_t -p tcp 22222
+
+<span class="c"># 3) Liberar no firewalld APENAS para o IP/sub-rede de gerência e fechar a porta 22:</span>
+<span class="k">firewall-cmd</span> --permanent --add-rich-rule='rule family="ipv4" source address="10.0.10.0/24" port port="22222" protocol="tcp" accept'
+<span class="k">firewall-cmd</span> --permanent --remove-service=ssh
+<span class="k">firewall-cmd</span> --reload
+<span class="k">sshd</span> -t &amp;&amp; <span class="k">systemctl</span> restart sshd
+
+<span class="c"># (Nota para sistemas legados com libwrap/TCP Wrappers: /etc/hosts.allow "sshd: IP" e /etc/hosts.deny "sshd: ALL")</span></pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">ss</span> -tulpn | <span class="k">grep</span> sshd
+<span class="k">semanage</span> port -l | <span class="k">grep</span> ssh_port_t
+<span class="k">ssh</span> -p 22222 admin@&lt;IP_SERVIDOR&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>SSH aberto na porta 22 para <code>0.0.0.0/0</code> (qualquer rede acessa).</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>sshd</code> na porta 22222 com contexto <code>ssh_port_t</code>, aceitando só a rede de gerência.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-ssh-port" type="button">🎮 Treinar</button>
     </div>
   </div>
 
-  <!-- ============ TASK 5 ============ -->
-  <div class="apanel" id="a-t5">
-    <div class="disc">🔏 <b>SELinux + vsftpd</b> no LinuxServer. 10 pontos.</div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SELinux</span>Habilitar e verificar</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># /etc/selinux/config
-SELINUX=enforcing
-setenforce 1
-sestatus            # verificar (Current mode: enforcing)
-getenforce</pre></div></div>
-    </div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SELinux</span>Porta FTP, contexto do diretório e booleans</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># porta 21 (se preciso):
-semanage port -a -t ftp_port_t -p tcp 21
-# diretório de upload + contexto:
-mkdir -p /var/ftp/upload
-semanage fcontext -a -t public_content_rw_t "/var/ftp/upload(/.*)?"
-restorecon -Rv /var/ftp/upload
-# booleans (permitir leitura/gravação e login):
-setsebool -P ftpd_full_access on
-setsebool -P ftp_home_dir on</pre></div></div>
-    </div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SELinux</span>Monitorar negações (audit)</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h ver"><span class="d"></span>Como fazer</div>
-<pre>ausearch -m avc -ts recent | grep ftp
-# gerar política a partir de uma negação:
-ausearch -c vsftpd --raw | audit2allow -M meu_ftp
-semodule -i meu_ftp.pp</pre></div></div>
+  <!-- 9 SELinux / MAC -->
+  <div class="v" data-cat="mac">
+    <div class="top"><div class="ttl"><h3><span class="os lin">SELinux</span>Controle de Acesso Obrigatório (Enforcing, Contextos, Booleans e Audit)</h3><div class="cat">nunca desative o SELinux — ajuste o contexto/boolean correto!</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>O <b>SELinux</b> confina cada daemon (<code>httpd_t</code>, <code>ftpd_t</code>, <code>sshd_t</code>) aos arquivos, portas e ações exatos permitidos pela política. Desligar o SELinux porque "um serviço não funcionou" é uma das piores falhas de segurança possíveis. O especialista mantém <code>Enforcing</code> e ajusta <b>contexto</b>, <b>porta</b>, <b>boolean</b> ou cria módulo mínimo via <code>audit2allow</code>. <i>(Em Ubuntu/Debian, o equivalente é o <b>AppArmor</b>: <code>aa-status</code> / <code>aa-enforce</code>.)</i></p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) Garantir modo Enforcing (imediato e persistente no /etc/selinux/config):</span>
+<span class="k">sed</span> -i 's/^SELINUX=.*/SELINUX=enforcing/' /etc/selinux/config
+<span class="k">setenforce</span> 1
+
+<span class="c"># 2) Rotular diretório customizado de serviço (ex.: upload FTP ou site web):</span>
+<span class="k">semanage</span> fcontext -a -t public_content_rw_t "/var/ftp/upload(/.*)?"
+<span class="k">restorecon</span> -Rv /var/ftp/upload
+
+<span class="c"># 3) Liberar porta personalizada e ajustar booleans persistentes (-P):</span>
+<span class="k">semanage</span> port -a -t http_port_t -p tcp 8443
+<span class="k">setsebool</span> -P httpd_can_network_connect off   <span class="c"># ou ligar só o necessário (ex.: ftpd_full_access)</span>
+
+<span class="c"># 4) Diagnosticar negação (AVC denial) sem desligar o SELinux:</span>
+<span class="k">ausearch</span> -m avc -ts recent
+<span class="c"># Em último caso, gerar módulo mínimo e revisar antes de instalar:</span>
+<span class="k">ausearch</span> -c vsftpd --raw | <span class="k">audit2allow</span> -M custom_ftp &amp;&amp; <span class="k">semodule</span> -i custom_ftp.pp</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">sestatus</span>; <span class="k">getenforce</span>
+<span class="k">ls</span> -Zd /var/ftp/upload       <span class="c"># confirma o rótulo SELinux aplicado</span>
+<span class="k">getsebool</span> -a | <span class="k">grep</span> ftp</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>Current mode: permissive</code> ou <code>disabled</code> — serviços rodam sem confinamento MAC.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Current mode: enforcing</code>, diretórios com rótulo correto e zero negações AVC indevidas.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-selinux" type="button">🎮 Treinar</button>
     </div>
   </div>
 
-  <!-- ============ TASK 6 ============ -->
-  <div class="apanel" id="a-t6">
-    <div class="disc">📋 <b>Logs centralizados (rsyslog), rotação, prioridades e NTP</b>. 10 pontos.</div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LOGS</span>Retenção 7 dias + logrotate</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># journald — /etc/systemd/journald.conf
-MaxRetentionSec=7day
-systemctl restart systemd-journald
-# logrotate diário, comprimido, 1 mês, com data no nome — /etc/logrotate.d/custom
+  <!-- 10 Firewall de Host -->
+  <div class="v" data-cat="fw">
+    <div class="top"><div class="ttl"><h3><span class="os lin">FIREWALL</span>Firewall de host default-deny (firewalld / ufw / nftables)</h3><div class="cat">bloqueia tudo por padrão · libera só serviços necessários</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Mesmo atrás de um firewall de perímetro, cada servidor deve ter seu <b>firewall local ativo</b> (Defesa em Profundidade). Isso bloqueia <b>movimento lateral</b> caso outra máquina na mesma VLAN seja invadida. A regra é <b>default-deny</b> na entrada: remover serviços inúteis (como <code>cockpit</code>, <code>dhcpv6-client</code>, <code>mdns</code>) e abrir somente as portas do papel daquele servidor.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># RHEL/CentOS/Rocky (firewalld):</span>
+<span class="k">systemctl</span> enable --now firewalld
+<span class="k">firewall-cmd</span> --permanent --remove-service=cockpit
+<span class="k">firewall-cmd</span> --permanent --add-service=https
+<span class="c"># Exemplo de rich rule (liberar porta 514 só da rede interna):</span>
+<span class="k">firewall-cmd</span> --permanent --add-rich-rule='rule family="ipv4" source address="10.0.0.0/16" port port="514" protocol="tcp" accept'
+<span class="k">firewall-cmd</span> --reload
+
+<span class="c"># Debian/Ubuntu (UFW):</span>
+<span class="k">ufw</span> default deny incoming &amp;&amp; <span class="k">ufw</span> default allow outgoing
+<span class="k">ufw</span> allow from 10.0.10.0/24 to any port 22 proto tcp
+<span class="k">ufw</span> allow 443/tcp &amp;&amp; <span class="k">ufw</span> enable</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">firewall-cmd</span> --list-all        <span class="c"># ou: ufw status verbose</span>
+<span class="k">nft</span> list ruleset | head -40    <span class="c"># confere as regras reais no kernel</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>firewalld</code> inativo (<code>inactive</code>) ou expondo serviços administrativos desnecessários.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Firewall <code>active</code>, entrada bloqueada por padrão e apenas portas/origens legítimas liberadas.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-fw" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 11 Kernel sysctl e Superfície -->
+  <div class="v" data-cat="kernel">
+    <div class="top"><div class="ttl"><h3><span class="os lin">KERNEL</span>Hardening de kernel (sysctl) e redução de superfície</h3><div class="cat">anti-spoofing · SYN cookies · sem redirects · fechar serviços ociosos</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Ajustes no kernel Linux via <code>sysctl</code> mitigam ataques de rede (<b>SYN flood, IP spoofing, ICMP redirects</b>) e dificultam exploração local (ASLR, restrição de ponteiros e dmesg). Em paralelo, desligar daemons desnecessários (<code>avahi-daemon</code>, <code>cups</code>, <code>rpcbind</code>) e manter pacotes atualizados fecha portas e CVEs antes que virem incidente.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># /etc/sysctl.d/99-hardening.conf</span>
+net.ipv4.tcp_syncookies = 1                   <span class="c"># proteção contra SYN flood</span>
+net.ipv4.conf.all.rp_filter = 1               <span class="c"># anti-IP spoofing</span>
+net.ipv4.conf.all.accept_redirects = 0        <span class="c"># ignora ICMP redirects (anti-MITM)</span>
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.ip_forward = 0                       <span class="c"># 0 em servidores; 1 apenas se for roteador/VPN</span>
+kernel.randomize_va_space = 2                 <span class="c"># ASLR completo</span>
+kernel.kptr_restrict = 2                      <span class="c"># oculta endereços do kernel</span>
+kernel.dmesg_restrict = 1                     <span class="c"># restringe dmesg ao root</span>
+
+<span class="k">sysctl</span> --system                               <span class="c"># aplica imediatamente</span>
+<span class="c"># Desativar serviços desnecessários encontrados no ss -tulpn:</span>
+<span class="k">systemctl</span> disable --now cups avahi-daemon 2&gt;/dev/null</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">sysctl</span> net.ipv4.tcp_syncookies net.ipv4.conf.all.rp_filter net.ipv4.conf.all.accept_redirects kernel.kptr_restrict
+<span class="k">ss</span> -tulpn                                     <span class="c"># conferir se restaram só portas necessárias</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>accept_redirects = 1</code>, <code>kptr_restrict = 0</code> e serviços inúteis escutando na rede.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Parâmetros de rede e kernel endurecidos em <code>/etc/sysctl.d/</code> e apenas serviços do escopo ativos.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="lin-sysctl" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== A · WINDOWS & AD ===================== -->
+<div class="apanel" id="a-win">
+  <div class="filters" id="af-win">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="gpo">GPO &amp; Políticas</span>
+    <span class="pill" data-f="proto">Protocolos</span>
+    <span class="pill" data-f="cred">Acesso &amp; Credenciais</span>
+    <span class="pill" data-f="fw">Firewall &amp; Auditoria</span>
+  </div>
+  <div class="count" id="ac-win"></div>
+
+  <div class="disc" style="border-color:var(--acc2);background:#0c1c2e">
+    🚀 <b>Auditoria rápida inicial em Windows Server / Active Directory</b> (PowerShell como Administrador):
+<pre style="margin-top:8px"><span class="k">net accounts</span>                                                    <span class="c"># política de senha e bloqueio</span>
+<span class="k">Get-SmbServerConfiguration</span> | select EnableSMB1Protocol,RequireSecuritySignature
+<span class="k">Get-NetFirewallProfile</span> | select Name,Enabled,DefaultInboundAction
+<span class="k">Get-ADGroupMember</span> "Domain Admins" | select Name,SamAccountName  <span class="c"># quem tem poder total no domínio?</span></pre>
+  </div>
+
+  <!-- 1 GPO -->
+  <div class="v" data-cat="gpo">
+    <div class="top"><div class="ttl"><h3><span class="os win">GPO / AD</span>Política de Senha, Bloqueio, Banner e Cache de Credenciais = 0</h3><div class="cat">Default Domain Policy · gpmc.msc · proteção centralizada</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Em domínios Active Directory, <b>GPOs (Group Policy Objects)</b> aplicam políticas uniformemente em todas as estações e servidores. Além de senha forte, histórico, expiração, bloqueio contra força bruta e banner legal, zerar <b>credenciais em cache (<code>cache = 0</code>)</b> impede que hashes DCC2 fiquem salvos no disco para quebra offline caso a máquina seja comprometida.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (gpmc.msc → Default Domain Policy)</div>
+<pre>Computer Configuration &gt; Policies &gt; Windows Settings &gt; Security Settings:
+  • Account Policies &gt; Password Policy:
+      Minimum password length = 12 (ou política) · History = 15 · Max age = 30 · Complexity = Enabled
+  • Account Policies &gt; Account Lockout Policy:
+      Lockout threshold = 3 · Lockout duration = 25 min · Reset counter = 25 min
+  • Local Policies &gt; Security Options:
+      Interactive logon: Message title / Message text  (banner legal)
+      Interactive logon: Number of previous logons to cache = 0
+
+<span class="c"># Forçar aplicação imediata nas estações/servidores:</span>
+<span class="k">gpupdate</span> /force</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">net accounts</span>
+<span class="k">gpresult</span> /r /scope computer
+<span class="k">Get-ItemProperty</span> "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name CachedLogonsCount</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>Lockout threshold: Never</code>, <code>CachedLogonsCount: 10</code> e senhas curtas aceitas.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Política de senha/bloqueio ativa, banner exibido no logon e <code>CachedLogonsCount: 0</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="win-gpo" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Protocolos legados -->
+  <div class="v" data-cat="proto">
+    <div class="top"><div class="ttl"><h3><span class="os win">PROTOCOLOS</span>Desabilitar SMBv1, exigir SMB Signing, bloquear NTLMv1 e LLMNR</h3><div class="cat">fecha EternalBlue, NTLM Relay e ataques Responder na LAN</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Os ataques mais rápidos em redes Windows internas exploram protocolos antigos: <b>SMBv1</b> (vulnerável a RCE como EternalBlue), falta de <b>SMB Signing</b> (permite NTLM Relay), <b>NTLMv1</b> (hashes triviais de quebrar) e <b>LLMNR/NBT-NS</b> (permite envenenamento de nomes com <i>Responder</i> para capturar hashes na LAN).</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (PowerShell + GPO)</div>
+<pre><span class="c"># 1) Desabilitar SMBv1 e exigir assinatura SMB (PowerShell):</span>
+<span class="k">Set-SmbServerConfiguration</span> -EnableSMB1Protocol $false -RequireSecuritySignature $true -Force
+
+<span class="c"># 2) Via GPO (Security Options):</span>
+  • Microsoft network server: Digitally sign communications (always) = Enabled
+  • Microsoft network client: Digitally sign communications (always) = Enabled
+  • Network security: LAN Manager authentication level = Send NTLMv2 response only. Refuse LM &amp; NTLM
+
+<span class="c"># 3) Desabilitar LLMNR via GPO:</span>
+  Computer Config &gt; Admin Templates &gt; Network &gt; DNS Client &gt; Turn off multicast name resolution = Enabled</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">Get-SmbServerConfiguration</span> | select EnableSMB1Protocol,RequireSecuritySignature
+<span class="k">Get-ItemProperty</span> "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LmCompatibilityLevel  <span class="c"># deve ser 5</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>EnableSMB1Protocol: True</code>, <code>RequireSecuritySignature: False</code>, LLMNR ativo na rede.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>SMBv1 desativado, SMB Signing obrigatório, apenas NTLMv2 (<code>LmCompatibilityLevel = 5</code>) e LLMNR desligado.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="win-proto" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 RDP NLA -->
+  <div class="v" data-cat="cred">
+    <div class="top"><div class="ttl"><h3><span class="os win">ACESSO</span>Hardening de RDP (exigir NLA e restringir acesso)</h3><div class="cat">autenticação antes da sessão gráfica · nunca expor 3389 na WAN</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Sem <b>NLA (Network Level Authentication)</b>, o servidor RDP cria uma sessão gráfica antes de autenticar o usuário — abrindo porta para ataques pré-autenticação (como BlueKeep) e exaustão de recursos. Além disso, o RDP nunca deve ficar exposto diretamente à internet (somente via VPN/rede de gerência) e restrito ao grupo mínimo de administradores.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># Exigir NLA via PowerShell/Registry (ou GPO: Remote Desktop Services &gt; Security):</span>
+<span class="k">Set-ItemProperty</span> "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name UserAuthentication -Value 1
+
+<span class="c"># Restringir RDP no Windows Firewall apenas à sub-rede de gerência:</span>
+<span class="k">Set-NetFirewallRule</span> -DisplayGroup "Remote Desktop" -RemoteAddress 10.0.10.0/24
+
+<span class="c"># Se o servidor NÃO precisar de RDP, desabilitar:</span>
+<span class="k">Set-ItemProperty</span> "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name fDenyTSConnections -Value 1</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">Get-ItemProperty</span> "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name UserAuthentication
+<span class="k">Get-LocalGroupMember</span> "Remote Desktop Users"</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>UserAuthentication: 0</code> (sem NLA) e porta 3389 aberta para qualquer origem.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>UserAuthentication: 1</code> (NLA obrigatório) e acesso restrito à rede de gerência/VPN.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="win-rdp" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 LAPS, gMSA, Protected Users -->
+  <div class="v" data-cat="cred">
+    <div class="top"><div class="ttl"><h3><span class="os win">AD / IAM</span>Proteção de Credenciais: LAPS, gMSA e Protected Users</h3><div class="cat">bloqueia movimento lateral com senha local igual e roubo de hash</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Em redes corporativas, reutilizar a mesma senha de Administrador local em todas as máquinas permite que o comprometimento de <i>um</i> computador derrube <i>todos</i> via Pass-the-Hash. <b>Windows LAPS</b> gera senhas locais únicas e rotacionadas por máquina; <b>gMSA</b> gerencia senhas longas automáticas para serviços; e o grupo <b>Protected Users</b> impede que contas administrativas usem NTLM, DES/RC4 ou delegação insegura.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) Adicionar contas de alto privilégio ao grupo Protected Users no AD:</span>
+<span class="k">Add-ADGroupMember</span> -Identity "Protected Users" -Members admin_tier0
+
+<span class="c"># 2) Revisar e enxugar membros de Domain Admins / Enterprise Admins:</span>
+<span class="k">Remove-ADGroupMember</span> -Identity "Domain Admins" -Members usuario_comum
+
+<span class="c"># 3) Boas práticas de arquitetura AD:</span>
+  • Ativar Windows LAPS (GPO: Admin Templates &gt; System &gt; LAPS) p/ senhas locais únicas
+  • Usar contas gMSA (New-ADServiceAccount) para serviços em vez de contas de usuário comuns
+  • Nunca usar conta Domain Admin para navegar na web ou logar em estações comuns (Tiering)</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">Get-ADGroupMember</span> "Domain Admins" | select SamAccountName
+<span class="k">Get-ADGroupMember</span> "Protected Users" | select SamAccountName</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Contas comuns em <code>Domain Admins</code>, <code>Protected Users</code> vazio e senha local igual em todos os PCs.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Domain Admins</code> mínimo, admins em <code>Protected Users</code>, LAPS e gMSA ativos.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="win-cred" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Windows Firewall e Serviços -->
+  <div class="v" data-cat="fw">
+    <div class="top"><div class="ttl"><h3><span class="os win">FIREWALL</span>Windows Defender Firewall e desativação de serviços desnecessários</h3><div class="cat">perfis Domain/Private/Public ativos · desabilitar Print Spooler em servidores</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Desligar o Firewall do Windows "para facilitar testes" deixa o servidor exposto a movimento lateral. Todos os 3 perfis (<b>Domain, Private, Public</b>) devem ficar ativados com entrada bloqueada por padrão. Além disso, serviços de alto risco como o <b>Print Spooler</b> (histórico do PrintNightmare) devem ser desabilitados em Domain Controllers e servidores que não imprimem.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (PowerShell)</div>
+<pre><span class="c"># 1) Ativar todos os perfis do Firewall com bloqueio padrão na entrada:</span>
+<span class="k">Set-NetFirewallProfile</span> -Profile Domain,Public,Private -Enabled True -DefaultInboundAction Block
+
+<span class="c"># 2) Liberar apenas a porta necessária para o serviço do host (ex.: HTTPS 443):</span>
+<span class="k">New-NetFirewallRule</span> -DisplayName "Allow HTTPS" -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow
+
+<span class="c"># 3) Parar e desabilitar Print Spooler em servidores sem impressora:</span>
+<span class="k">Stop-Service</span> -Name Spooler -Force
+<span class="k">Set-Service</span> -Name Spooler -StartupType Disabled</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">Get-NetFirewallProfile</span> | select Name,Enabled,DefaultInboundAction
+<span class="k">Get-Service</span> Spooler | select Name,Status,StartType</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Perfis de firewall <code>Enabled: False</code> e <code>Spooler</code> rodando (<code>Running / Automatic</code>) no DC.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Todos os perfis <code>True / Block</code> na entrada e serviços desnecessários <code>Stopped / Disabled</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="win-fw" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 Auditoria, PowerShell Logging, AppLocker -->
+  <div class="v" data-cat="fw">
+    <div class="top"><div class="ttl"><h3><span class="os win">AUDITORIA</span>Auditoria Avançada, PowerShell Logging e Controle de Execução</h3><div class="cat">Event ID 4625/4688/4104 · detectar ataques "living off the land"</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Por padrão, o Windows não registra a linha de comando dos processos criados nem o conteúdo de scripts PowerShell ofuscados. Ativar <b>Advanced Audit Policy</b> (Logon, Account Management, Process Creation com linha de comando — ID 4688) e <b>PowerShell Script Block Logging</b> (ID 4104) dá visibilidade real de ataques. <b>AppLocker / ASR</b> bloqueiam execução de binários e scripts não autorizados.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) Habilitar auditoria de Logon, Contas e Criação de Processos (auditpol):</span>
+<span class="k">auditpol</span> /set /subcategory:"Logon" /success:enable /failure:enable
+<span class="k">auditpol</span> /set /subcategory:"Account Lockout" /success:enable /failure:enable
+<span class="k">auditpol</span> /set /subcategory:"Process Creation" /success:enable
+
+<span class="c"># 2) Via GPO (Administrative Templates):</span>
+  • System &gt; Audit Process Creation &gt; Include command line in process creation events = Enabled
+  • Windows Components &gt; Windows PowerShell &gt; Turn on PowerShell Script Block Logging = Enabled
+  • Windows Settings &gt; Security Settings &gt; Application Control Policies &gt; AppLocker (regras padrão + allowlist)</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">auditpol</span> /get /subcategory:"Logon","Process Creation"
+<span class="k">Get-WinEvent</span> -LogName Security -MaxEvents 5 | select TimeCreated,Id,Message</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>No Auditing</code> para Process Creation e sem Script Block Logging — atacante age invisível.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Eventos de logon (4624/4625), processos com argumentos (4688) e scripts PowerShell (4104) registrados.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="win-audit" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== A · SERVIÇOS & PKI ===================== -->
+<div class="apanel" id="a-svc">
+  <div class="filters" id="af-svc">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="pki">PKI &amp; CA</span>
+    <span class="pill" data-f="web">Web &amp; TLS</span>
+    <span class="pill" data-f="files">Arquivos (FTPS/SFTP)</span>
+    <span class="pill" data-f="db">Banco de Dados</span>
+  </div>
+  <div class="count" id="ac-svc"></div>
+
+  <div class="vfig" style="margin:0 0 18px">
+    <svg viewBox="0 0 880 125" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+      <defs><marker id="pa1" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#36d399"/></marker></defs>
+      <rect x="16" y="22" width="165" height="66" rx="10" fill="#2a220e" stroke="#fbbf24"/>
+      <text x="98" y="48" fill="#fbbf24" font-size="11.5" font-weight="700" text-anchor="middle">1. Root CA Interna</text>
+      <text x="98" y="68" fill="#97a6c0" font-size="10" text-anchor="middle">OpenSSL / ADCS (chave RSA 4096)</text>
+
+      <line x1="181" y1="55" x2="245" y2="55" stroke="#36d399" stroke-width="2" marker-end="url(#pa1)"/>
+      <text x="213" y="44" fill="#e3ebf6" font-size="9.5" text-anchor="middle">assina CSR</text>
+
+      <rect x="252" y="22" width="185" height="66" rx="10" fill="#0e2a20" stroke="#36d399"/>
+      <text x="344" y="48" fill="#36d399" font-size="11.5" font-weight="700" text-anchor="middle">2. Cert Servidor / Cliente</text>
+      <text x="344" y="68" fill="#97a6c0" font-size="10" text-anchor="middle">CN + SAN (DNS/IP) + validade</text>
+
+      <line x1="437" y1="55" x2="500" y2="55" stroke="#36d399" stroke-width="2" marker-end="url(#pa1)"/>
+      <text x="468" y="44" fill="#e3ebf6" font-size="9.5" text-anchor="middle">instala em</text>
+
+      <rect x="506" y="22" width="165" height="66" rx="10" fill="#10243a" stroke="#38bdf8"/>
+      <text x="588" y="48" fill="#38bdf8" font-size="11.5" font-weight="700" text-anchor="middle">3. Serviços Protegidos</text>
+      <text x="588" y="68" fill="#97a6c0" font-size="10" text-anchor="middle">HTTPS · IIS · FTPS · VPN</text>
+
+      <line x1="671" y1="55" x2="725" y2="55" stroke="#36d399" stroke-width="2" marker-end="url(#pa1)"/>
+
+      <rect x="731" y="22" width="133" height="66" rx="10" fill="#131c2b" stroke="#36d399"/>
+      <text x="797" y="48" fill="#36d399" font-size="11.5" font-weight="700" text-anchor="middle">4. Cliente Confia</text>
+      <text x="797" y="68" fill="#97a6c0" font-size="10" text-anchor="middle">CA no Trust Store</text>
+    </svg>
+    <div class="cap">Cadeia de confiança PKI: clientes confiam na Root CA e validam automaticamente qualquer certificado assinado por ela.</div>
+  </div>
+
+  <!-- 1 OpenSSL CA -->
+  <div class="v" data-cat="pki">
+    <div class="top"><div class="ttl"><h3><span class="os pki">PKI / Linux</span>Autoridade Certificadora (CA) e emissão de certificados com OpenSSL</h3><div class="cat">RSA 4096 · CSR com SAN · assinatura pela CA interna</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Certificados autoassinados isolados geram alertas em navegadores e não escalam. Montar uma <b>CA interna</b> permite emitir e revogar certificados de servidores (HTTPS, FTPS, LDAP, VPN) e de clientes a partir de uma única raiz confiável. Sempre inclua <b>SAN (Subject Alternative Name)</b> — navegadores modernos ignoram apenas o CN!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) Criar chave privada (protegida) e certificado da Root CA (RSA 4096):</span>
+<span class="k">openssl</span> genrsa -aes256 -out rootCA.key 4096 &amp;&amp; <span class="k">chmod</span> 400 rootCA.key
+<span class="k">openssl</span> req -x509 -new -nodes -key rootCA.key -sha256 -days 1825 \
+  -subj "/C=BR/O=Empresa/CN=Empresa Root CA" -out rootCA.crt
+
+<span class="c"># 2) Gerar chave + CSR do servidor (ex.: site.empresa.local):</span>
+<span class="k">openssl</span> genrsa -out server.key 4096 &amp;&amp; <span class="k">chmod</span> 600 server.key
+<span class="k">openssl</span> req -new -key server.key -subj "/CN=site.empresa.local" -out server.csr
+
+<span class="c"># 3) Assinar o CSR com a CA incluindo SAN (DNS/IP):</span>
+<span class="k">openssl</span> x509 -req -in server.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial \
+  -out server.crt -days 365 -sha256 -extfile &lt;(printf "subjectAltName=DNS:site.empresa.local")</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">openssl</span> verify -CAfile rootCA.crt server.crt
+<span class="k">openssl</span> x509 -in server.crt -noout -subject -issuer -dates -ext subjectAltName</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Chave fraca (1024 bits), sem SAN, chave privada com permissão 644 ou certificado sem cadeia válida.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>server.crt: OK</code>, chave RSA 4096 (<code>chmod 600</code>), SHA-256 e SAN correspondente ao domínio.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="svc-ca" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 ADCS + IIS -->
+  <div class="v" data-cat="pki">
+    <div class="top"><div class="ttl"><h3><span class="os win">PKI / IIS</span>ADCS (Enterprise CA) + Certificados Servidor/Cliente no IIS</h3><div class="cat">CA integrada ao Active Directory · binding HTTPS no IIS</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Em ambientes Windows com Active Directory, o <b>ADCS (Active Directory Certificate Services)</b> atua como CA corporativa confiável automaticamente por todas as máquinas do domínio (via GPO). Permite emitir certificados para sites IIS (HTTPS), autenticação mútua de clientes e túneis VPN IPsec/OpenVPN.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre>1. Server Manager &gt; Add Roles and Features &gt; Active Directory Certificate Services
+   (marcar Certification Authority + Certification Authority Web Enrollment)
+   → Post-deployment: configurar como Enterprise Root CA (RSA 4096, SHA256).
+2. Emitir certificado de servidor no IIS:
+   IIS Manager &gt; servidor &gt; Server Certificates &gt; Create Domain Certificate (selecionar a Enterprise CA).
+3. Emitir certificado de cliente (para usuário/VPN):
+   Via MMC (certmgr.msc → Request New Certificate) ou Web Enrollment (https://&lt;ca-server&gt;/certsrv).
+4. Vincular HTTPS no IIS:
+   IIS &gt; Default Web Site &gt; Bindings &gt; Add &gt; Type: https (443) · Host name (SNI) · SSL certificate.</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">certutil</span> -ping                           <span class="c"># confirma que a CA está ativa</span>
+<span class="k">Get-WebBinding</span> -Name "Default Web Site"  <span class="c"># confirma binding https na porta 443</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Site IIS servindo apenas HTTP (porta 80) em texto claro, sem CA corporativa.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Enterprise CA operacional, binding HTTPS (443) com certificado assinado e confiável no domínio.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="svc-adcs" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 Web TLS + SNI + Redirect -->
+  <div class="v" data-cat="web">
+    <div class="top"><div class="ttl"><h3><span class="os lin">WEB / TLS</span>Apache/Nginx: TLS 1.2/1.3, VirtualHosts com SNI e Redirect HTTP→HTTPS</h3><div class="cat">elimina texto claro e protocolos obsoletos (SSLv3/TLS 1.0/1.1)</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p><b>SNI (Server Name Indication)</b> permite hospedar múltiplos sites HTTPS com certificados distintos no mesmo IP/porta 443. Forçar <b>redirect permanente (301)</b> de HTTP para HTTPS e restringir o servidor apenas a <b>TLS 1.2 e 1.3</b> com cifras modernas impede interceptação de tráfego e ataques de downgrade (POODLE/BEAST).</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (Apache — /etc/httpd/conf.d/sites.conf)</div>
+<pre>&lt;VirtualHost *:80&gt;
+    ServerName site.empresa.local
+    Redirect permanent / https://site.empresa.local/
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:443&gt;
+    ServerName site.empresa.local
+    DocumentRoot /var/www/site
+    SSLEngine on
+    SSLProtocol -all +TLSv1.2 +TLSv1.3
+    SSLCertificateFile    /etc/pki/tls/certs/site.crt
+    SSLCertificateKeyFile /etc/pki/tls/private/site.key
+&lt;/VirtualHost&gt;
+
+<span class="c"># Outro domínio no mesmo IP (SNI): repetir bloco &lt;VirtualHost *:443&gt; com ServerName files.empresa.local</span>
+<span class="k">httpd</span> -t &amp;&amp; <span class="k">systemctl</span> reload httpd
+<span class="k">firewall-cmd</span> --permanent --add-service=http --add-service=https &amp;&amp; <span class="k">firewall-cmd</span> --reload</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">curl</span> -I http://site.empresa.local                           <span class="c"># deve retornar 301 → https://</span>
+<span class="k">openssl</span> s_client -connect site.empresa.local:443 -servername site.empresa.local -tls1_1  <span class="c"># deve recusar TLS 1.1</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Site responde <code>200 OK</code> em HTTP claro ou aceita <code>TLSv1.0 / TLSv1.1</code>.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>HTTP devolve <code>301 Moved Permanently</code> para HTTPS; apenas <code>TLSv1.2 / TLSv1.3</code> aceitos.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="svc-tls" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 Headers + Ocultação + Sem listagem -->
+  <div class="v" data-cat="web">
+    <div class="top"><div class="ttl"><h3><span class="os lin">WEB</span>HSTS, headers de segurança, ocultar versão e desabilitar directory listing</h3><div class="cat">Strict-Transport-Security · Options -Indexes · ServerTokens Prod</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>• <b>HSTS:</b> instrui o navegador a nunca mais tentar HTTP puro.<br>• <b>Headers de defesa:</b> <code>X-Frame-Options</code> bloqueia clickjacking, <code>X-Content-Type-Options: nosniff</code> evita confusão de MIME e <code>CSP</code> mitiga XSS.<br>• <b><code>Options -Indexes</code>:</b> impede que pastas sem <code>index.html</code> listem todos os arquivos.<br>• <b><code>ServerTokens Prod</code>:</b> esconde a versão exata do Apache/SO para dificultar reconhecimento.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (Apache)</div>
+<pre><span class="c"># Global (/etc/httpd/conf/httpd.conf ou conf.d/security.conf):</span>
+ServerTokens Prod
+ServerSignature Off
+TraceEnable Off
+
+<span class="c"># Dentro do &lt;VirtualHost *:443&gt;:</span>
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "DENY"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+&lt;Directory /var/www/files&gt;
+    Options -Indexes
+    AllowOverride All
+&lt;/Directory&gt;
+
+<span class="k">httpd</span> -t &amp;&amp; <span class="k">systemctl</span> reload httpd</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">curl</span> -Ik https://site.empresa.local | <span class="k">grep</span> -iE 'server:|strict-transport|x-frame|x-content'
+<span class="k">curl</span> -Ik https://files.empresa.local/   <span class="c"># sem index.html deve retornar 403 Forbidden (não 200 Index of)</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>Server: Apache/2.4.57 (Rocky Linux)</code>, sem HSTS e listagem <code>Index of /files</code> aberta.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Server: Apache</code>, HSTS + headers presentes e diretórios sem índice retornam <code>403 Forbidden</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="svc-headers" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Não-root, .htaccess e Bloquear .bak/.env -->
+  <div class="v" data-cat="web">
+    <div class="top"><div class="ttl"><h3><span class="os lin">WEB</span>Execução não-root, autenticação protegida e bloqueio de arquivos sensíveis</h3><div class="cat">User apache · htpasswd · bloquear .bak / .env / .git com 403</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Rodar o servidor web com usuário sem privilégio (<code>apache</code>/<code>www-data</code>) limita o impacto em caso de invasão. Proteger diretórios restritos com autenticação (sempre sobre HTTPS!) e bloquear acesso HTTP a extensões sensíveis (<code>.bak</code>, <code>.env</code>, <code>.git</code>, <code>.sql</code>) com <code>&lt;FilesMatch&gt;</code> impede vazamento de backups e código-fonte (sem afetar parâmetros de query string).</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (Apache)</div>
+<pre><span class="c"># 1) Garantir processo worker não-root (/etc/httpd/conf/httpd.conf):</span>
+User apache
+Group apache
+
+<span class="c"># 2) Criar arquivo de senhas fora do DocumentRoot e ativar autenticação:</span>
+<span class="k">htpasswd</span> -cB /etc/httpd/.htpasswd usuario_web
+<span class="c"># No &lt;Directory /var/www/files&gt; (ou .htaccess):</span>
+AuthType Basic
+AuthName "Area Restrita"
+AuthUserFile /etc/httpd/.htpasswd
+Require valid-user
+
+<span class="c"># 3) Bloquear arquivos sensíveis (.bak, .env, .sql) com HTTP 403:</span>
+&lt;FilesMatch "\.(bak|env|sql|swp)$"&gt;
+    Require all denied
+&lt;/FilesMatch&gt;
+
+<span class="k">httpd</span> -t &amp;&amp; <span class="k">systemctl</span> reload httpd</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">ps</span> -eo user,comm | <span class="k">grep</span> httpd                     <span class="c"># workers rodando como apache (não root)</span>
+<span class="k">curl</span> -Ik https://site.empresa.local/backup.bak     <span class="c"># deve retornar 403 Forbidden</span>
+<span class="k">curl</span> -Ik "https://site.empresa.local/?ref=a.bak"   <span class="c"># query string continua permitida (200 OK)</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>GET /backup.bak</code> retorna <code>200 OK</code> expondo backup, ou área privada acessível sem senha.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>.bak/.env</code> retornam <code>403 Forbidden</code>, pasta restrita exige <code>401 Unauthorized</code> e workers rodam como <code>apache</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="svc-nonroot" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 FTPS / SFTP -->
+  <div class="v" data-cat="files">
+    <div class="top"><div class="ttl"><h3><span class="os lin">ARQUIVOS</span>Transferência segura: vsftpd com FTPS obrigatório (vs. SFTP)</h3><div class="cat">sem anônimo · TLS obrigatório em login e dados · chroot</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>O protocolo <b>FTP puro</b> trafega usuário, senha e arquivos em <b>texto claro</b> — qualquer pessoa na rede captura tudo com Wireshark/tcpdump. Quando a transferência via FTP for exigida, deve-se desligar login anônimo, enjaular usuários (<code>chroot</code>) e forçar <b>FTPS (FTP sobre TLS)</b> tanto no canal de login quanto no de dados. Quando houver liberdade de arquitetura, prefira <b>SFTP</b> (nativo sobre SSH, porta única).</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (/etc/vsftpd/vsftpd.conf)</div>
+<pre>anonymous_enable=NO
+local_enable=YES
+chroot_local_user=YES
+ssl_enable=YES
+allow_anon_ssl=NO
+force_local_logins_ssl=YES
+force_local_data_ssl=YES
+ssl_tlsv1=YES
+ssl_sslv2=NO
+ssl_sslv3=NO
+require_ssl_reuse=NO
+rsa_cert_file=/etc/pki/tls/certs/vsftpd.crt
+rsa_private_key_file=/etc/pki/tls/private/vsftpd.key
+
+<span class="k">systemctl</span> restart vsftpd</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">openssl</span> s_client -connect &lt;IP_SERVIDOR&gt;:21 -starttls ftp   <span class="c"># valida handshake TLS</span>
+<span class="c"># Teste negativo: cliente FTP em texto claro deve receber "530 Non-anonymous sessions must use encryption"</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>anonymous_enable=YES</code> ou login aceito sem TLS (credenciais visíveis em texto claro).</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Anônimo recusado, texto claro rejeitado (530) e sessão negociada com TLS via STARTTLS.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="svc-ftps" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 7 Banco de Dados -->
+  <div class="v" data-cat="db">
+    <div class="top"><div class="ttl"><h3><span class="os pki">BANCO DE DADOS</span>Hardening de MySQL / MariaDB / PostgreSQL</h3><div class="cat">bind localhost · sem root remoto · menor privilégio por aplicação</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Bancos de dados guardam o ativo mais crítico da empresa. Instalações padrão costumam vir com contas anônimas, banco <code>test</code>, root aceitando acesso remoto ou escutando em <code>0.0.0.0</code>. O endurecimento restringe o acesso de rede ao mínimo (<code>127.0.0.1</code> ou VLAN privada), remove contas padrão e cria um usuário de aplicação com privilégio mínimo.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (MariaDB / MySQL)</div>
+<pre><span class="c"># 1) Executar script de endurecimento inicial:</span>
+<span class="k">mysql_secure_installation</span>
+<span class="c">#   → definir senha forte root · remover usuários anônimos · bloquear root remoto · remover DB test</span>
+
+<span class="c"># 2) Restringir escuta apenas local (/etc/my.cnf.d/server.cnf):</span>
+[mysqld]
+bind-address = 127.0.0.1
+local_infile = 0            <span class="c"># impede leitura arbitrária de arquivos locais via SQL</span>
+
+<span class="c"># 3) Criar conta dedicada da aplicação com privilégio mínimo (nunca usar root na app!):</span>
+CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'SenhaForte!2026';
+GRANT SELECT, INSERT, UPDATE, DELETE ON app_db.* TO 'app_user'@'localhost';
+FLUSH PRIVILEGES;</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">ss</span> -tulpn | <span class="k">grep</span> 3306                          <span class="c"># deve escutar em 127.0.0.1:3306 (não 0.0.0.0)</span>
+<span class="k">mysql</span> -u root -p -e "SELECT user,host FROM mysql.user;"</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Banco em <code>0.0.0.0:3306</code>, <code>root@%</code> permitido e aplicação conectando como <code>root</code>.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Escuta apenas em <code>127.0.0.1</code> (ou rede restrita), sem root remoto e usuário dedicado com privilégio mínimo.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="svc-db" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== A · REDE, FIREWALL & VPN ===================== -->
+<div class="apanel" id="a-net">
+  <div class="filters" id="af-net">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="perim">Perímetro &amp; Zonas</span>
+    <span class="pill" data-f="vpn">VPN</span>
+    <span class="pill" data-f="ids">IDS / IPS</span>
+  </div>
+  <div class="count" id="ac-net"></div>
+
+  <div class="vfig" style="margin:0 0 18px">
+    <svg viewBox="0 0 880 185" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+      <defs>
+        <marker id="na1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#36d399"/></marker>
+        <marker id="na2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#a78bfa"/></marker>
+      </defs>
+      <rect x="14" y="18" width="170" height="72" rx="10" fill="#10243a" stroke="#38bdf8"/>
+      <text x="99" y="42" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle">LAN / Matriz (HQ)</text>
+      <text x="99" y="60" fill="#97a6c0" font-size="9.5" text-anchor="middle">AD / WinServer · Estações</text>
+      <text x="99" y="76" fill="#97a6c0" font-size="9.5" text-anchor="middle">LogServer · Rede Interna</text>
+
+      <rect x="14" y="106" width="170" height="62" rx="10" fill="#2a220e" stroke="#fbbf24"/>
+      <text x="99" y="128" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">DMZ (Isolada)</text>
+      <text x="99" y="148" fill="#97a6c0" font-size="9.5" text-anchor="middle">Web HTTPS · FTPS · Proxy</text>
+
+      <line x1="184" y1="54" x2="258" y2="80" stroke="#36d399" stroke-width="2" marker-end="url(#na1)"/>
+      <line x1="184" y1="137" x2="258" y2="108" stroke="#36d399" stroke-width="2" marker-end="url(#na1)"/>
+
+      <rect x="264" y="34" width="180" height="118" rx="12" fill="#241c3a" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="354" y="60" fill="#a78bfa" font-size="12" font-weight="700" text-anchor="middle">FW Matriz (pfSense)</text>
+      <text x="354" y="82" fill="#e3ebf6" font-size="10" text-anchor="middle">Default-Deny + NAT</text>
+      <text x="354" y="100" fill="#97a6c0" font-size="9.5" text-anchor="middle">IDS/IPS (Suricata/Snort)</text>
+      <text x="354" y="118" fill="#97a6c0" font-size="9.5" text-anchor="middle">Terminação IPsec / OpenVPN</text>
+      <text x="354" y="136" fill="#36d399" font-size="9.5" text-anchor="middle">Syslog → LogServer</text>
+
+      <line x1="444" y1="68" x2="626" y2="52" stroke="#a78bfa" stroke-width="2.5" stroke-dasharray="6,3" marker-end="url(#na2)"/>
+      <text x="535" y="46" fill="#a78bfa" font-size="10" text-anchor="middle">Túnel IPsec IKEv2 (Cert)</text>
+
+      <line x1="444" y1="118" x2="626" y2="136" stroke="#36d399" stroke-width="2.5" stroke-dasharray="6,3" marker-end="url(#na1)"/>
+      <text x="535" y="148" fill="#36d399" font-size="10" text-anchor="middle">OpenVPN SSL/TLS (Cert User)</text>
+
+      <rect x="632" y="20" width="232" height="66" rx="10" fill="#0e2a20" stroke="#a78bfa"/>
+      <text x="748" y="45" fill="#e3ebf6" font-size="11" font-weight="700" text-anchor="middle">FW Filial → Rede Filial</text>
+      <text x="748" y="66" fill="#97a6c0" font-size="9.5" text-anchor="middle">Site-to-Site cifrado (ESP)</text>
+
+      <rect x="632" y="106" width="232" height="62" rx="10" fill="#131c2b" stroke="#36d399"/>
+      <text x="748" y="130" fill="#e3ebf6" font-size="11" font-weight="700" text-anchor="middle">Usuário Remoto</text>
+      <text x="748" y="150" fill="#97a6c0" font-size="9.5" text-anchor="middle">Acesso seguro via certificado</text>
+    </svg>
+    <div class="cap">Arquitetura corporativa segura: segmentação de zonas + firewall default-deny + túneis VPN autenticados por PKI + IDS/IPS.</div>
+  </div>
+
+  <!-- 1 Segmentação e Default-Deny -->
+  <div class="v" data-cat="perim">
+    <div class="top"><div class="ttl"><h3><span class="os net">PERÍMETRO</span>Segmentação de zonas (LAN / DMZ / WAN) e política Default-Deny</h3><div class="cat">isolamento entre redes · remover regra "Allow All" · proteger GUI do firewall</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Uma regra <code>Allow Any → Any</code> transforma o firewall em um simples roteador sem proteção. Em redes corporativas, cada interface representa uma <b>zona de confiança</b> (WAN, DMZ, LAN, Gerência). Tráfego entre zonas deve seguir <b>default-deny</b>: liberar apenas origem, destino e porta exatos, registrar bloqueios em log e impedir acesso ao painel administrativo do firewall a partir da WAN ou DMZ.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (pfSense / OPNsense)</div>
+<pre>1. Interfaces &gt; Assignments: separar fisicamente/VLAN as zonas (WAN, LAN, DMZ).
+2. Firewall &gt; Rules &gt; DMZ:
+   • BLOQUEAR tráfego originado na DMZ com destino à LAN (impede movimento lateral)
+   • PERMITIR apenas saída estritamente necessária (ex.: DNS/NTP/LogServer específico)
+3. Firewall &gt; Rules &gt; LAN:
+   • Substituir "Default allow LAN to any" por regras específicas (HTTP/HTTPS, DNS, SSH p/ gerência)
+   • Marcar "Log packets handled by this rule" nas regras de bloqueio/críticas
+4. System &gt; Advanced &gt; Admin Access:
+   • Forçar HTTPS na GUI, desabilitar acesso administrativo pela WAN e restringir à rede de gerência.</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="c"># Da DMZ, testar acesso a um host da LAN (deve ser bloqueado e registrado):</span>
+<span class="k">nc</span> -zv -w 2 &lt;IP_LAN&gt; 445
+<span class="c"># No firewall: Status &gt; System Logs &gt; Firewall → confirmar bloqueio registrado</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Regra <code>Allow Any to Any</code> nas interfaces e painel do firewall acessível de qualquer zona.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>DMZ isolada da LAN, apenas portas legítimas liberadas e GUI restrita à gerência via HTTPS.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="net-zones" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 NAT e Anti-Spoofing -->
+  <div class="v" data-cat="perim">
+    <div class="top"><div class="ttl"><h3><span class="os net">PERÍMETRO</span>NAT / Port Forwarding seguro e filtros anti-spoofing na WAN</h3><div class="cat">expor só o serviço da DMZ · bloquear RFC1918/Bogon na WAN</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Para publicar um site ou serviço externo, o firewall faz <b>Port Forward (DNAT)</b> apenas da porta necessária (ex.: TCP 443) para o servidor da DMZ — nunca exponha bancos de dados, SMB ou RDP direto na WAN. Além disso, ativar filtros <b>Block private networks (RFC1918)</b> e <b>Block bogon networks</b> na WAN real bloqueia pacotes forjados (IP spoofing) vindos da internet. <i>(Obs.: em labs onde a "WAN" usa IP privado, desmarque "Block private" apenas se necessário para o roteamento do lab.)</i></p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (pfSense)</div>
+<pre>1. Firewall &gt; NAT &gt; Port Forward &gt; Add:
+   • Interface: WAN · Protocol: TCP · Dest Port: HTTPS (443)
+   • Redirect target IP: &lt;IP_WEBSERVER_DMZ&gt; · Redirect target port: 443
+   • Filter rule association: Add associated filter rule (gera regra específica automática)
+2. Interfaces &gt; WAN:
+   • Em produção com WAN pública: marcar "Block private networks" e "Block bogon networks"
+3. Firewall &gt; Rules &gt; WAN:
+   • Conferir se existem APENAS as portas estritamente publicadas (ex.: 443, UDP 1194, UDP 500/4500).</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="c"># A partir de um host externo (WAN), varrer o IP público do firewall:</span>
+<span class="k">nmap</span> -Pn -sT --top-ports 100 &lt;IP_WAN_FW&gt;   <span class="c"># deve mostrar só as portas intencionalmente publicadas</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Portas administrativas (22, 3389, 445, 8080) expostas na WAN ou redirecionamento 1:1 irrestrito.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Apenas HTTPS (443) redirecionado para a DMZ e portas de VPN estritamente necessárias na WAN.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="net-nat" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 VPN Site-to-Site IPsec -->
+  <div class="v" data-cat="vpn">
+    <div class="top"><div class="ttl"><h3><span class="os net">VPN</span>VPN Site-to-Site: IPsec (IKEv2) com autenticação por certificado</h3><div class="cat">Fase 1 (IKEv2 + Mutual Cert) · Fase 2 (ESP + sub-redes) · regras IPsec</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Conecta duas redes corporativas (Matriz ↔ Filial) através de um túnel criptografado sobre a internet. Usar <b>IKEv2</b> com <b>autenticação mútua por certificado da CA interna</b> é muito superior a PSK (chave pré-compartilhada), pois impede ataque de força bruta na senha compartilhada e facilita revogação. Lembre: <b>Fase 1</b> autentica os firewalls; <b>Fase 2 (ESP)</b> protege o tráfego das sub-redes; e as <b>regras de firewall na aba IPsec</b> liberam o fluxo!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (em ambos os firewalls — pfSense)</div>
+<pre>1. System &gt; Cert Manager:
+   • Importar o certificado da Root CA interna (aba CAs)
+   • Importar o certificado + chave privada deste firewall (aba Certificates)
+2. VPN &gt; IPsec &gt; Tunnels &gt; Add P1 (Fase 1):
+   • Key Exchange: IKEv2 · Remote Gateway: &lt;IP_WAN_OUTRO_FW&gt;
+   • Authentication Method: Mutual Certificate · My Certificate: cert do FW · Peer CA: Root CA
+   • Encryption: AES256-GCM (ou AES-256 + SHA256 + DH Group 14+)
+3. Add P2 (Fase 2 — nos dois lados, invertendo Local/Remote):
+   • Local Network: sub-rede local · Remote Network: sub-rede remota · Protocol: ESP · AES256-GCM
+4. Firewall &gt; Rules &gt; IPsec:
+   • Permitir apenas o tráfego necessário entre as duas sub-redes (evite liberar tudo se houver restrição).</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="c"># No pfSense: Status &gt; IPsec → túnel deve aparecer como ESTABLISHED (P1 e P2 ativos)</span>
+<span class="c"># De um host na Matriz para um host na Filial:</span>
+<span class="k">ping</span> -c 3 &lt;IP_HOST_FILIAL&gt;   <span class="c"># e testar o serviço real (ex.: HTTPS/SSH)</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Tráfego entre unidades sem criptografia ou túnel usando IKEv1 + PSK fraca.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Túnel IPsec IKEv2 <code>ESTABLISHED</code> com certificado CA, criptografia AES-256 e tráfego validado entre LANs.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="net-ipsec" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 VPN Remote Access OpenVPN / WireGuard -->
+  <div class="v" data-cat="vpn">
+    <div class="top"><div class="ttl"><h3><span class="os net">VPN</span>VPN Remote Access: OpenVPN (SSL/TLS) e noções de WireGuard</h3><div class="cat">certificado individual por usuário · revogável · acesso mínimo à LAN</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Permite que colaboradores remotos acessem recursos internos com segurança sem expor servidores à internet. Emitir um <b>certificado individual por usuário</b> (ou par de chaves no WireGuard) garante rastreabilidade (quem entrou?) e revogação instantânea caso um funcionário saia ou perca o notebook. Ative <b>TLS Crypt/Auth</b> para esconder o serviço de scanners na WAN.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (pfSense — OpenVPN)</div>
+<pre>1. System &gt; Cert Manager:
+   • Garantir CA + Server Certificate + User Certificate individual para cada usuário remoto
+2. VPN &gt; OpenVPN &gt; Servers &gt; Add (ou Wizard):
+   • Server mode: Remote Access (SSL/TLS) — ou SSL/TLS + User Auth (2 fatores: cert + senha)
+   • Protocol: UDP (porta 1194) · TLS Configuration: Use TLS Key (Encryption + Auth)
+   • Tunnel Network: ex. 10.99.0.0/24 · Local Network(s): somente a sub-rede que o usuário precisa
+3. Firewall &gt; Rules:
+   • WAN: permitir UDP 1194 · Aba OpenVPN: permitir apenas destinos/portas autorizados
+4. VPN &gt; OpenVPN &gt; Client Export: exportar arquivo .ovpn e conectar no cliente remoto.
+<span class="c"># Alternativa moderna: WireGuard (mais rápido, configuração minimalista baseada em chave pública/privada por peer).</span></pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="c"># Status &gt; OpenVPN → cliente remoto listado como CONNECTED com IP do túnel</span>
+<span class="c"># No cliente remoto: testar acesso ao servidor interno (ex.: curl -k https://&lt;IP_INTERNO&gt;)</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Acesso remoto direto por RDP/SSH exposto na WAN ou VPN com conta compartilhada sem certificado.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Cliente conectado via OpenVPN SSL/TLS com certificado individual acessando apenas os recursos liberados.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="net-ovpn" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 IDS / IPS Suricata / Snort -->
+  <div class="v" data-cat="ids">
+    <div class="top"><div class="ttl"><h3><span class="os net">IDS / IPS</span>Detecção e Prevenção de Intrusão no perímetro (Suricata / Snort)</h3><div class="cat">detectar scans, exploits e C2 · diferença entre IDS e IPS</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>O firewall filtra por IP e porta, mas não inspeciona o conteúdo de um ataque passando pela porta 443 ou 80. O <b>IDS (Intrusion Detection System)</b> analisa pacotes contra assinaturas de ataques e gera alertas; o <b>IPS (Intrusion Prevention System)</b> atua <i>inline</i> e bloqueia o tráfego malicioso automaticamente. No pfSense/Linux, <b>Suricata</b> e <b>Snort</b> são os padrões da indústria.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (pfSense — Suricata / Snort)</div>
+<pre>1. System &gt; Package Manager &gt; Available Packages → instalar Suricata (ou Snort).
+2. Services &gt; Suricata &gt; Global Settings:
+   • Habilitar regras "Emerging Threats Open Rules" (ET Open) e rodar Updates → Update Rules.
+3. Interfaces &gt; Add:
+   • Escolher interface interna (LAN/DMZ — enxerga IPs reais antes do NAT) ou WAN
+   • Habilitar "Send Alerts to System Log" (envia alertas automaticamente ao rsyslog central!)
+   • Selecionar categorias relevantes (scan, exploit, web-attacks, malware)
+   • Modo IDS: apenas alerta · Modo IPS: habilitar "Block Offenders" (após testar falsos positivos!).
+4. Iniciar o serviço na interface e validar alertas.</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="c"># Gerar evento de teste controlado (ex.: scan de portas ou curl com user-agent de teste):</span>
+<span class="k">nmap</span> -sS -p 22,80,443 &lt;IP_ALVO&gt;
+<span class="c"># Conferir em Services &gt; Suricata &gt; Alerts (ou /var/log/suricata/fast.log) se o alerta foi disparado</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Sem inspeção de pacotes — scans, força bruta e payloads maliciosos passam sem nenhum alerta.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Suricata/Snort ativo com regras atualizadas, disparando alertas (e bloqueando em IPS) e enviando ao syslog.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="net-ids" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== A · LOGS, AUDITORIA & TEMPO ===================== -->
+<div class="apanel" id="a-logs">
+  <div class="filters" id="af-logs">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="cent">Centralização</span>
+    <span class="pill" data-f="ret">Retenção &amp; Auditoria</span>
+    <span class="pill" data-f="res">Recursos</span>
+    <span class="pill" data-f="ntp">Tempo (NTP)</span>
+  </div>
+  <div class="count" id="ac-logs"></div>
+
+  <!-- 1 rsyslog centralizado -->
+  <div class="v" data-cat="cent">
+    <div class="top"><div class="ttl"><h3><span class="os log">SYSLOG</span>Logging centralizado (rsyslog remoto + Web + Firewall)</h3><div class="cat">preserva evidências fora do host comprometido · porta 514 TCP / 6514 TLS</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Uma das primeiras ações de um invasor ao conquistar root é apagar <code>/var/log/</code> para esconder rastros (<i>Defense Evasion</i>). Enviar logs em tempo real para um <b>LogServer centralizado</b> (ou SIEM como Wazuh/ELK) garante que as evidências sobrevivam ao comprometimento do servidor de origem. Prefira <b>TCP (<code>@@</code>)</b> em vez de UDP (<code>@</code>) para evitar perda de mensagens — e <b>TLS (porta 6514)</b> quando trafegar em redes sensíveis.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) No LogServer (receptor) — /etc/rsyslog.conf:</span>
+module(load="imtcp")
+input(type="imtcp" port="514")
+<span class="k">systemctl</span> restart rsyslog
+<span class="k">firewall-cmd</span> --permanent --add-port=514/tcp &amp;&amp; <span class="k">firewall-cmd</span> --reload
+
+<span class="c"># 2) Nos clientes Linux — /etc/rsyslog.d/99-remote.conf:</span>
+*.*  @@&lt;IP_LOGSERVER&gt;:514    <span class="c"># @@ = TCP confiável (@ = UDP)</span>
+<span class="k">systemctl</span> restart rsyslog
+
+<span class="c"># 3) Encaminhar logs do Apache (/etc/httpd/conf/httpd.conf):</span>
+ErrorLog "|/usr/bin/logger -t httpd-err -p local6.err"
+CustomLog "|/usr/bin/logger -t httpd-acc -p local6.info" combined
+
+<span class="c"># 4) No pfSense: Status &gt; System Logs &gt; Settings &gt; Enable Remote Logging → IP do LogServer:514</span></pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="c"># No cliente, enviar mensagem de teste:</span>
+<span class="k">logger</span> -t teste_hardening "Validacao de envio remoto"
+<span class="c"># No LogServer, confirmar recepção e porta aberta:</span>
+<span class="k">ss</span> -tulpn | <span class="k">grep</span> 514
+<span class="k">grep</span> "teste_hardening" /var/log/messages /var/log/syslog 2&gt;/dev/null</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Logs gravados apenas localmente — se o host cair ou for invadido, os rastros somem.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Porta 514/TCP ativa no LogServer e eventos de Linux, Apache e pfSense chegando em tempo real.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="log-rsyslog" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Retenção e Logrotate -->
+  <div class="v" data-cat="ret">
+    <div class="top"><div class="ttl"><h3><span class="os log">RETENÇÃO</span>Retenção no journald e rotação com logrotate</h3><div class="cat">evita disco cheio (DoS) e garante histórico mínimo de auditoria</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Logs sem rotação podem encher 100% da partição <code>/var</code> e travar o servidor (negação de serviço); logs sem retenção persistente somem no próximo reboot. Configurar <b><code>journald</code> persistente com retenção definida</b> e <b><code>logrotate</code></b> (com compressão e data no nome) equilibra compliance forense e saúde do disco.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># 1) systemd-journald — /etc/systemd/journald.conf:</span>
+Storage=persistent
+Compress=yes
+MaxRetentionSec=7day         <span class="c"># ajuste conforme a política (ex.: 7day, 30day, 90day)</span>
+<span class="k">systemctl</span> restart systemd-journald
+
+<span class="c"># 2) logrotate — /etc/logrotate.d/custom_app:</span>
 /var/log/custom/*.log {
     daily
     rotate 30
     compress
+    delaycompress
     dateext
     missingok
-}</pre></div></div>
-    </div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LOGS</span>Prioridade de processos (nice)</h3><div class="cat">Doe baixa · John alta</div></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># /etc/security/limits.conf
-@Doe   -   priority   10     # prioridade baixa (nice +10)
-@John  -   priority  -10     # prioridade alta (nice -10)
-# ad hoc: nice -n 10 comando   |   renice -n -10 -u John</pre></div></div>
-    </div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LOGS</span>rsyslog remoto + httpd + pfSense</h3></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># no LogServer — /etc/rsyslog.conf (receber):
-module(load="imtcp")  input(type="imtcp" port="514")
-module(load="imudp")  input(type="imudp" port="514")
-firewall-cmd --add-port=514/tcp --add-port=514/udp --permanent; firewall-cmd --reload
-# no WebServer — enviar httpd para o LogServer:
-#   httpd.conf: ErrorLog "| /usr/bin/logger -t httpd -n LOGSERVER -P 514"
-# pfSense: Status &gt; System Logs &gt; Settings &gt; Remote Logging → IP do LogServer</pre></div></div>
-    </div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">NTP</span>Sincronizar e servir (chrony)</h3><div class="cat">pool 2.centos.pool.ntp.org · servir 10.8.8.0/24</div></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># /etc/chrony.conf
-pool 2.centos.pool.ntp.org iburst     # sincronização rápida
-allow 10.8.8.0/24                      # servir só essa sub-rede
-local stratum 10
-systemctl restart chronyd
-chronyc sources; chronyc clients</pre></div></div>
+    notifempty
+    create 0640 root adm
+}</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">logrotate</span> -d /etc/logrotate.d/custom_app   <span class="c"># modo debug (simula rotação sem alterar)</span>
+<span class="k">journalctl</span> --disk-usage</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Logs voláteis (somem no reboot) ou crescendo infinitamente sem rotação/compressão.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>journald</code> persistente com retenção definida e <code>logrotate</code> validado com compressão e <code>dateext</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="log-rot" type="button">🎮 Treinar</button>
     </div>
   </div>
 
-  <!-- ============ TASK 7 ============ -->
-  <div class="apanel" id="a-t7">
-    <div class="disc">🔗 <b>VPN no pfSense</b>: Site-to-Site IPsec (IKEv2, cert da CA do WinServer) + OpenVPN Remote Access com certificados. 20 pontos. Feito pela interface web do pfSense.</div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">pfSense</span>Site-to-Site IPsec (IKEv2)</h3><div class="cat">FW1 ↔ FW2, autenticação por certificado</div></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Passos</div>
-<pre>1. Importar a CA do WinServer: System &gt; Cert Manager &gt; CAs (e o cert de cada FW).
-2. VPN &gt; IPsec &gt; Tunnels &gt; Add P1:
-     Key Exchange: IKEv2 · Authentication: Mutual Certificate
-     Remote Gateway: WAN do outro FW · My Certificate: cert do FW.
-3. Add P2: redes locais (10.8.8.0/24 ↔ 10.0.2.0/24), ESP.
-4. Firewall &gt; Rules &gt; IPsec: permitir o tráfego das LANs.
-5. Status &gt; IPsec: túnel "ESTABLISHED".</pre></div></div>
+  <!-- 3 auditd -->
+  <div class="v" data-cat="ret">
+    <div class="top"><div class="ttl"><h3><span class="os log">AUDITORIA</span>Auditoria de arquivos críticos no kernel (auditd)</h3><div class="cat">rastreia quem alterou /etc/passwd, /etc/shadow, /etc/sudoers ou sshd_config</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>O <b>Linux Audit Daemon (<code>auditd</code>)</b> monitora chamadas de sistema diretamente no kernel. Permite saber <i>exatamente</i> qual usuário, PID e horário modificou arquivos críticos de identidade (<code>/etc/passwd</code>, <code>/etc/shadow</code>, <code>/etc/sudoers</code>) ou configurações de segurança — requisito direto dos CIS Benchmarks.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># Criar regras persistentes em /etc/audit/rules.d/hardening.rules:</span>
+-w /etc/passwd -p wa -k identity_changes
+-w /etc/shadow -p wa -k identity_changes
+-w /etc/group  -p wa -k identity_changes
+-w /etc/sudoers -p wa -k sudoers_changes
+-w /etc/ssh/sshd_config -p wa -k ssh_config
+
+<span class="c"># Carregar regras e garantir serviço ativo:</span>
+<span class="k">augenrules</span> --load
+<span class="k">systemctl</span> enable --now auditd</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">auditctl</span> -l                       <span class="c"># lista regras ativas no kernel</span>
+<span class="k">ausearch</span> -k identity_changes      <span class="c"># busca eventos pela chave configurada</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>No rules</code> no <code>auditctl -l</code> — alterações em contas ou <code>sudoers</code> passam sem rastro detalhado.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Regras ativas para arquivos críticos e eventos consultáveis via <code>ausearch -k</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="log-auditd" type="button">🎮 Treinar</button>
     </div>
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">pfSense</span>OpenVPN Remote Access (certificado)</h3><div class="cat">usuário Skills, acesso à rede do FW1</div></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Passos</div>
-<pre>1. Cert Manager: criar CA/Server cert e um User cert para "Skills".
-2. VPN &gt; OpenVPN &gt; Wizard (ou Servers &gt; Add):
-     Server mode: Remote Access (SSL/TLS) · TLS Authentication.
-3. Firewall: permitir UDP 1194 na WAN + tráfego na interface OpenVPN.
-4. Exportar o perfil (OpenVPN Client Export) e conectar no RemoteUser.
-5. Status &gt; OpenVPN: cliente conectado, acessando o LinuxServer.</pre></div></div>
+  </div>
+
+  <!-- 4 Controle de recursos / limits / nice -->
+  <div class="v" data-cat="res">
+    <div class="top"><div class="ttl"><h3><span class="os log">RECURSOS</span>Limites de processos e prioridades (limits.conf e nice)</h3><div class="cat">protege disponibilidade contra fork bombs e abuso de CPU</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Segurança não é só confidencialidade — é também <b>Disponibilidade</b>. Sem limites de recursos (<code>/etc/security/limits.conf</code>), um único usuário ou processo com bug pode esgotar a tabela de processos (<i>fork bomb</i>) ou consumir 100% da CPU. Valores de <code>nice</code> vão de <b>-20 (prioridade máxima)</b> a <b>+19 (prioridade mínima)</b>.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># /etc/security/limits.conf (ou /etc/security/limits.d/99-hardening.conf):</span>
+*          hard core      0      <span class="c"># desabilita core dumps (evita vazamento de memória)</span>
+@usuarios  hard nproc     200    <span class="c"># protege contra fork bomb</span>
+@grupoA    -    priority  10     <span class="c"># prioridade baixa (nice +10)</span>
+@grupoB    -    priority -10     <span class="c"># prioridade alta  (nice -10)</span>
+
+<span class="c"># Ajuste pontual em execução:</span>
+<span class="k">nice</span> -n 10 &lt;comando&gt;             <span class="c"># inicia processo com prioridade menor</span>
+<span class="k">renice</span> -n -10 -u &lt;usuario&gt;       <span class="c"># altera prioridade de processos já ativos</span></pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">ulimit</span> -a
+<span class="k">ps</span> -eo pid,user,ni,comm | head -15   <span class="c"># coluna NI mostra o valor de nice</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>core file size: unlimited</code> e sem limites de processos/prioridade por grupo.</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Core dumps desabilitados, <code>nproc</code> limitado e prioridades <code>NI</code> aplicadas corretamente.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="log-limits" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 NTP / Chrony -->
+  <div class="v" data-cat="ntp">
+    <div class="top"><div class="ttl"><h3><span class="os log">TEMPO / NTP</span>Sincronização segura de relógio (chrony)</h3><div class="cat">essencial para Kerberos (AD), certificados TLS e correlação forense</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Relógios dessincronizados derrubam a segurança inteira de uma empresa: o <b>Kerberos (Active Directory)</b> rejeita autenticações com diferença &gt; 5 minutos; certificados <b>TLS</b> podem parecer expirados ou ainda inválidos; e <b>investigações de incidentes</b> ficam impossíveis se cada servidor registrar horários diferentes nos logs. Use <code>chrony</code> sincronizando de um pool confiável e restringindo quais redes internas podem consultá-lo.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (/etc/chrony.conf)</div>
+<pre>pool pool.ntp.org iburst          <span class="c"># ou servidor NTP corporativo / pool regional</span>
+allow 10.0.0.0/24                 <span class="c"># liberar APENAS a sub-rede interna que vai consultar este host</span>
+local stratum 10                  <span class="c"># fallback local se perder internet</span>
+
+<span class="k">systemctl</span> enable --now chronyd
+<span class="c"># Se este host servir NTP para a rede interna, liberar UDP 123 no firewall:</span>
+<span class="k">firewall-cmd</span> --permanent --add-service=ntp &amp;&amp; <span class="k">firewall-cmd</span> --reload</pre></div>
+      <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre><span class="k">chronyc</span> tracking     <span class="c"># mostra drift e status de sincronia</span>
+<span class="k">chronyc</span> sources -v   <span class="c"># fontes NTP conectadas (* = sincronizado)</span>
+<span class="k">chronyc</span> clients      <span class="c"># clientes internos consultando este servidor</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span><code>chronyd</code> desligado, relógio atrasado ou NTP aberto para qualquer IP externo (risco de amplificação DDoS).</div>
+        <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Leap status: Normal</code>, fonte marcada com <code>^*</code> e <code>allow</code> restrito à sub-rede interna.</div>
+      </div></div>
+      <button class="trainbtn" data-alab="log-ntp" type="button">🎮 Treinar</button>
     </div>
   </div>
 </div>
+
+<!-- ===================== A · FERRAMENTAS & CHECKLIST ===================== -->
+<div class="apanel" id="a-tools">
+  <div class="disc" style="margin-top:4px">🧰 Ferramentas que especialistas usam para <b>auditar o próprio hardening</b> antes de considerar um ambiente pronto — e o checklist final de validação (segurança + disponibilidade).</div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Auditoria &amp; Baselines Linux</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://cisofy.com/lynis/" target="_blank" rel="noopener">Lynis</a><div class="dsc">Auditor open-source de hardening Linux/Unix: gera índice de segurança e lista exatamente o que endurecer.</div></div><span class="badge">Linux</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.open-scap.org/" target="_blank" rel="noopener">OpenSCAP</a><div class="dsc">Valida conformidade automática contra perfis CIS Benchmarks e DISA STIG em RHEL/CentOS/Ubuntu.</div></div><span class="badge">CIS/STIG</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Auditoria Windows &amp; Active Directory</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://github.com/scipag/HardeningKitty" target="_blank" rel="noopener">HardeningKitty</a><div class="dsc">Script PowerShell que audita e compara configurações do Windows contra baselines CIS e Microsoft.</div></div><span class="badge">Windows</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.pingcastle.com/" target="_blank" rel="noopener">PingCastle</a><div class="dsc">Avaliação rápida da saúde de segurança do Active Directory (GPOs, protocolos fracos, privilégios).</div></div><span class="badge">AD</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Criptografia, TLS &amp; Web</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://ssl-config.mozilla.org/" target="_blank" rel="noopener">Mozilla SSL Config Generator</a><div class="dsc">Gera configurações TLS 1.2/1.3 e cifras seguras prontas para Apache, Nginx, HAProxy e IIS.</div></div><span class="badge">TLS</span></div>
+      <div class="tool"><div class="tn"><a href="https://testssl.sh/" target="_blank" rel="noopener">testssl.sh</a><div class="dsc">Testa qualquer porta TLS (HTTPS, FTPS, LDAPS) detectando protocolos antigos, cifras fracas e HSTS.</div></div><span class="badge">TLS</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.openssl.org/" target="_blank" rel="noopener">OpenSSL</a><div class="dsc">Canivete suíço para criar CAs, gerar CSRs, inspecionar certificados X.509 e testar handshakes TLS.</div></div><span class="badge">PKI</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.cisecurity.org/cis-benchmarks" target="_blank" rel="noopener">CIS Benchmarks</a><div class="dsc">Guias de referência oficiais para hardening de sistemas operacionais, servidores web, bancos e firewalls.</div></div><span class="badge">Padrão</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Perímetro, IDS/IPS &amp; SIEM</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://www.pfsense.org/" target="_blank" rel="noopener">pfSense / OPNsense</a><div class="dsc">Firewalls corporativos open-source com segmentação de zonas, IPsec IKEv2, OpenVPN e pacotes IDS/IPS.</div></div><span class="badge">Firewall</span></div>
+      <div class="tool"><div class="tn"><a href="https://suricata.io/" target="_blank" rel="noopener">Suricata / Snort</a><div class="dsc">Motores de IDS/IPS para detectar e bloquear scans, exploits e tráfego malicioso na rede.</div></div><span class="badge">IDS/IPS</span></div>
+      <div class="tool"><div class="tn"><a href="https://wazuh.com/" target="_blank" rel="noopener">Wazuh</a><div class="dsc">SIEM + XDR open-source para centralização de logs, detecção de intrusão em host e checagem CIS.</div></div><span class="badge">SIEM</span></div>
+      <div class="tool"><div class="tn"><a href="https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon" target="_blank" rel="noopener">Sysmon (Sysinternals)</a><div class="dsc">Estende o Windows Event Log registrando criação de processos, conexões de rede e alterações críticas.</div></div><span class="badge">Windows</span></div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:28px"><span class="d"></span>Checklist interativo — Validação Pós-Hardening (<span id="aChkCount">0/8</span>)</div>
+  <p style="color:var(--mut);font-size:13.5px;margin:0 0 8px">Antes de dar qualquer hardening como concluído, valide <b>segurança + funcionamento real</b> de cada camada:</p>
+  <div class="chklist" id="aChkList">
+    <label class="chkitem"><input type="checkbox" data-chk="c1"><div><b>1. Identidade &amp; Políticas validadas</b><div class="cd">Senha fraca e repetida são recusadas; bloqueio de conta funciona (e conta de admin foi destravada); cache=0 aplicado no AD.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-chk="c2"><div><b>2. Acesso remoto (SSH / RDP) testado em nova sessão</b><div class="cd">SSH aceita só chave na porta definida sem root/senha; RDP exige NLA e está restrito à rede de gerência/VPN.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-chk="c3"><div><b>3. SELinux / AppArmor em Enforcing sem quebrar serviços</b><div class="cd"><code>getenforce</code> retorna <code>Enforcing</code> e <code>ausearch -m avc -ts recent</code> não bloqueia operações legítimas.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-chk="c4"><div><b>4. Firewall de host e perímetro em Default-Deny</b><div class="cd"><code>ss -tulpn</code> / <code>nmap</code> mostram apenas as portas esperadas; DMZ isolada da LAN.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-chk="c5"><div><b>5. PKI, HTTPS e FTPS validados ponta a ponta</b><div class="cd">HTTP redireciona 301→HTTPS; TLS 1.2/1.3 ativo; HSTS presente; <code>.bak/.env</code> retornam 403; FTP recusa texto claro.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-chk="c6"><div><b>6. Túneis VPN estabelecidos com tráfego real</b><div class="cd">IPsec Site-to-Site em <code>ESTABLISHED</code> e cliente OpenVPN remoto acessando o recurso interno autorizado.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-chk="c7"><div><b>7. Logs centralizados, auditoria e NTP sincronizados</b><div class="cd">Mensagem de teste via <code>logger</code> chegou no LogServer; <code>auditctl -l</code> ativo; <code>chronyc tracking</code> sincronizado.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-chk="c8"><div><b>8. Serviços críticos sobrevivem ao reboot</b><div class="cd">Todas as regras estão persistentes (<code>--permanent</code>, <code>/etc/selinux/config</code>, <code>/etc/sysctl.d/</code>, <code>systemctl enable</code>).</div></div></label>
+  </div>
 </div>
+
+</div><!-- /.wrap -->
+</div><!-- /#provaA -->
 
 <div class="prova-content" id="provaC">
   <div class="provaempty"><div class="big">🅲</div><h2>Prova C</h2><p>Conteúdo em construção. Me diga o tema desta prova que eu monto as abas e os comandos.</p><span class="tag">em breve</span></div>
@@ -2024,17 +3006,20 @@ chronyc sources; chronyc clients</pre></div></div>
   });
 
   // filters (generic for each panel that has a .filters bar)
-  function setupFilters(panelId, filtersId, countId){
+  function setupFilters(panelId, filtersId, countId, sing, plur){
     var cards = Array.from(document.querySelectorAll('#'+panelId+' .v'));
     var countEl = document.getElementById(countId);
+    sing = sing || 'vulnerabilidade exibida';
+    plur = plur || 'vulnerabilidades exibidas';
     function applyFilter(f){
       var n=0;
       cards.forEach(function(c){
-        var show = (f==='all') || c.dataset.cat.split(' ').indexOf(f)>=0;
+        var cats = (c.dataset.cat || '').split(' ');
+        var show = (f==='all') || cats.indexOf(f)>=0;
         c.style.display = show ? '' : 'none';
         if(show) n++;
       });
-      if(countEl) countEl.textContent = n + ' vulnerabilidade' + (n>1?'s':'') + ' exibida' + (n>1?'s':'');
+      if(countEl) countEl.textContent = n + ' ' + (n===1 ? sing : plur);
     }
     document.querySelectorAll('#'+filtersId+' .pill').forEach(function(p){
       p.addEventListener('click',function(){
@@ -2048,8 +3033,13 @@ chronyc sources; chronyc clients</pre></div></div>
   setupFilters('linux','filters','count');
   setupFilters('windows','wfilters','wcount');
   setupFilters('web','webfilters','webcount');
+  setupFilters('a-linux','af-linux','ac-linux','controle exibido','controles exibidos');
+  setupFilters('a-win','af-win','ac-win','controle exibido','controles exibidos');
+  setupFilters('a-svc','af-svc','ac-svc','controle exibido','controles exibidos');
+  setupFilters('a-net','af-net','ac-net','controle exibido','controles exibidos');
+  setupFilters('a-logs','af-logs','ac-logs','controle exibido','controles exibidos');
 
-  // concept modal
+  // concept modal (Prova B + Prova A)
   (function(){
     var modal=document.getElementById('cModal'), t=document.getElementById('cmTitle'),
         b=document.getElementById('cmBody');
@@ -2060,7 +3050,7 @@ chronyc sources; chronyc clients</pre></div></div>
       modal.classList.add('show');
     }
     function close(){ modal.classList.remove('show'); }
-    document.querySelectorAll('#fund .popc').forEach(function(c){
+    document.querySelectorAll('.popc').forEach(function(c){
       c.addEventListener('click',function(){ open(c); });
     });
     document.getElementById('cmClose').addEventListener('click',close);
@@ -2173,15 +3163,19 @@ document.querySelectorAll('.provanav .pbtn').forEach(function(b){
     window.scrollTo({top:0,behavior:'smooth'});
   });
 });
-/* abas internas da Prova A */
+/* abas internas da Prova A + cards de atalho */
+function openProvaATab(panelId){
+  document.querySelectorAll('#provaA .atab').forEach(x=>x.classList.toggle('active', x.dataset.ap===panelId));
+  document.querySelectorAll('#provaA .apanel').forEach(x=>x.classList.remove('active'));
+  var el=document.getElementById(panelId);
+  if(el) el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 document.querySelectorAll('#provaA .atab').forEach(function(t){
-  t.addEventListener('click',function(){
-    document.querySelectorAll('#provaA .atab').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('#provaA .apanel').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    var el=document.getElementById(t.dataset.ap);
-    if(el) el.classList.add('active');
-  });
+  t.addEventListener('click',function(){ openProvaATab(t.dataset.ap); });
+});
+document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
+  j.addEventListener('click',function(){ openProvaATab(j.dataset.jump); });
 });
 </script>
 <script>
@@ -2245,22 +3239,25 @@ document.querySelectorAll('#provaA .atab').forEach(function(t){
     term.innerHTML = lines.map(l=>'<div class="ln '+l.c+'">'+l.t+'</div>').join("");
     term.scrollTop = term.scrollHeight;
   }
-  function addPrompt(cmd, win){ lines.push({c:"", t:'<span class="pr">'+(win?"C:\\&gt; ":"$ ")+'</span><span class="cc">'+esc(cmd)+'</span>'}); }
-  function addOut(txt, cls){ nl(txt).forEach(function(t){ lines.push({c:cls||"out", t:esc(t)}); }); }
+  function addPrompt(cmd, win){
+    var pr = (cur && cur.prompt) ? cur.prompt : (win ? "C:\\> " : "$ ");
+    lines.push({c:"", t:'<span class="pr">'+esc(pr)+'</span><span class="cc">'+esc(cmd)+'</span>'});
+  }
+  function addOut(txt, cls){ String(txt).split(/\\n|\n/).forEach(function(t){ lines.push({c:cls||"out", t:esc(t)}); }); }
 
   function openLab(scn, title, win){
     cur=scn; cur._win=win; lines=[]; titleEl.textContent="🎮 Laboratório — "+title;
     stepEl.textContent="Passo 1/3";
-    lines.push({c:"sys", t:"Ambiente de treino (simulação). Execute o comando para ver o estado atual."});
+    lines.push({c:"sys", t:"Ambiente de treino (simulação). Execute o comando para verificar o estado atual."});
     render(); step1();
     modal.classList.add("show");
   }
   function step1(){
     ctrl.innerHTML="";
-    const b=document.createElement("button"); b.className="tbtn run"; b.textContent="▶  Executar comando";
+    const b=document.createElement("button"); b.className="tbtn run"; b.textContent="▶  Executar verificação";
     b.onclick=function(){
       addPrompt(cur.cmd, cur._win); addOut(cur.vuln, "bad");
-      lines.push({c:"bad", t:"⚠  Vulnerabilidade encontrada!"});
+      lines.push({c:"bad", t:cur.badMsg || "⚠  Vulnerabilidade encontrada!"});
       render(); stepEl.textContent="Passo 2/3"; step2();
     };
     ctrl.appendChild(b);
@@ -2298,7 +3295,8 @@ document.querySelectorAll('#provaA .atab').forEach(function(t){
     const b=document.createElement("button"); b.className="tbtn test"; b.textContent="🔄  Testar novamente";
     b.onclick=function(){
       addPrompt(cur.cmd, cur._win); addOut(cur.safe, "good");
-      lines.push({c:"good", t:"✅  Corrigido! A vulnerabilidade não aparece mais."}); render();
+      lines.push({c:"good", t:cur.goodMsg || "✅  Corrigido! A vulnerabilidade não aparece mais."}); render();
+      if(typeof cur.onDone === "function") cur.onDone();
       ctrl.innerHTML="";
       const r=document.createElement("button"); r.className="tbtn rst"; r.textContent="↺ Reiniciar treino";
       r.onclick=function(){ lines=[{c:"sys",t:"Ambiente reiniciado. Execute o comando novamente."}]; render(); stepEl.textContent="Passo 1/3"; step1(); };
@@ -2327,19 +3325,263 @@ document.querySelectorAll('#provaA .atab').forEach(function(t){
 })();
 </script>
 <script>
-/* ===== Treino da Prova A - Task 1 ===== */
+/* ===== Laboratórios interativos & Progresso da Prova A (34 cenários) ===== */
 (function(){
   if(!window.csOpenLab) return;
-  const TA1=[
-    {title:"Expiração de senha", cmd:"chage -l User01", vuln:"Maximum number of days between password change: 99999   (nunca expira)", fix:"chage -M 14 -W 3 -I 1 User01", safe:"Maximum: 14   Warning: 3   Inactive: 1", key:["chage"]},
-    {title:"Complexidade (pwquality)", cmd:"passwd User01   → (digita a senha: abc)", vuln:"senha 'abc' ACEITA — sem política de força", fix:"pwquality.conf: minlen=10 dcredit=-1 ucredit=-1 lcredit=-1", safe:"BAD PASSWORD: it is too short — senha rejeitada", key:["pwquality","minlen","pwscore","pam"]},
-    {title:"Histórico de senhas", cmd:"passwd User01   → (repete a senha anterior)", vuln:"senha anterior reutilizada com sucesso", fix:"pam_pwhistory.so remember=15 (system-auth / password-auth)", safe:"Password has been already used. Choose another.", key:["pwhistory","remember"]},
-    {title:"Bloqueio de conta (faillock)", cmd:"3 tentativas de login com senha errada", vuln:"conta continua aceitando tentativas — força bruta livre", fix:"faillock.conf deny=3 unlock_time=1500 + authselect enable-feature with-faillock", safe:"The account is locked due to 3 failed logins (25 min)", key:["faillock","deny","authselect"]}
-  ];
-  document.querySelectorAll('#a-t1 .trainbtn').forEach(function(b){
-    var i=parseInt(b.dataset.ta1,10); var s=TA1[i]; if(!s) return;
-    b.addEventListener('click',function(e){ e.stopPropagation(); window.csOpenLab(s, s.title, false); });
+  const BAD="⚠  Configuração insegura detectada!",
+        GOOD="✅  Hardening aplicado e validado com sucesso!";
+  const ALABS = {
+    // Linux (11)
+    "lin-exp": {title:"Expiração de senha", prompt:"root@linux:~# ", cmd:"chage -l usuario",
+      vuln:"Maximum number of days between password change: 99999\nPassword inactive: never",
+      fix:"chage -M 30 -m 1 -W 7 -I 1 usuario",
+      safe:"Maximum: 30  ·  Minimum: 1  ·  Warning: 7  ·  Inactive: 1",
+      key:["chage","pass_max_days","login.defs"]},
+    "lin-pwq": {title:"Complexidade de senha (pwquality)", prompt:"root@linux:~# ", cmd:"echo 'abc123' | pwscore",
+      vuln:"Score aceito — sem exigência mínima de tamanho ou classes de caracteres",
+      fix:"pwquality.conf: minlen=12 dcredit=-1 ucredit=-1 lcredit=-1 + authselect enable-feature with-pwquality",
+      safe:"Password quality check failed: The password is shorter than 12 characters",
+      key:["pwquality","minlen","dcredit","authselect"]},
+    "lin-hist": {title:"Histórico de senhas (pwhistory)", prompt:"root@linux:~# ", cmd:"passwd usuario  → (tenta repetir a senha anterior)",
+      vuln:"passwd: all authentication tokens updated successfully  (senha repetida aceita!)",
+      fix:"pam_pwhistory.so remember=15 (pwhistory.conf / system-auth / common-password)",
+      safe:"Password has been already used. Choose another.",
+      key:["pwhistory","remember"]},
+    "lin-faillock": {title:"Bloqueio de conta (faillock)", prompt:"root@linux:~# ", cmd:"faillock --user usuario  (após 3 senhas erradas)",
+      vuln:"nenhum bloqueio registrado — força bruta ilimitada liberada",
+      fix:"faillock.conf: deny=3 unlock_time=1500 + authselect enable-feature with-faillock",
+      safe:"The account is locked due to 3 failed logins (unlock_time=1500s)",
+      key:["faillock","deny","unlock_time","authselect"]},
+    "lin-banner": {title:"Banner, Timeout e Sudoers", prompt:"root@linux:~# ", cmd:"cat /etc/issue; echo $TMOUT; sudo -l -U usuario",
+      vuln:"Rocky Linux 9.4 (Kernel 5.14)\nTMOUT=(vazio)\n(ALL) NOPASSWD: ALL",
+      fix:"echo 'Acesso restrito' > /etc/issue; TMOUT=900 em /etc/profile.d/timeout.sh; visudo (remover NOPASSWD: ALL)",
+      safe:"Acesso restrito a usuarios autorizados.\nTMOUT=900 (readonly)\nsudo restrito ao comando necessário",
+      key:["issue","tmout","visudo","timeout"]},
+    "lin-ssh-key": {title:"SSH: Chave Ed25519, sem Root e sem Senha", prompt:"root@linux:~# ", cmd:"sshd -T | grep -Ei 'permitrootlogin|passwordauthentication'",
+      vuln:"permitrootlogin yes\npasswordauthentication yes",
+      fix:"sshd_config: PermitRootLogin no · PasswordAuthentication no · PubkeyAuthentication yes → sshd -t && systemctl reload sshd",
+      safe:"permitrootlogin no\npasswordauthentication no\npubkeyauthentication yes",
+      key:["permitrootlogin","passwordauthentication","ed25519","sshd"]},
+    "lin-ssh-hard": {title:"SSH: Banner, Idle, LogLevel e Túneis", prompt:"root@linux:~# ", cmd:"sshd -T | grep -Ei 'x11|forwarding|loglevel|clientalive'",
+      vuln:"x11forwarding yes\nallowtcpforwarding yes\nloglevel INFO\nclientaliveinterval 0",
+      fix:"sshd_config: X11Forwarding no · AllowTcpForwarding no · PermitTunnel no · LogLevel VERBOSE · ClientAliveInterval 900",
+      safe:"x11forwarding no\nallowtcpforwarding no\nloglevel VERBOSE\nclientaliveinterval 900",
+      key:["x11forwarding","allowtcpforwarding","verbose","clientalive","permittunnel"]},
+    "lin-ssh-port": {title:"SSH: Porta Alternativa + Restrição por IP", prompt:"root@linux:~# ", cmd:"ss -tulpn | grep sshd; firewall-cmd --list-all | grep ssh",
+      vuln:"LISTEN 0.0.0.0:22   (aberto para qualquer IP)",
+      fix:"Port 22222 + semanage port -a -t ssh_port_t -p tcp 22222 + firewall-cmd rich-rule (só rede de gerência)",
+      safe:"LISTEN 0.0.0.0:22222 (ssh_port_t) · firewalld aceita apenas 10.0.10.0/24",
+      key:["semanage","22222","rich-rule","allowusers","firewall-cmd"]},
+    "lin-selinux": {title:"SELinux: Enforcing, Contextos e Booleans", prompt:"root@linux:~# ", cmd:"getenforce; ls -Zd /var/ftp/upload",
+      vuln:"Permissive\nunconfined_u:object_r:var_t:s0 /var/ftp/upload",
+      fix:"setenforce 1; semanage fcontext -a -t public_content_rw_t '/var/ftp/upload(/.*)?'; restorecon -Rv /var/ftp/upload",
+      safe:"Enforcing\nsystem_u:object_r:public_content_rw_t:s0 /var/ftp/upload",
+      key:["setenforce","enforcing","semanage","restorecon","setsebool"]},
+    "lin-fw": {title:"Firewall de Host Default-Deny", prompt:"root@linux:~# ", cmd:"systemctl is-active firewalld; firewall-cmd --list-services",
+      vuln:"inactive  (firewall de host desligado!)",
+      fix:"systemctl enable --now firewalld && firewall-cmd --permanent --remove-service=cockpit --add-service=https && firewall-cmd --reload",
+      safe:"active\nservices: https  (entrada padrão: bloqueada)",
+      key:["firewalld","firewall-cmd","ufw","nft"]},
+    "lin-sysctl": {title:"Hardening de Kernel (sysctl) e Superfície", prompt:"root@linux:~# ", cmd:"sysctl net.ipv4.conf.all.accept_redirects kernel.kptr_restrict",
+      vuln:"net.ipv4.conf.all.accept_redirects = 1\nkernel.kptr_restrict = 0",
+      fix:"/etc/sysctl.d/99-hardening.conf: accept_redirects=0 rp_filter=1 tcp_syncookies=1 kptr_restrict=2 → sysctl --system",
+      safe:"net.ipv4.conf.all.accept_redirects = 0\nkernel.kptr_restrict = 2\nnet.ipv4.tcp_syncookies = 1",
+      key:["sysctl","rp_filter","syncookies","accept_redirects","kptr_restrict"]},
+
+    // Windows & AD (6)
+    "win-gpo": {title:"GPO de Domínio + Cache = 0", prompt:"PS C:\\> ", cmd:"net accounts; (Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon').CachedLogonsCount",
+      vuln:"Lockout threshold: Never\nMinimum password length: 0\nCachedLogonsCount: 10",
+      fix:"gpmc.msc (Default Domain Policy): MinLen=12 History=15 Lockout=3 CachedLogons=0 → gpupdate /force",
+      safe:"Lockout threshold: 3  ·  MinLen: 12  ·  History: 15\nCachedLogonsCount: 0",
+      key:["gpo","gpmc","gpupdate","cache","lockout"]},
+    "win-proto": {title:"Desabilitar SMBv1, exigir SMB Signing e NTLMv2", prompt:"PS C:\\> ", cmd:"Get-SmbServerConfiguration | select EnableSMB1Protocol,RequireSecuritySignature",
+      vuln:"EnableSMB1Protocol: True\nRequireSecuritySignature: False",
+      fix:"Set-SmbServerConfiguration -EnableSMB1Protocol $false -RequireSecuritySignature $true -Force + GPO NTLMv2/LLMNR",
+      safe:"EnableSMB1Protocol: False\nRequireSecuritySignature: True\nLmCompatibilityLevel: 5 (NTLMv2 only)",
+      key:["smb","set-smbserverconfiguration","signing","ntlmv2","llmnr"]},
+    "win-rdp": {title:"Hardening de RDP (NLA e Restrição de Rede)", prompt:"PS C:\\> ", cmd:"(Get-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp').UserAuthentication",
+      vuln:"UserAuthentication: 0   (NLA desabilitado · RDP aberto para Any)",
+      fix:"Set-ItemProperty ... -Name UserAuthentication -Value 1 + Set-NetFirewallRule -DisplayGroup 'Remote Desktop' -RemoteAddress 10.0.10.0/24",
+      safe:"UserAuthentication: 1 (NLA ativo)  ·  RDP restrito à rede de gerência",
+      key:["userauthentication","nla","set-itemproperty","set-netfirewallrule","1"]},
+    "win-cred": {title:"Proteção de Credenciais (Protected Users / LAPS / gMSA)", prompt:"PS C:\\> ", cmd:"Get-ADGroupMember 'Protected Users'; Get-ADGroupMember 'Domain Admins'",
+      vuln:"Protected Users: (vazio)\nDomain Admins: Administrator, estagiario, svc_backup",
+      fix:"Remove-ADGroupMember 'Domain Admins' + Add-ADGroupMember 'Protected Users' -Members admin_tier0 + habilitar LAPS/gMSA",
+      safe:"Protected Users: admin_tier0\nDomain Admins: mínimo estrito  ·  LAPS ativo",
+      key:["protected users","laps","gmsa","remove-adgroupmember","add-adgroupmember"]},
+    "win-fw": {title:"Windows Firewall e Desativar Spooler", prompt:"PS C:\\> ", cmd:"Get-NetFirewallProfile | select Name,Enabled; Get-Service Spooler",
+      vuln:"Domain: False · Private: False · Public: False\nSpooler: Running (Automatic)",
+      fix:"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True -DefaultInboundAction Block; Stop-Service Spooler; Set-Service Spooler -StartupType Disabled",
+      safe:"Domain/Private/Public: True (DefaultInbound: Block)\nSpooler: Stopped (Disabled)",
+      key:["set-netfirewallprofile","spooler","stop-service","firewall"]},
+    "win-audit": {title:"Auditoria Avançada e PowerShell Logging", prompt:"PS C:\\> ", cmd:"auditpol /get /subcategory:'Process Creation','Logon'",
+      vuln:"Process Creation: No Auditing\nLogon: Success only (falhas não registradas!)",
+      fix:"auditpol /set /subcategory:'Logon' /success:enable /failure:enable + Process Creation + GPO PowerShell Script Block Logging",
+      safe:"Logon: Success and Failure  ·  Process Creation: Success (com Command Line)\nPowerShell Script Block Logging: Enabled",
+      key:["auditpol","script block","4688","4104","logging"]},
+
+    // Serviços & PKI (7)
+    "svc-ca": {title:"OpenSSL Root CA e Certificado com SAN", prompt:"root@linux:~# ", cmd:"openssl verify -CAfile rootCA.crt server.crt",
+      vuln:"error 18 at 0 depth lookup: self-signed certificate  (sem cadeia CA e sem SAN)",
+      fix:"openssl x509 -req -in server.csr -CA rootCA.crt -CAkey rootCA.key -out server.crt -sha256 -extfile (subjectAltName)",
+      safe:"server.crt: OK  (RSA 4096 · SHA-256 · SAN=DNS:site.empresa.local)",
+      key:["openssl","x509","san","subjectaltname","ca"]},
+    "svc-adcs": {title:"Windows ADCS (Enterprise CA) + IIS HTTPS", prompt:"PS C:\\> ", cmd:"certutil -ping; Get-WebBinding -Name 'Default Web Site'",
+      vuln:"CA não instalada · IIS binding: http *:80:  (sem HTTPS)",
+      fix:"Instalar ADCS Enterprise Root CA → IIS Create Domain Certificate → Add Binding https (443)",
+      safe:"ICertRequest2 interface is alive\nIIS binding: https *:443: (certificado emitido pela Enterprise CA)",
+      key:["adcs","https","binding","certificate","443","ca"]},
+    "svc-tls": {title:"Apache/Nginx: TLS 1.2/1.3, SNI e Redirect HTTP→HTTPS", prompt:"root@linux:~# ", cmd:"curl -I http://site.empresa.local; openssl s_client -connect site.empresa.local:443 -tls1_1",
+      vuln:"HTTP/1.1 200 OK (texto claro!)\nTLSv1.1 handshake: ACCEPTED (protocolo inseguro!)",
+      fix:"Redirect permanent / https://site.empresa.local/ + SSLProtocol -all +TLSv1.2 +TLSv1.3 → httpd -t && systemctl reload httpd",
+      safe:"HTTP/1.1 301 Moved Permanently → https://site.empresa.local/\nTLSv1.1: handshake failure (apenas TLS 1.2/1.3 aceitos)",
+      key:["redirect","sslprotocol","tlsv1.2","tlsv1.3","https"]},
+    "svc-headers": {title:"HSTS, Headers de Segurança, ServerTokens e -Indexes", prompt:"root@linux:~# ", cmd:"curl -Ik https://site.empresa.local | grep -iE 'server:|strict-transport|x-frame'",
+      vuln:"Server: Apache/2.4.57 (Rocky Linux)\n(HSTS ausente · X-Frame-Options ausente · Index of /files aberto)",
+      fix:"ServerTokens Prod · ServerSignature Off · Header always set Strict-Transport-Security · Options -Indexes",
+      safe:"Server: Apache\nStrict-Transport-Security: max-age=31536000; includeSubDomains\nX-Frame-Options: DENY · /files → 403 Forbidden",
+      key:["hsts","strict-transport","servertokens","-indexes","header"]},
+    "svc-nonroot": {title:"Apache Não-Root, .htaccess e Bloquear .bak/.env", prompt:"root@linux:~# ", cmd:"curl -Ik https://site.empresa.local/backup.bak",
+      vuln:"HTTP/1.1 200 OK   (backup.bak baixável publicamente!)",
+      fix:"User apache · htpasswd -cB /etc/httpd/.htpasswd user · <FilesMatch '\\.(bak|env)$'> Require all denied </FilesMatch>",
+      safe:"HTTP/1.1 403 Forbidden  (backup.bak bloqueado · query string ?ref=a.bak segue 200 OK · worker=apache)",
+      key:["filesmatch","require all denied","htpasswd","apache","403"]},
+    "svc-ftps": {title:"vsftpd com FTPS Obrigatório (sem anônimo)", prompt:"root@linux:~# ", cmd:"grep -E 'anonymous_enable|ssl_enable|force_local' /etc/vsftpd/vsftpd.conf",
+      vuln:"anonymous_enable=YES\nssl_enable=NO   (usuário e senha trafegam em texto claro!)",
+      fix:"anonymous_enable=NO · ssl_enable=YES · force_local_logins_ssl=YES · force_local_data_ssl=YES → systemctl restart vsftpd",
+      safe:"anonymous_enable=NO · ssl_enable=YES · force_local_logins_ssl=YES\nFTP claro → 530 Non-anonymous sessions must use encryption",
+      key:["ssl_enable","anonymous_enable","force_local","vsftpd","ftps"]},
+    "svc-db": {title:"Hardening de Banco de Dados (MySQL/MariaDB)", prompt:"root@linux:~# ", cmd:"ss -tulpn | grep 3306",
+      vuln:"LISTEN 0.0.0.0:3306   (exposto na rede + root remoto habilitado)",
+      fix:"mysql_secure_installation + bind-address=127.0.0.1 + usuário dedicado com GRANT mínimo",
+      safe:"LISTEN 127.0.0.1:3306  ·  sem root remoto  ·  app_user com privilégio mínimo",
+      key:["mysql_secure_installation","bind-address","127.0.0.1","grant"]},
+
+    // Rede & VPN (5)
+    "net-zones": {title:"Segmentação LAN/DMZ e Default-Deny", prompt:"pfSense > ", cmd:"(DMZ) nc -zv -w 2 <IP_LAN> 445",
+      vuln:"Connection to <IP_LAN> 445 port [tcp/microsoft-ds] succeeded!  (DMZ acessa LAN!)",
+      fix:"Firewall > Rules > DMZ: Block DMZ→LAN + remover Allow Any + restringir GUI HTTPS à gerência",
+      safe:"nc: Operation timed out  ·  Firewall log: BLOCK DMZ → LAN:445",
+      key:["block","dmz","default-deny","regra","rule","lan"]},
+    "net-nat": {title:"NAT / Port Forward Seguro e Anti-Spoofing WAN", prompt:"attacker@wan:~$ ", cmd:"nmap -Pn -sT --top-ports 100 <IP_WAN_FW>",
+      vuln:"22/tcp open ssh · 445/tcp open smb · 3389/tcp open rdp · 443/tcp open https",
+      fix:"Firewall > NAT > Port Forward: expor APENAS 443→DMZ + ativar Block private/bogon networks na WAN",
+      safe:"443/tcp open https  (todas as portas administrativas filtradas/bloqueadas)",
+      key:["nat","port forward","443","bogon","wan"]},
+    "net-ipsec": {title:"VPN Site-to-Site IPsec (IKEv2 com Certificado)", prompt:"pfSense > ", cmd:"Status > IPsec  |  ping -c 2 <IP_HOST_FILIAL>",
+      vuln:"IPsec: DISCONNECTED  ·  100% packet loss (sem túnel cifrado entre Matriz e Filial)",
+      fix:"Importar CA/Cert → VPN > IPsec Add P1 (IKEv2 + Mutual Certificate) + Add P2 (ESP sub-redes) + Rules > IPsec",
+      safe:"IPsec Phase 1 & Phase 2: ESTABLISHED (IKEv2 / AES256-GCM)\n2 packets transmitted, 2 received (0% loss)",
+      key:["ikev2","ipsec","certificate","certificado","p1","p2","esp"]},
+    "net-ovpn": {title:"VPN Remote Access (OpenVPN SSL/TLS)", prompt:"pfSense > ", cmd:"Status > OpenVPN  (usuário remoto tentando acessar rede interna)",
+      vuln:"OpenVPN: sem servidor configurado · acesso remoto exposto ou indisponível",
+      fix:"Cert Manager (User cert) → OpenVPN Remote Access (SSL/TLS + TLS Key) + liberar UDP 1194 + Client Export",
+      safe:"Status > OpenVPN: usuario_remoto CONNECTED (10.99.0.2) · acesso validado ao servidor interno",
+      key:["openvpn","ssl/tls","1194","cert","export","wireguard"]},
+    "net-ids": {title:"IDS / IPS no Perímetro (Suricata / Snort)", prompt:"pfSense > ", cmd:"Services > Suricata > Alerts  (após nmap -sS na rede)",
+      vuln:"Nenhum IDS/IPS ativo — varredura de portas e tentativas de exploit passaram sem alerta",
+      fix:"Instalar Suricata/Snort → habilitar ET Open rules → ativar na interface LAN/DMZ + Send Alerts to System Log",
+      safe:"[ALERT] ET SCAN Nmap Scripting Engine / SYN Scan detected → enviado ao LogServer!",
+      key:["suricata","snort","et open","rules","regras","ids","ips"]},
+
+    // Logs & Tempo (5)
+    "log-rsyslog": {title:"Logging Centralizado (rsyslog TCP)", prompt:"root@logserver:~# ", cmd:"ss -tulpn | grep 514; grep teste_hardening /var/log/messages",
+      vuln:"(porta 514 fechada · nenhum log remoto recebido)",
+      fix:"rsyslog.conf: module(load='imtcp') input(type='imtcp' port='514') + firewall-cmd 514/tcp + clientes: *.* @@IP_LOGSERVER:514",
+      safe:"LISTEN 0.0.0.0:514 (rsyslogd)\ncliente01 teste_hardening: Validacao de envio remoto",
+      key:["imtcp","514","rsyslog","@@","remote"]},
+    "log-rot": {title:"Retenção no journald e Rotação com logrotate", prompt:"root@linux:~# ", cmd:"grep -E 'Storage|MaxRetentionSec' /etc/systemd/journald.conf; ls /etc/logrotate.d/custom_app",
+      vuln:"#Storage=auto · #MaxRetentionSec=  (sem retenção definida e sem rotação para logs custom)",
+      fix:"journald.conf: Storage=persistent MaxRetentionSec=7day + /etc/logrotate.d/custom_app (daily rotate 30 compress dateext)",
+      safe:"Storage=persistent · MaxRetentionSec=7day\nlogrotate -d: OK (daily, compress, dateext, rotate 30)",
+      key:["maxretentionsec","logrotate","compress","dateext","journald"]},
+    "log-auditd": {title:"Auditoria de Arquivos Críticos (auditd)", prompt:"root@linux:~# ", cmd:"auditctl -l",
+      vuln:"No rules   (alterações em /etc/shadow e /etc/sudoers não são auditadas!)",
+      fix:"/etc/audit/rules.d/hardening.rules: -w /etc/shadow -p wa -k identity_changes + augenrules --load",
+      safe:"-w /etc/passwd -p wa -k identity_changes\n-w /etc/shadow -p wa -k identity_changes\n-w /etc/sudoers -p wa -k sudoers_changes",
+      key:["auditctl","augenrules","auditd","-w","/etc/shadow"]},
+    "log-limits": {title:"Limites de Processos e Prioridades (limits.conf / nice)", prompt:"root@linux:~# ", cmd:"ulimit -c; grep -E 'core|nproc|priority' /etc/security/limits.conf",
+      vuln:"core file size: unlimited  ·  sem limite de nproc ou prioridade por grupo",
+      fix:"/etc/security/limits.conf: * hard core 0 · @usuarios hard nproc 200 · @grupoA - priority 10",
+      safe:"core file size: 0  ·  nproc limitado  ·  prioridades (nice) aplicadas",
+      key:["limits.conf","nproc","priority","nice","core"]},
+    "log-ntp": {title:"Sincronização Segura de Tempo (chrony / NTP)", prompt:"root@linux:~# ", cmd:"chronyc tracking",
+      vuln:"506 Cannot talk to daemon  (chronyd parado — relógio fora de sincronia!)",
+      fix:"/etc/chrony.conf: pool pool.ntp.org iburst + allow 10.0.0.0/24 → systemctl enable --now chronyd",
+      safe:"Reference ID: pool.ntp.org  ·  System time: 0.0002s  ·  Leap status: Normal",
+      key:["chrony","chronyd","pool","ntp","allow"]}
+  };
+
+  const STORE_KEY = "cs_provaA_done_v1";
+  let done = {};
+  try { done = JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch(e){ done = {}; }
+
+  const btns = Array.from(document.querySelectorAll('#provaA .trainbtn[data-alab]'));
+  const total = btns.length;
+  const progTxt = document.getElementById("aProgTxt");
+  const progBar = document.getElementById("aProgBar");
+
+  function refreshProg(){
+    let n = 0;
+    btns.forEach(function(b){
+      const id = b.dataset.alab;
+      if(done[id]){
+        n++;
+        b.classList.add("done");
+        b.textContent = "✅ Treinado (repetir)";
+      } else {
+        b.classList.remove("done");
+        b.textContent = "🎮 Treinar";
+      }
+    });
+    if(progTxt) progTxt.textContent = n + " / " + total;
+    if(progBar) progBar.style.width = (total ? Math.round((n/total)*100) : 0) + "%";
+  }
+
+  btns.forEach(function(b){
+    const id = b.dataset.alab;
+    const s = ALABS[id];
+    if(!s) return;
+    b.addEventListener("click", function(e){
+      e.stopPropagation();
+      const scn = Object.assign({}, s, {
+        badMsg: BAD,
+        goodMsg: GOOD,
+        onDone: function(){
+          done[id] = 1;
+          try { localStorage.setItem(STORE_KEY, JSON.stringify(done)); } catch(err){}
+          refreshProg();
+        }
+      });
+      window.csOpenLab(scn, s.title, false);
+    });
   });
+  refreshProg();
+
+  // Checklist interativo de validação pós-hardening
+  const CHK_KEY = "cs_provaA_chk_v1";
+  let chk = {};
+  try { chk = JSON.parse(localStorage.getItem(CHK_KEY) || "{}"); } catch(e){ chk = {}; }
+  const chkBoxes = Array.from(document.querySelectorAll('#aChkList input[type="checkbox"]'));
+  const chkCount = document.getElementById("aChkCount");
+  function refreshChk(){
+    let n = 0;
+    chkBoxes.forEach(function(cb){
+      const on = !!chk[cb.dataset.chk];
+      cb.checked = on;
+      cb.closest(".chkitem").classList.toggle("checked", on);
+      if(on) n++;
+    });
+    if(chkCount) chkCount.textContent = n + "/" + chkBoxes.length;
+  }
+  chkBoxes.forEach(function(cb){
+    cb.addEventListener("change", function(){
+      chk[cb.dataset.chk] = cb.checked ? 1 : 0;
+      try { localStorage.setItem(CHK_KEY, JSON.stringify(chk)); } catch(err){}
+      refreshChk();
+    });
+  });
+  refreshChk();
 })();
 </script>
 </body>
