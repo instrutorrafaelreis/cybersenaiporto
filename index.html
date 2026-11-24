@@ -8897,6 +8897,8 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
 
   function isTextField(el){
     if(!el || !el.tagName) return false;
+    // exceção: campos de flag (.eflag) podem ser colados — digitação manual não é exigida aqui
+    if(el.closest && el.closest(".eflag")) return false;
     var tag=el.tagName.toUpperCase();
     if(tag==="TEXTAREA") return true;
     if(tag==="INPUT"){
