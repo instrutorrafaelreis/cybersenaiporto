@@ -395,7 +395,7 @@
     <button class="pbtn" data-prova="provaC" type="button">Prova C <span class="st">Incident Response</span></button>
     <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">Blue Team &amp; SIEM</span></button>
     <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">CTF / Pentest</span></button>
-    <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">Application Security</span></button>
   </div>
 </nav>
 
@@ -5325,7 +5325,652 @@ print(rop.chain())"</span></pre></div>
 </div>
 
 <div class="prova-content" id="provaF">
-  <div class="provaempty"><div class="big">🅵</div><h2>Prova F</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · WorldSkills Skill 54 · Prova F — Application Security</div>
+    <h1>Secure Coding &amp; DevSecOps: <span class="g">achar a falha no código e corrigir</span></h1>
+    <p class="sub">O lado do desenvolvedor do WorldSkills Cyber Security: revisar código-fonte, identificar a vulnerabilidade, entender o OWASP Top 10:2025 e corrigir antes de chegar à produção — integrando segurança ao pipeline (shift-left). Cada falha vem com 🔴 código vulnerável e 🟢 código seguro.</p>
+    <div style="margin-top:10px;color:var(--mut2);font-size:12.5px">🛡️ Enquanto a Prova E <b>ataca</b> a aplicação, a Prova F <b>constrói e revisa</b> com segurança. É o fechamento do ciclo: ofensa (E) → defesa no código (F).</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="atabs" id="ftabs">
+    <span class="atab active" data-fp="f-fund"><span class="ic">📚</span> Fundamentos</span>
+    <span class="atab" data-fp="f-review"><span class="ic">🔎</span> Code Review</span>
+    <span class="atab" data-fp="f-owasp"><span class="ic">🏆</span> OWASP Top 10:2025</span>
+    <span class="atab" data-fp="f-tools"><span class="ic">🛠️</span> SAST / DAST / SCA</span>
+    <span class="atab" data-fp="f-devsecops"><span class="ic">🔁</span> DevSecOps / CI-CD</span>
+    <span class="atab" data-fp="f-supply"><span class="ic">📦</span> Supply Chain</span>
+    <span class="atab" data-fp="f-secrets"><span class="ic">🔑</span> Segredos &amp; Cripto</span>
+    <span class="atab" data-fp="f-provas"><span class="ic">📝</span> Desafios</span>
+  </div>
+
+  <!-- ===== FUNDAMENTOS ===== -->
+  <div class="apanel active" id="f-fund">
+    <div class="disc" style="border-color:var(--acc)">🧱 <b>Application Security (AppSec)</b> é a disciplina de prevenir, encontrar e corrigir vulnerabilidades <b>no software</b> — do design ao deploy. A regra de ouro é <b>shift-left</b>: quanto mais cedo a falha é achada, mais barato é corrigir. Uma falha pega no editor custa minutos; em produção, custa um incidente. Esta aba fixa os conceitos; as próximas treinam cada técnica.</div>
+
+    <div class="mgroup" style="margin-top:22px"><span class="d"></span>Conceitos-chave <span style="font-size:11px;color:var(--mut2);text-transform:none;letter-spacing:0">— clique para aprofundar</span></div>
+    <div class="gloss" id="fconcepts">
+      <div class="gi click popc" data-t="Secure SDLC (S-SDLC)"><b>Secure SDLC</b> — segurança em todo o ciclo. <span class="more">ⓘ</span>
+        <div class="gx">O <b>Secure Software Development Life Cycle</b> insere controles de segurança em cada fase: <b>requisitos</b> (abuse cases), <b>design</b> (threat modeling), <b>código</b> (secure coding + SAST), <b>build</b> (SCA + SBOM), <b>teste</b> (DAST), <b>deploy</b> (hardening) e <b>operação</b> (logging, patching).<br><br>Frameworks de referência: <b>NIST SSDF (SP 800-218)</b>, <b>OWASP SAMM</b> (maturidade) e <b>BSIMM</b>. A ideia central: segurança não é uma etapa no fim — é tecida em todo o processo.</div>
+      </div>
+      <div class="gi click popc" data-t="Shift-Left"><b>Shift-Left</b> — achar cedo custa pouco. <span class="more">ⓘ</span>
+        <div class="gx">"Deslocar para a esquerda" significa mover os testes de segurança para o <b>início</b> do ciclo — no IDE e no commit, não só no pentest final.<br><br>Custo relativo de corrigir uma falha: ~1x em design, ~6x em código, ~15x em teste, <b>~100x em produção</b> (estudos clássicos IBM/NIST). Por isso SAST roda no pull request e secret scanning roda no pre-commit: a falha nunca chega longe.</div>
+      </div>
+      <div class="gi click popc" data-t="Threat Modeling (STRIDE)"><b>Threat Modeling</b> — pensar como o atacante no design. <span class="more">ⓘ</span>
+        <div class="gx">Antes de escrever código, você modela as ameaças ao sistema. O método <b>STRIDE</b> (Microsoft) classifica 6 categorias: <b>S</b>poofing (identidade), <b>T</b>ampering (integridade), <b>R</b>epudiation (não-repúdio), <b>I</b>nformation disclosure (confidencialidade), <b>D</b>enial of Service (disponibilidade), <b>E</b>levation of privilege (autorização).<br><br>Ferramentas: OWASP Threat Dragon, Microsoft Threat Modeling Tool. Falhas de design (OWASP A06) <b>não</b> são pegas por scanner — só por threat modeling.</div>
+      </div>
+      <div class="gi click popc" data-t="SAST"><b>SAST</b> — análise estática (olha o código). <span class="more">ⓘ</span>
+        <div class="gx"><b>Static Application Security Testing</b> examina o <b>código-fonte sem executá-lo</b>, procurando padrões inseguros (entrada não sanitizada, funções perigosas, fluxos de dados do input até um sink).<br><br>✅ Cobre 100% dos caminhos de código, roda cedo (no commit/PR), aponta o arquivo e a linha.<br>❌ Gera <b>falsos positivos</b>, não vê falhas de lógica de negócio nem problemas de runtime/config. Ferramentas: Semgrep, CodeQL, Bandit, SonarQube.</div>
+      </div>
+      <div class="gi click popc" data-t="DAST"><b>DAST</b> — análise dinâmica (ataca a app rodando). <span class="more">ⓘ</span>
+        <div class="gx"><b>Dynamic Application Security Testing</b> testa a <b>aplicação em execução</b> do lado de fora, simulando ataques reais (envia payloads de SQLi, XSS etc. e observa a resposta). É "black-box".<br><br>✅ Encontra problemas de runtime, config e autenticação; poucos falsos positivos.<br>❌ Não vê o código (não diz a linha), não alcança caminhos sem rota HTTP. Ferramentas: OWASP ZAP, Burp Suite, Nuclei. SAST e DAST são <b>complementares</b>.</div>
+      </div>
+      <div class="gi click popc" data-t="SCA (Software Composition Analysis)"><b>SCA</b> — analisa as dependências de terceiros. <span class="more">ⓘ</span>
+        <div class="gx"><b>Software Composition Analysis</b> inventaria as bibliotecas open-source do projeto e cruza com bases de CVE/NVD para achar <b>componentes vulneráveis</b>. Uma app média usa centenas de dependências — a maior parte do código que você entrega <b>não foi você quem escreveu</b>.<br><br>É o controle que a OWASP recomenda para o problema de supply chain (A03:2025). Gera também o <b>SBOM</b>. Ferramentas: OWASP Dependency-Check/Track, Snyk, Trivy, Grype, Dependabot.</div>
+      </div>
+      <div class="gi click popc" data-t="IAST & RASP"><b>IAST &amp; RASP</b> — instrumentação em runtime. <span class="more">ⓘ</span>
+        <div class="gx"><b>IAST</b> (Interactive AST) instrumenta a aplicação durante os testes e combina a visão estática (código/linha) com a dinâmica (runtime) — menos falsos positivos, mas exige agente.<br><br><b>RASP</b> (Runtime Application Self-Protection) roda <b>dentro</b> da aplicação em produção e bloqueia ataques em tempo real (como um WAF embutido). IAST testa; RASP protege. Ambos complementam SAST/DAST/SCA, não substituem.</div>
+      </div>
+      <div class="gi click popc" data-t="OWASP: Top 10, ASVS, Cheat Sheets, SAMM"><b>Ecossistema OWASP</b> — as referências que você deve conhecer. <span class="more">ⓘ</span>
+        <div class="gx"><b>Top 10</b> — lista de conscientização dos 10 riscos mais críticos (edição <b>2025</b>, confirmada em jan/2026).<br><b>ASVS 5.0</b> (Application Security Verification Standard, mai/2025) — o padrão de <b>requisitos verificáveis</b> por nível (L1/L2/L3); é o que se usa para testar de verdade.<br><b>Cheat Sheets</b> — receitas práticas por tema (ex.: SQL Injection Prevention, Password Storage).<br><b>SAMM</b> — modelo de maturidade do programa de AppSec. <b>WSTG</b> — guia de testes web. <b>Proactive Controls</b> — top 10 de defesas.</div>
+      </div>
+      <div class="gi click popc" data-t="Princípios de código seguro"><b>Princípios</b> — as leis do código seguro. <span class="more">ⓘ</span>
+        <div class="gx"><b>Nunca confie na entrada</b> (valide no servidor, allowlist &gt; denylist). <b>Menor privilégio</b> (cada parte só o acesso mínimo). <b>Defesa em profundidade</b> (camadas). <b>Fail securely</b> (em erro, negue — não abra). <b>Separe dados de código</b> (parametrize; nunca concatene input em query/comando). <b>Não reinvente cripto</b> (use bibliotecas testadas). <b>Minimize a superfície</b> (desligue o que não usa). <b>Secure defaults</b> (seguro já de fábrica).</div>
+      </div>
+      <div class="gi click popc" data-t="CWE vs CVE vs CVSS"><b>CWE × CVE × CVSS</b> — não confunda. <span class="more">ⓘ</span>
+        <div class="gx"><b>CWE</b> (Common Weakness Enumeration) — a <b>classe</b> da falha (ex.: CWE-89 = SQL Injection, CWE-79 = XSS). É o "tipo de bug".<br><b>CVE</b> (Common Vulnerabilities and Exposures) — uma <b>instância</b> concreta e catalogada numa versão de um produto (ex.: CVE-2021-44228 = Log4Shell).<br><b>CVSS</b> — a <b>nota de severidade</b> (0–10) daquela CVE. 👉 A calculadora de CVSS está na <b>Prova A</b>. No code review você fala em CWE; no SCA você vê CVE + CVSS.</div>
+      </div>
+    </div>
+
+    <div class="mgroup" style="margin-top:26px"><span class="d"></span>SAST × DAST × SCA × IAST — quando cada um pega a falha</div>
+    <table class="ftable">
+      <thead><tr><th>Técnica</th><th>Olha o quê</th><th>Quando roda</th><th>Pega bem</th><th>Não pega</th></tr></thead>
+      <tbody>
+        <tr><td class="id">SAST</td><td>código-fonte (não executa)</td><td>IDE / commit / PR</td><td>injeção, funções perigosas, secrets no código</td><td>lógica de negócio, runtime, config</td></tr>
+        <tr><td class="id">DAST</td><td>app rodando (black-box)</td><td>staging / QA</td><td>auth, config, XSS/SQLi em runtime</td><td>a linha do código; rotas sem HTTP</td></tr>
+        <tr><td class="id">SCA</td><td>dependências de terceiros</td><td>build / PR</td><td>CVEs em libs, licenças, SBOM</td><td>bugs no seu próprio código</td></tr>
+        <tr><td class="id">IAST</td><td>app instrumentada</td><td>testes integrados</td><td>confirma exploração + aponta a linha</td><td>requer agente; cobre só o que é exercitado</td></tr>
+        <tr><td class="id">Secrets</td><td>código, config, histórico git</td><td>pre-commit / PR</td><td>chaves, tokens, senhas hardcoded</td><td>segredos fora do repositório</td></tr>
+      </tbody>
+    </table>
+    <div class="disc" style="margin-top:14px">🎓 <b>Labs para treinar:</b> OWASP Juice Shop e WebGoat (apps vulneráveis), Semgrep Playground (regras SAST), PortSwigger Web Security Academy, Snyk Learn, Secure Code Warrior. O objetivo: ler um trecho e <b>na hora</b> enxergar a falha e o conserto.</div>
+  </div>
+
+  <!-- ===== CODE REVIEW ===== -->
+  <div class="apanel" id="f-review">
+    <div class="disc">🔎 <b>Revisão segura de código</b> — diferente do code review comum (que olha legibilidade/funcionalidade), a revisão <b>de segurança</b> procura falhas exploráveis: injeção, autenticação, autorização, cripto, tratamento de erros. A melhor abordagem é <b>híbrida</b>: ferramenta roda primeiro e marca o óbvio, humano decide o contexto.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">MÉTODO</span>Metodologia de revisão segura</h3><div class="cat">o processo que não deixa passar</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Revisar sem método é "ler até cansar". O especialista segue um fluxo: entende o contexto, roda as ferramentas, foca nos pontos críticos e rastreia o caminho do dado da entrada até o sink.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer (fluxo)</div>
+<pre><span class="c"># 1. Contexto: o que a app faz? quem é o usuário? que dados são sensíveis?</span>
+<span class="c"># 2. Ferramentas primeiro: rode SAST + SCA + secret scan (o óbvio sai de graça)</span>
+<span class="c"># 3. Siga o DADO: toda entrada do usuário (source) ate onde ela e usada (sink)</span>
+<span class="c">#    sources: parametros HTTP, body, headers, cookies, arquivos, env</span>
+<span class="c">#    sinks:   query SQL, exec/system, HTML, deserializacao, path de arquivo</span>
+<span class="c"># 4. Revise manualmente os HOTSPOTS (auth, authz, cripto, upload, pagamento)</span>
+<span class="c"># 5. Confirme: e explorável? qual CWE? qual o impacto? -&gt; prioriza o conserto</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Erro comum</span>Confiar só na ferramenta (perde lógica de negócio) ou só no olho (perde o óbvio e cansa).</div>
+          <div class="r safe"><span class="lab">🟢 Certo</span>Híbrido: ferramenta pega o padrão, humano julga contexto e explorabilidade.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">TRIAGEM</span>Risco por criticidade — onde revisar fundo</h3><div class="cat">tempo é limitado; priorize</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Você não revisa 100% do código com a mesma profundidade. Classifique por risco: código que toca autenticação, dinheiro, dados pessoais ou isolamento entre clientes recebe revisão profunda; o resto, revisão leve.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Prioridade de revisão</div>
+<pre><span class="c"># CRÍTICO (revise linha a linha):</span>
+#   autenticação, autorização, sessão, criptografia,
+#   pagamento, upload de arquivo, isolamento multi-tenant,
+#   qualquer coisa que monte query/comando/path com input
+<span class="c"># ALTO:</span> APIs públicas, parsing de dados externos, desserialização
+<span class="c"># MÉDIO/BAIXO:</span> telas internas, código sem entrada de usuário</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Sinal de alerta</span>Mudança grande num arquivo de auth sem teste e sem segundo revisor.</div>
+          <div class="r safe"><span class="lab">🟢 Boa prática</span>Revisor de segurança obrigatório em PRs que tocam áreas críticas (CODEOWNERS).</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">GREP</span>Caça rápida: padrões perigosos no código</h3><div class="cat">o primeiro pente-fino manual</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Antes de ferramentas sofisticadas, um <code class="inl">grep</code> dirigido já revela funções perigosas. É o reflexo do revisor: procurar os "sinks" clássicos.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="c"># execução de comando / código:</span>
+<span class="k">grep</span> -rnE <span class="s">"system\(|exec\(|popen|eval\(|os\.system|subprocess.*shell=True"</span> .
+<span class="c"># SQL concatenado:</span>
+<span class="k">grep</span> -rnE <span class="s">"SELECT .*\+|execute\(.*%|query\(.*f\""</span> .
+<span class="c"># desserialização insegura:</span>
+<span class="k">grep</span> -rnE <span class="s">"pickle.loads|yaml.load\(|readObject|unserialize"</span> .
+<span class="c"># cripto fraca / segredos:</span>
+<span class="k">grep</span> -rnE <span class="s">"md5|sha1|DES|ECB|password *=|api_?key *=|secret *="</span> .</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Achou</span>Um hit não é prova — é um ponto para investigar o fluxo do dado.</div>
+          <div class="r safe"><span class="lab">🟢 Depois</span>Confirme com SAST (Semgrep) para reduzir ruído e seguir data-flow automático.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-cmd" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== OWASP TOP 10 2025 ===== -->
+  <div class="apanel" id="f-owasp">
+    <div class="disc">🏆 <b>OWASP Top 10:2025</b> — a edição foi confirmada em <b>janeiro de 2026</b>, com base em dados de centenas de CWEs. Duas categorias novas: <b>A03 Software Supply Chain Failures</b> e <b>A10 Mishandling of Exceptional Conditions</b>. O SSRF foi absorvido por A01. Cada card: o que é, como achar no código, e 🔴 vulnerável → 🟢 seguro.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A01</span>Broken Access Control</h3><div class="cat">#1 · inclui BOLA/BFLA · absorveu o SSRF · CWE-284/639/918</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>O usuário consegue fazer o que não deveria: acessar o recurso de outro usuário (IDOR/BOLA), uma função de admin (BFLA) ou forçar o servidor a requisitar uma URL interna (SSRF, agora aqui). Segue no 1º lugar.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar no código</div><p>Endpoint que recebe um ID e busca no banco <b>sem checar se o objeto pertence ao usuário logado</b>. Rota de admin sem verificação de papel. Requisição a URL vinda do usuário sem allowlist.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável (IDOR / BOLA)</div>
+<pre><span class="c"># Python/Flask — qualquer um lê o pedido de qualquer um</span>
+@app.get(<span class="s">"/api/orders/&lt;int:oid&gt;"</span>)
+def get_order(oid):
+    <span class="k">return</span> db.orders.find_one({<span class="s">"id"</span>: oid})   <span class="c"># sem checar dono!</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre>@app.get(<span class="s">"/api/orders/&lt;int:oid&gt;"</span>)
+@login_required
+def get_order(oid):
+    order = db.orders.find_one({<span class="s">"id"</span>: oid})
+    <span class="k">if</span> <span class="k">not</span> order <span class="k">or</span> order[<span class="s">"user_id"</span>] != current_user.id:
+        abort(<span class="s">404</span>)            <span class="c"># nega e não revela existência</span>
+    <span class="k">return</span> order</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Trocar o ID na URL vaza/edita dados de outros (o bug web mais comum).</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Autorização no servidor por objeto e por função; negar por padrão (deny-by-default).</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-idor" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A02</span>Security Misconfiguration</h3><div class="cat">↑ do #5 · defaults, debug, cloud, IaC · CWE-16/611</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Configuração insegura em qualquer camada: credenciais padrão, modo debug ligado, diretórios listáveis, headers de segurança ausentes, buckets abertos, XXE por parser mal configurado. Subiu para #2 por aparecer muito nos dados.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p>Procure <code class="inl">DEBUG=True</code> em produção, senhas padrão, CORS <code class="inl">*</code>, parser XML com entidades externas habilitadas, ausência de CSP/HSTS.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável (XXE)</div>
+<pre><span class="c"># Python — parser que resolve entidades externas</span>
+<span class="k">import</span> lxml.etree <span class="k">as</span> ET
+doc = ET.fromstring(user_xml)   <span class="c"># resolve &lt;!ENTITY&gt; -&gt; lê /etc/passwd</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre><span class="k">from</span> lxml <span class="k">import</span> etree
+parser = etree.XMLParser(resolve_entities=<span class="k">False</span>,
+                         no_network=<span class="k">True</span>, dtd_validation=<span class="k">False</span>)
+doc = etree.fromstring(user_xml, parser)   <span class="c"># entidades desligadas</span>
+<span class="c"># + DEBUG=False, headers CSP/HSTS, remover defaults, CORS restrito</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Vaza arquivos/segredos, expõe stack traces, abre a nuvem.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Hardening automatizado, secure defaults, IaC scanning, revisão de headers.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A03</span>Software Supply Chain Failures <span style="font-size:10px;color:var(--warn)">NOVA</span></h3><div class="cat">#3 · dependências, build e distribuição · CWE-1104/506</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Nova categoria (expande "Componentes vulneráveis e desatualizados"). Comprometimentos em <b>qualquer ponto</b> da cadeia: dependências vulneráveis/maliciosas, build systems, registries, ações de CI. Foi o item mais votado pela comunidade e tem a maior incidência.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p>Dependências desatualizadas com CVE conhecida; pacotes sem pin de versão/hash; ações de CI apontando para <code class="inl">@main</code> em vez de SHA; ausência de SBOM. 👉 Aba <b>Supply Chain</b> aprofunda.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável</div>
+<pre><span class="c"># requirements.txt sem pin — pega qualquer versão, até comprometida</span>
+requests
+flask
+<span class="c"># GitHub Actions apontando para tag móvel</span>
+- uses: some/action@main</pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre><span class="c"># versões fixas + hash verificado</span>
+requests==<span class="s">2.32.3</span> --hash=sha256:...
+flask==<span class="s">3.0.3</span>
+<span class="c"># ação fixada no commit SHA imutável</span>
+- uses: some/action@a1b2c3d   <span class="c"># + SCA no pipeline + SBOM + Dependabot</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Exemplos reais</span>Log4Shell (CVE-2021-44228), worm npm Shai-Hulud (2025), typosquatting.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>SCA contínuo, pin+hash, SBOM, assinatura (Sigstore/cosign), proveniência SLSA.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-dep" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A04</span>Cryptographic Failures</h3><div class="cat">↓ do #2 · cripto fraca ou ausente · CWE-327/328/916</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Falta de cripto onde é necessária, algoritmos fracos (MD5, SHA1, DES, ECB), chaves hardcoded, TLS mal configurado, hashing de senha sem sal/custo. Foco no dado sensível em trânsito e em repouso.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p>Senhas em <code class="inl">md5()</code>/<code class="inl">sha1()</code>, modo <code class="inl">ECB</code>, chave/IV fixos no código, <code class="inl">http://</code> para dado sensível. 👉 Aba <b>Segredos &amp; Cripto</b> aprofunda.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável</div>
+<pre><span class="c"># senha com MD5 (rápido de quebrar, sem sal)</span>
+<span class="k">import</span> hashlib
+pw_hash = hashlib.md5(password.encode()).hexdigest()</pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre><span class="c"># hashing de senha dedicado, com sal e custo</span>
+<span class="k">from</span> argon2 <span class="k">import</span> PasswordHasher
+ph = PasswordHasher()
+pw_hash = ph.hash(password)     <span class="c"># argon2id (ou bcrypt/scrypt)</span>
+ph.verify(pw_hash, password)    <span class="c"># verificação segura</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Vazou o banco? Senhas em MD5 caem em minutos no hashcat.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>argon2id/bcrypt para senhas; AES-GCM para dados; TLS 1.2+; chaves em cofre.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-hash" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A05</span>Injection</h3><div class="cat">↓ do #3 · SQLi, XSS, command, LDAP · CWE-89/79/77/78</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Entrada não confiável é interpretada como código/comando: SQL Injection, XSS, OS command injection, LDAP, NoSQL. A categoria com mais CVEs. A raiz é sempre a mesma: <b>misturar dados com código</b>.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p>Query montada por concatenação/f-string; <code class="inl">innerHTML</code>/template sem escape; <code class="inl">os.system</code> com input; <code class="inl">shell=True</code>.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável (SQLi)</div>
+<pre><span class="c"># PHP — input concatenado direto na query</span>
+$id = $_GET[<span class="s">'id'</span>];
+$sql = <span class="s">"SELECT * FROM users WHERE id = $id"</span>;
+$res = $conn-&gt;query($sql);   <span class="c"># ' OR '1'='1 -&gt; dump total</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro (prepared statement)</div>
+<pre>$stmt = $conn-&gt;prepare(<span class="s">"SELECT * FROM users WHERE id = ?"</span>);
+$stmt-&gt;bind_param(<span class="s">"i"</span>, $id);   <span class="c"># dado nunca vira código</span>
+$stmt-&gt;execute();
+<span class="c"># XSS: use autoescape do template / textContent, nunca innerHTML cru</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Dump/alteração do banco, execução de comandos, roubo de sessão (XSS).</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Consultas parametrizadas sempre; output encoding por contexto; ORM seguro.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-sqli" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A06</span>Insecure Design</h3><div class="cat">↓ do #4 · falha de design, não de bug · CWE-209/256/501</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>A falha está no <b>desenho</b> do sistema, não num erro de implementação: ausência de limite de tentativas, fluxo de recuperação de senha fraco, confiança indevida no cliente. Scanner <b>não</b> acha — só threat modeling e revisão de design.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p>Pergunte "qual controle de segurança <b>deveria existir</b> e não existe?". Ex.: checkout sem controle de estoque server-side, reset de senha por pergunta secreta, rate limit ausente no login.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Design vulnerável</div>
+<pre><span class="c"># preço vem do cliente — confiança indevida</span>
+POST /checkout  { "item": 42, "price": 999.00 }
+<span class="c"># servidor cobra o que o cliente mandar -&gt; price=0.01</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Design seguro</div>
+<pre><span class="c"># servidor ignora o preço do cliente e busca na fonte da verdade</span>
+POST /checkout  { "item": 42 }
+price = db.items.get(<span class="s">42</span>).price   <span class="c"># + rate limit + limites de negócio</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Fraude lógica: comprar por 1 centavo, abusar de cupons, enumerar contas.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Threat modeling (STRIDE), abuse cases nos requisitos, validação de regra no servidor.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A07</span>Authentication Failures</h3><div class="cat">#7 · login, sessão, credenciais · CWE-287/307/384</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Falhas que permitem assumir a identidade de outro: senhas fracas aceitas, sem MFA, sem rate limit (brute force/credential stuffing), sessão que não expira, token previsível, fixação de sessão.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p>Login sem bloqueio após N tentativas; token de sessão com pouca entropia; sessão não invalidada no logout; MFA ausente em áreas sensíveis; mensagem de erro que distingue "usuário não existe" de "senha errada".</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável</div>
+<pre><span class="c"># sem limite de tentativas + erro que revela o que falhou</span>
+<span class="k">if</span> <span class="k">not</span> user: <span class="k">return</span> <span class="s">"usuário não existe"</span>   <span class="c"># enumeração</span>
+<span class="k">if</span> user.pw != sent_pw: <span class="k">return</span> <span class="s">"senha errada"</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre>limiter.check(ip, user)             <span class="c"># rate limit + backoff/lockout</span>
+<span class="k">if</span> <span class="k">not</span> user <span class="k">or</span> <span class="k">not</span> ph.verify_safe(user.hash, sent_pw):
+    <span class="k">return</span> <span class="s">"credenciais inválidas"</span>       <span class="c"># mensagem genérica</span>
+<span class="c"># + MFA, sessão com expiração, rotação de token no login</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Tomada de conta por brute force/credential stuffing, enumeração de usuários.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>MFA, rate limit/lockout, senhas fortes (NIST 800-63B), mensagens genéricas.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A08</span>Software &amp; Data Integrity Failures</h3><div class="cat">#8 · desserialização, updates não verificados · CWE-502/345</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Código ou dado aceito <b>sem verificar integridade</b>: desserialização insegura (RCE), update de software sem assinatura, pipeline de CI que confia em artefato não verificado. Fronteira com supply chain.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p><code class="inl">pickle.loads</code>, <code class="inl">yaml.load</code> (sem SafeLoader), <code class="inl">ObjectInputStream.readObject</code>, <code class="inl">unserialize()</code> sobre dado do usuário; download executado sem checar hash/assinatura.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável (desserialização)</div>
+<pre><span class="c"># Python — pickle de dado não confiável = RCE</span>
+<span class="k">import</span> pickle
+obj = pickle.loads(request.data)   <span class="c"># __reduce__ executa comando</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre><span class="c"># use um formato de dados, não de objetos</span>
+<span class="k">import</span> json
+obj = json.loads(request.data)     <span class="c"># json não instancia classes</span>
+<span class="c"># YAML: yaml.safe_load(...) · Java: allowlist de classes / evitar nativo</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Execução remota de código ao desserializar entrada controlada pelo atacante.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>JSON em vez de pickle/serial nativo; assinar e verificar artefatos e updates.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-deser" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A09</span>Security Logging &amp; Alerting Failures</h3><div class="cat">#9 · renomeada (ênfase em alerta) · CWE-778/117</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Eventos de segurança não são registrados, logs podem ser adulterados ou vazam segredos, e — o foco do novo nome — <b>ninguém é alertado</b>. Log sem alerta não encurta uma invasão. É o que deixa outras falhas virarem incidentes longos.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p>Login/falha de autz/erro de validação sem log; logs gravando senha/token/PII; ausência de alerta/correlação; log que o próprio usuário pode forjar (log injection via <code class="inl">\n</code>).</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável</div>
+<pre><span class="c"># nada é logado; e quando loga, vaza segredo + aceita CRLF</span>
+login(user, pw)   <span class="c"># sem registro de sucesso/falha</span>
+log.info(<span class="s">"login "</span> + user + <span class="s">" pw="</span> + pw)   <span class="c"># vaza senha + injeção</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre>log.info(<span class="s">"auth.login"</span>, extra={<span class="s">"user_id"</span>: uid,
+         <span class="s">"result"</span>: result, <span class="s">"ip"</span>: ip})   <span class="c"># estruturado, sem segredo</span>
+<span class="c"># + alerta em N falhas, logs íntegros/append-only, sanitizar \r\n</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Ataque passa despercebido; sem trilha para forense; segredo no log.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Logar eventos de segurança (sem PII/segredo), alertar, correlacionar (ligação com Prova D/SIEM).</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">A10</span>Mishandling of Exceptional Conditions <span style="font-size:10px;color:var(--warn)">NOVA</span></h3><div class="cat">#10 · erro mal tratado / fail-open · CWE-209/755/703</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é</div><p>Categoria nova (24 CWEs). Tratamento errado de condições anormais: <b>falhar aberto</b> (em erro, libera acesso), engolir exceções, vazar stack trace/detalhes internos, lógica que não cobre o caso de erro. O erro vira a brecha.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar</div><p><code class="inl">except: pass</code>, <code class="inl">catch(e){}</code> vazio, checagem de permissão dentro de try que, ao falhar, segue adiante; mensagens de erro detalhadas para o usuário final.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável (fail-open)</div>
+<pre><span class="k">try</span>:
+    allowed = check_permission(user, resource)
+<span class="k">except</span> Exception:
+    allowed = <span class="k">True</span>      <span class="c"># erro -&gt; LIBERA (falha aberta!)</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro (fail-closed)</div>
+<pre><span class="k">try</span>:
+    allowed = check_permission(user, resource)
+<span class="k">except</span> Exception:
+    log.exception(<span class="s">"authz error"</span>)
+    allowed = <span class="k">False</span>     <span class="c"># erro -&gt; NEGA (falha fechada)</span>
+<span class="c"># + mensagem genérica ao usuário, detalhe só no log</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Bypass de autorização via erro forçado; vazamento de dados internos no stack trace.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Fail securely (negar em erro), handler global de erro, mensagem genérica + log interno.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOOLS ===== -->
+  <div class="apanel" id="f-tools">
+    <div class="disc">🛠️ <b>Ferramentas de AppSec</b> — a ideia não é "comprar tudo", é um stack enxuto de alto sinal: SAST no PR, SCA + SBOM no build, secret scan no pre-commit, DAST no staging, IaC/container scan no package. Cada ferramenta cobre uma fatia; juntas, cobrem o ciclo.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SAST</span>Análise estática de código</h3><div class="cat">Semgrep, CodeQL, Bandit</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como usar</div>
+<pre><span class="k">semgrep</span> --config auto .                 <span class="c"># regras da comunidade, multi-linguagem</span>
+<span class="k">semgrep</span> --config p/owasp-top-ten .        <span class="c"># foco OWASP</span>
+<span class="k">bandit</span> -r app/                          <span class="c"># SAST para Python</span>
+<span class="c"># CodeQL (GitHub): query semântica do fluxo de dados source-&gt;sink</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>O que observar</div><p>Priorize achados <b>high</b> com fluxo confirmado. Ajuste regras para cortar falso positivo. Rode no PR e <b>falhe o build</b> em severidade alta.</p></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Limite</span>Não vê lógica de negócio nem config de runtime; pode gerar ruído.</div>
+          <div class="r safe"><span class="lab">🟢 Força</span>Barato, cedo, aponta arquivo+linha; ótimo em gate de PR.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">DAST</span>Teste dinâmico da app rodando</h3><div class="cat">OWASP ZAP, Nuclei, Burp</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como usar</div>
+<pre><span class="k">zap-baseline.py</span> -t https://staging.alvo       <span class="c"># scan passivo rápido (CI)</span>
+<span class="k">zap-full-scan.py</span> -t https://staging.alvo      <span class="c"># ativo (mais fundo)</span>
+<span class="k">nuclei</span> -u https://staging.alvo -t cves/        <span class="c"># templates de CVE conhecidas</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>O que observar</div><p>Rode em <b>staging</b> (nunca produção sem autorização). Headers de segurança, XSS/SQLi refletidos, config exposta. Complementa o SAST com a visão de runtime.</p></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Limite</span>Não diz a linha; cobre só o que tem rota HTTP e foi navegado.</div>
+          <div class="r safe"><span class="lab">🟢 Força</span>Pega config/auth/runtime com poucos falsos positivos.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SCA</span>Dependências + SBOM</h3><div class="cat">Dependency-Check, Trivy, Grype, Snyk, Dependabot</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como usar</div>
+<pre><span class="k">trivy</span> fs --scanners vuln,license .         <span class="c"># deps + licenças</span>
+<span class="k">grype</span> dir:.                                <span class="c"># casa deps com CVE</span>
+<span class="k">syft</span> dir:. -o cyclonedx-json &gt; sbom.json   <span class="c"># gera o SBOM</span>
+<span class="k">grype</span> sbom:./sbom.json                     <span class="c"># re-checa o SBOM contra novas CVEs</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>O que observar</div><p>Severidade (CVSS) + se há fix disponível + se a função vulnerável é realmente usada (VEX). Gate: falhar em CRITICAL/HIGH com correção disponível.</p></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Limite</span>Não acha bug no seu código; depende de a CVE já existir na base.</div>
+          <div class="r safe"><span class="lab">🟢 Força</span>Cobre a maior parte do código entregue (o de terceiros) e gera SBOM.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SECRETS / IaC</span>Segredos e infraestrutura como código</h3><div class="cat">gitleaks, trufflehog, Checkov, tfsec, kics</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como usar</div>
+<pre><span class="k">gitleaks</span> detect --source .                 <span class="c"># segredos no código E no histórico</span>
+<span class="k">trufflehog</span> git file://. --only-verified    <span class="c"># valida se o segredo é vivo</span>
+<span class="k">checkov</span> -d .                               <span class="c"># Terraform/K8s/Docker misconfig</span>
+<span class="k">trivy</span> config .                             <span class="c"># IaC + Dockerfile</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>O que observar</div><p>Segredo achado = <b>rotacione já</b> (está no histórico git para sempre). IaC: buckets públicos, security groups abertos, containers como root.</p></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Limite</span>Secret scan só acha o que está no repo; IaC não vê o runtime real.</div>
+          <div class="r safe"><span class="lab">🟢 Força</span>Barato no pre-commit; evita a classe de vazamento mais comum.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-secret" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DEVSECOPS ===== -->
+  <div class="apanel" id="f-devsecops">
+    <div class="disc">🔁 <b>DevSecOps</b> — segurança automatizada em cada etapa do pipeline, para que vazamento de credencial, dependência vulnerável, misconfig e artefato adulterado sejam pegos <b>pelo próprio pipeline</b>, não por um humano no fim. Um stack bem paralelizado adiciona menos de ~5 min ao build.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">PIPELINE</span>Qual controle em cada etapa</h3><div class="cat">a ordem que importa</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Mapa do pipeline seguro</div>
+<pre><span class="c"># PRE-COMMIT (máquina do dev):</span>  secret scan, lint, SAST rápido
+<span class="c"># COMMIT / PR:</span>                   SAST completo, SCA, secret scan
+<span class="c"># BUILD:</span>                        gerar SBOM, SCA do SBOM
+<span class="c"># PACKAGE:</span>                      scan de container + IaC scan
+<span class="c"># PUBLISH:</span>                      assinar artefato (cosign) + proveniência SLSA
+<span class="c"># PRE-DEPLOY:</span>                   policy-as-code gates (OPA)
+<span class="c"># STAGING:</span>                      DAST
+<span class="c"># PROD:</span>                         monitoração/alerta (liga com A09 e Prova D)</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Antipadrão</span>Só um pentest no fim: caro, tarde e não repetível.</div>
+          <div class="r safe"><span class="lab">🟢 Certo</span>Controle automático em cada etapa, falhando o build no que é crítico.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">CI</span>Exemplo: GitHub Actions com gates</h3><div class="cat">shift-left na prática</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>.github/workflows/devsecops.yml</div>
+<pre>name: devsecops
+on: [pull_request]
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@a1b2c3d   <span class="c"># pin por SHA</span>
+      - name: Secrets
+        run: gitleaks detect --source . --redact
+      - name: SAST
+        run: semgrep --config p/owasp-top-ten --error
+      - name: SCA + SBOM
+        run: |
+          syft dir:. -o cyclonedx-json &gt; sbom.json
+          grype sbom:./sbom.json --fail-on high
+      - name: IaC
+        run: trivy config . --severity HIGH,CRITICAL --exit-code 1</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>O que observar</div><p><code class="inl">--error</code>/<code class="inl">--exit-code 1</code>/<code class="inl">--fail-on</code> = o job <b>quebra</b> o PR em achado crítico. Rode os passos em paralelo quando possível. Baixa severidade: registra, não bloqueia.</p></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Antipadrão</span>Scanner que só "avisa" e nunca bloqueia — vira ruído ignorado.</div>
+          <div class="r safe"><span class="lab">🟢 Certo</span>Gate que bloqueia o crítico, com exceção auditável quando necessário.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">SEGREDOS</span>Credenciais no pipeline</h3><div class="cat">o alvo favorito do atacante de CI/CD</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Regras</div>
+<pre><span class="c"># nenhum segredo estático no CI: use OIDC federation (token efêmero)</span>
+<span class="c"># segredos vêm de cofre (Vault / cloud secrets), injetados em runtime</span>
+<span class="c"># mascarar segredos nos logs do build</span>
+<span class="c"># pin de TODA ação de terceiros por commit SHA (não @main/@v1)</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Chave de nuvem longa vazada no CI = comprometimento de toda a conta.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>OIDC + credenciais curtas, cofre, mascaramento, pin por SHA.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SUPPLY CHAIN ===== -->
+  <div class="apanel" id="f-supply">
+    <div class="disc">📦 <b>Segurança da cadeia de suprimentos (A03:2025)</b> — a maior parte do seu software não foi você quem escreveu. Atacantes miram o elo mais fraco: uma dependência, o build ou o registry. Defesa = <b>saber o que você usa</b> (SBOM), <b>fixar</b> o que usa (pin+hash) e <b>provar</b> o que você entregou (assinatura + proveniência).</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SBOM</span>Inventário de tudo que entra no produto</h3><div class="cat">Syft, CycloneDX, SPDX, Dependency-Track</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>O <b>Software Bill of Materials</b> lista cada componente (incluindo os transitivos), versão, licença e origem. Quando sai uma CVE nova (ex.: Log4Shell), você responde em minutos "eu uso isso?" em vez de dias.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">syft</span> dir:. -o cyclonedx-json &gt; sbom.json    <span class="c"># gera o SBOM por build</span>
+<span class="c"># armazene o SBOM junto do artefato e re-escaneie continuamente:</span>
+<span class="k">grype</span> sbom:./sbom.json                      <span class="c"># casa com CVEs novas</span>
+<span class="c"># Dependency-Track: monitora os SBOMs ao longo do tempo</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Sem SBOM</span>Uma CVE nova vira uma caça manual em pânico por todos os repositórios.</div>
+          <div class="r safe"><span class="lab">🟢 Com SBOM</span>Resposta imediata + VEX (quais CVEs realmente afetam o produto).</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">ATAQUES</span>Dependency confusion, typosquatting, pacote malicioso</h3><div class="cat">como o elo é comprometido</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p><b>Typosquatting:</b> pacote com nome quase igual (<code class="inl">reqeusts</code>). <b>Dependency confusion:</b> publicar no registry público um pacote com o nome de um interno, e o gestor baixar o público. <b>Pacote malicioso:</b> lib legítima comprometida (ex.: worm npm <b>Shai-Hulud</b>, 2025).</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>Como achar / mitigar</div>
+<pre><span class="c"># conferir nome exato e reputação antes de adicionar dependência</span>
+<span class="c"># registry interno com scoped packages + bloquear fetch público</span>
+<span class="c"># lockfile commitado + pin por hash (install só o que foi verificado)</span>
+<span class="k">npm</span> ci            <span class="c"># instala exatamente o lockfile (não resolve versões novas)</span>
+<span class="k">pip</span> install --require-hashes -r requirements.txt</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Código malicioso roda no seu build/app com os privilégios do CI.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Pin+hash, lockfile, registry interno, SCA e revisão de novas dependências.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">INTEGRIDADE</span>Assinatura &amp; proveniência (Sigstore, SLSA)</h3><div class="cat">provar o que você entregou</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p><b>Assinar</b> o artefato prova que ele veio de você e não foi adulterado. <b>Proveniência</b> (SLSA) registra <b>como</b> e <b>de onde</b> ele foi construído. Juntos fecham o elo entre o código revisado e o que roda em produção.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">cosign</span> sign       registry/app@sha256:...     <span class="c"># assina a imagem</span>
+<span class="k">cosign</span> verify     registry/app@sha256:...     <span class="c"># verifica antes de deploy</span>
+<span class="c"># SLSA: o pipeline gera atestado de proveniência (build reproduzível)</span>
+<span class="c"># gate de admissão (K8s): só roda imagem assinada e com proveniência</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Sem isso</span>Um artefato trocado no registry passa como legítimo.</div>
+          <div class="r safe"><span class="lab">🟢 Com isso</span>Deploy só aceita o que foi assinado pelo seu pipeline (cadeia de confiança).</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECRETS & CRYPTO ===== -->
+  <div class="apanel" id="f-secrets">
+    <div class="disc">🔑 <b>Segredos &amp; Criptografia no código</b> — dois dos achados mais comuns (e mais fáceis de corrigir) do code review: credenciais hardcoded e cripto fraca. A regra: <b>segredo nunca no código</b> (vai para cofre/env) e <b>nunca invente cripto</b> (use primitivas certas).</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">SEGREDOS</span>Credenciais hardcoded</h3><div class="cat">CWE-798 · o clássico do git vazado</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Senha, chave de API ou token escrito direto no código. Uma vez commitado, fica no <b>histórico git para sempre</b> — mesmo que você apague depois. Repositório que vaza = conta comprometida.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável</div>
+<pre>DB_PASSWORD = <span class="s">"P@ssw0rd123"</span>
+STRIPE_KEY  = <span class="s">"sk_live_51Hxxxxxxxxxxxxxxxx"</span>   <span class="c"># chave viva no repo</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre><span class="k">import</span> os
+DB_PASSWORD = os.environ[<span class="s">"DB_PASSWORD"</span>]      <span class="c"># injetado em runtime</span>
+STRIPE_KEY  = vault.get(<span class="s">"stripe/live_key"</span>)    <span class="c"># de um cofre</span>
+<span class="c"># .env NO .gitignore · secret scan no pre-commit · ROTACIONE o que vazou</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Qualquer um com acesso ao repo (ou ao histórico) usa suas credenciais.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Env/cofre, <code>.gitignore</code>, gitleaks no pre-commit, rotação imediata.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-secret" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">HASH</span>Armazenamento de senha</h3><div class="cat">CWE-916 · nunca MD5/SHA1</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Senha nunca é guardada em texto nem em hash rápido (MD5/SHA1/SHA256 puro). Use uma função <b>lenta, com sal</b>, feita para senha: <b>argon2id</b> (preferido), bcrypt ou scrypt.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável</div>
+<pre>hash = hashlib.sha256(password.encode()).hexdigest()  <span class="c"># rápido, sem sal</span></pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre><span class="k">from</span> argon2 <span class="k">import</span> PasswordHasher
+ph = PasswordHasher()               <span class="c"># sal automático + custo configurável</span>
+hash = ph.hash(password)
+<span class="k">try</span>: ph.verify(hash, attempt)        <span class="c"># comparação em tempo constante</span>
+<span class="k">except</span>: deny()</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>Banco vazado → senhas quebradas em massa (bilhões de hash/s em GPU).</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>argon2id/bcrypt/scrypt; custo calibrado; política de senha NIST 800-63B.</div>
+        </div></div>
+        <button class="trainbtn" data-flab="f-hash" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">CRIPTO</span>Cifra simétrica: modo e chave</h3><div class="cat">CWE-327 · evite ECB e chave fixa</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Para cifrar dado, use um modo <b>autenticado</b> (AES-GCM) com <b>nonce único</b> por mensagem e a chave vinda de um cofre. O modo <b>ECB</b> vaza padrões (o famoso "pinguim ECB") e chave hardcoded anula a cifra.</p></div>
+        <div class="blk"><div class="h find"><span class="d"></span>🔴 Vulnerável</div>
+<pre><span class="c"># ECB + chave fixa no código</span>
+cipher = AES.new(<span class="s">b"1234567890123456"</span>, AES.MODE_ECB)</pre></div>
+        <div class="blk"><div class="h fix"><span class="d"></span>🟢 Seguro</div>
+<pre><span class="k">from</span> cryptography.hazmat.primitives.ciphers.aead <span class="k">import</span> AESGCM
+key = load_key_from_vault()         <span class="c"># fora do código</span>
+nonce = os.urandom(<span class="s">12</span>)              <span class="c"># único por mensagem</span>
+ct = AESGCM(key).encrypt(nonce, plaintext, aad)   <span class="c"># cifra + autentica</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Impacto</span>ECB revela estrutura do dado; chave fixa = qualquer um decifra.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>AES-GCM (ou libsodium), nonce único, chave em cofre, rotação de chaves.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DESAFIOS ===== -->
+  <div class="apanel" id="f-provas">
+    <div class="disc">📝 <b>Desafios de code review</b> — leia o trecho, ache a falha e capture a flag. Treina o reflexo que vale ponto na prova: olhar código e <b>na hora</b> ver a vulnerabilidade. Sem colar — digite a resposta.</div>
+
+    <div class="v open"><div class="top"><div class="ttl"><h3><span class="os lin">DESAFIO 1</span>O segredo escondido no código</h3><div class="cat">hardcoded secret · decode</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>Enunciado</div><p>Um dev "escondeu" uma chave ofuscando em base64 dentro do código. Ofuscar <b>não</b> é proteger. Decodifique e capture a flag.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Código revisado</div>
+<pre><span class="k">import</span> base64
+<span class="c"># "ninguém vai olhar isso aqui" — erro clássico</span>
+API_KEY = base64.b64decode(<span class="s">"ZmxhZ3toYXJkY29kZWRfc2VjcmV0c19hcmVfYmFkfQ=="</span>)</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Dica</div><pre>echo 'ZmxhZ3toYXJkY29kZWRfc2VjcmV0c19hcmVfYmFkfQ==' | base64 -d</pre></div>
+        <div class="eflag" data-flag="flag{hardcoded_secrets_are_bad}">
+          <input type="text" placeholder="flag{...}" autocomplete="off" spellcheck="false">
+          <button type="button">Verificar</button>
+          <span class="eres"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">DESAFIO 2</span>Comentário suspeito (hex)</h3><div class="cat">log/comentário vazado · decode</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>Enunciado</div><p>Durante a revisão você acha um comentário com um blob hexadecimal deixado por engano. Converta de hex para ASCII e capture a flag.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Código revisado</div>
+<pre><span class="c"># TODO remover antes do merge:</span>
+<span class="c"># 666c61677b736173745f636174636865735f696e6a656374696f6e7d</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Dica</div><pre>echo '666c...7d' | xxd -r -p      # ou use CyberChef "From Hex"</pre></div>
+        <div class="eflag" data-flag="flag{sast_catches_injection}">
+          <input type="text" placeholder="flag{...}" autocomplete="off" spellcheck="false">
+          <button type="button">Verificar</button>
+          <span class="eres"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">DESAFIO 3</span>Classifique a falha (ROT13)</h3><div class="cat">conhecimento + decode</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>Enunciado</div><p>Qual princípio resume toda esta Prova F? A resposta está cifrada em ROT13. Decodifique <code class="inl">synt{fuvsg_yrsg_jvaf}</code> e capture a flag.</p></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Dica</div><pre>echo 'synt{fuvsg_yrsg_jvaf}' | tr 'A-Za-z' 'N-ZA-Mn-za-m'</pre></div>
+        <div class="eflag" data-flag="flag{shift_left_wins}">
+          <input type="text" placeholder="flag{...}" autocomplete="off" spellcheck="false">
+          <button type="button">Verificar</button>
+          <span class="eres"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="disc" style="margin-top:18px">🏁 <b>Fechou o ciclo.</b> Prova E ataca a aplicação; Prova F a constrói e revisa com segurança. Quem domina os dois lados — achar a falha explorando <b>e</b> achar a falha no código — é o perfil que o WorldSkills Cyber Security premia.</div>
+  </div>
+</div>
 </div>
 
 <div class="cmodal" id="cModal">
@@ -8350,6 +8995,64 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
   if(modal){
     var t=document.getElementById('cmTitle'), b=document.getElementById('cmBody');
     document.querySelectorAll('#econcepts .popc').forEach(function(c){
+      c.addEventListener('click',function(){
+        t.textContent=c.getAttribute('data-t')||'';
+        var gx=c.querySelector('.gx'); b.innerHTML=gx?gx.innerHTML:'';
+        modal.classList.add('show');
+      });
+    });
+  }
+})();
+</script>
+<script>
+/* ===== Prova F: abas, treinos e flags ===== */
+(function(){
+  // abas internas
+  document.querySelectorAll('#provaF .atab').forEach(function(t){
+    t.addEventListener('click',function(){
+      document.querySelectorAll('#provaF .atab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('#provaF .apanel').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      var el=document.getElementById(t.dataset.fp); if(el) el.classList.add('active');
+    });
+  });
+
+  // cenários de treino (corrigir a falha no código)
+  var FLABS={
+    "f-sqli":{title:"Corrigir SQL Injection", cmd:"GET /item?id=1 OR 1=1", vuln:"retornou TODAS as linhas da tabela (query concatenada)", fix:"usar prepared statement / consulta parametrizada (prepare + bind)", safe:"retornou apenas o item 1 (dado nunca vira codigo)", key:["prepar","parametriz","bind","pdo","placeholder","?"]},
+    "f-cmd":{title:"Corrigir Command Injection", cmd:"ping para host=8.8.8.8; cat /etc/passwd", vuln:"root:x:0:0:... (o ; executou um segundo comando)", fix:"usar subprocess com lista de args e shell=False (sem shell)", safe:"PING 8.8.8.8 ... (o host virou um unico argumento)", key:["shell=false","lista","subprocess","args","sem shell","array"]},
+    "f-deser":{title:"Corrigir Desserializacao Insegura", cmd:"POST payload pickle malicioso", vuln:"comando do atacante executado (RCE via __reduce__)", fix:"usar json.loads em vez de pickle / yaml.safe_load", safe:"dado lido como objeto inerte (json nao instancia classes)", key:["json","safe_load","allowlist","nao pickle","inert"]},
+    "f-idor":{title:"Corrigir IDOR / Broken Access Control", cmd:"GET /api/orders/777 (pedido de outro usuario)", vuln:"dados do pedido 777 retornados sem checar o dono", fix:"verificar no servidor se o objeto pertence ao usuario logado", safe:"404 - objeto nao pertence a voce (deny by default)", key:["dono","owner","user_id","servidor","autoriz","pertence","404"]},
+    "f-dep":{title:"Corrigir Dependencia Vulneravel", cmd:"sca: lib X 1.0.0 -> CVE critica", vuln:"componente vulneravel em uso, sem pin e sem SCA no pipeline", fix:"atualizar e fixar a versao (pin+hash) e adicionar SCA no CI", safe:"lib X 1.0.5 fixada - SCA do pipeline passou", key:["atualiz","update","pin","hash","sca","versao","lock"]},
+    "f-hash":{title:"Corrigir Hash de Senha Fraco", cmd:"cadastro: senha salva com md5()", vuln:"hash md5 sem sal - quebrado em segundos no hashcat", fix:"usar argon2id (ou bcrypt/scrypt) com sal e custo", safe:"senha armazenada com argon2id (lento, com sal)", key:["argon2","bcrypt","scrypt","sal","salt","custo","lento"]},
+    "f-secret":{title:"Remover Segredo Hardcoded", cmd:"grep -rn 'sk_live' .  -> chave no codigo", vuln:"STRIPE_KEY = sk_live_... (segredo vivo commitado no repo)", fix:"mover para variavel de ambiente / cofre e rotacionar a chave", safe:"STRIPE_KEY = os.environ[...] (segredo fora do codigo)", key:["environ","env","cofre","vault","rotac","getenv",".env"]}
+  };
+  if(window.csOpenLab){
+    document.querySelectorAll('#provaF .trainbtn[data-flab]').forEach(function(b){
+      var s=FLABS[b.dataset.flab]; if(!s) return;
+      b.addEventListener('click',function(e){ e.stopPropagation(); window.csOpenLab(s, s.title, false); });
+    });
+  }
+
+  // validacao de flags (desafios de code review)
+  document.querySelectorAll('#provaF .eflag').forEach(function(w){
+    var inp=w.querySelector('input'), btn=w.querySelector('button'), res=w.querySelector('.eres');
+    var ans=(w.getAttribute('data-flag')||'').trim().toLowerCase();
+    function check(){
+      var v=(inp.value||'').trim().toLowerCase();
+      if(!v){ res.textContent=''; res.className='eres'; return; }
+      if(v===ans){ res.textContent='✅ Flag correta! Mandou bem.'; res.className='eres ok'; }
+      else { res.textContent='❌ Ainda não — revise o decode.'; res.className='eres no'; }
+    }
+    btn.addEventListener('click',check);
+    inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); check(); } });
+  });
+
+  // garantir modal de conceitos para #fconcepts
+  var modal=document.getElementById('cModal');
+  if(modal){
+    var t=document.getElementById('cmTitle'), b=document.getElementById('cmBody');
+    document.querySelectorAll('#fconcepts .popc').forEach(function(c){
       c.addEventListener('click',function(){
         t.textContent=c.getAttribute('data-t')||'';
         var gx=c.querySelector('.gx'); b.innerHTML=gx?gx.innerHTML:'';
