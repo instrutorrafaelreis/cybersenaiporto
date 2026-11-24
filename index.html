@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vulnerabilidades de Sistema Operacional — Guia de Campo</title>
+<style>
+  :root{
+    --bg:#0b0f17; --card:#131c2b; --card2:#0f1724; --line:#223049;
+    --txt:#e3ebf6; --mut:#97a6c0; --mut2:#6b7a96;
+    --acc:#36d399; --acc2:#38bdf8; --warn:#fbbf24; --crit:#f87171; --info:#a78bfa;
+    --mono:ui-monospace,"SFMono-Regular","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1100px 560px at 85% -10%,#15223a 0,transparent 60%),var(--bg);
+    color:var(--txt);font-family:var(--sans);line-height:1.62;font-size:15.5px}
+  a{color:var(--acc2);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+
+  header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0e1626,#0b0f17);padding:34px 0 26px}
+  .brand{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+  h1{font-size:clamp(25px,3.6vw,36px);margin:12px 0 6px;letter-spacing:-.02em;line-height:1.15}
+  h1 .g{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--mut);max-width:74ch}
+
+  /* platform tabs */
+  .ptabs{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+  .ptab{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);
+    color:var(--mut);padding:10px 16px;border-radius:12px 12px 0 0;cursor:pointer;font-size:14.5px;font-weight:600;
+    border-bottom:none;position:relative;top:1px}
+  .ptab .ic{font-size:17px}
+  .ptab.active{background:var(--bg);color:var(--txt);border-color:var(--line)}
+  .ptab.active .ic{filter:drop-shadow(0 0 8px var(--acc))}
+  .ptab.soon{opacity:.6;cursor:default}
+  .ptab .tagsoon{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut2);
+    border:1px solid var(--line);border-radius:999px;padding:1px 7px}
+
+  .panel{display:none;padding:28px 0 60px}
+  .panel.active{display:block}
+
+  /* sub filter pills */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 22px;position:sticky;top:0;z-index:4;
+    background:rgba(11,15,23,.9);backdrop-filter:blur(8px);padding:12px 0;border-bottom:1px solid var(--line)}
+  .pill{font-size:13px;color:var(--mut);border:1px solid var(--line);background:var(--card);
+    padding:6px 12px;border-radius:999px;cursor:pointer;user-select:none}
+  .pill:hover{color:var(--txt);border-color:var(--acc2)}
+  .pill.on{background:#0e2336;color:var(--acc2);border-color:var(--acc2)}
+
+  .count{color:var(--mut2);font-size:13px;margin-bottom:16px}
+
+  /* vuln card */
+  .v{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 16px;overflow:hidden}
+  .v>.top{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;cursor:pointer}
+  .v>.top:hover{background:#15203049}
+  .sev{flex:0 0 auto;width:58px;text-align:center;padding-top:2px}
+  .sev .num{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1}
+  .sev .lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut2);margin-top:3px}
+  .sev.crit .num{color:var(--crit)} .sev.alto .num{color:var(--warn)} .sev.med .num{color:var(--acc2)} .sev.info .num{color:var(--info)}
+  .v .ttl{flex:1}
+  .v .ttl h3{margin:0 0 3px;font-size:17px}
+  .v .ttl .cat{font-size:12px;color:var(--mut)}
+  .v .chev{flex:0 0 auto;color:var(--mut2);font-size:18px;transition:transform .2s;margin-top:4px}
+  .v.open .chev{transform:rotate(90deg)}
+  .v .body{display:none;padding:2px 18px 20px;border-top:1px solid var(--line)}
+  .v.open .body{display:block}
+  .blk{margin:16px 0 0}
+  .blk .h{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:7px}
+  .blk .h .d{width:14px;height:2px;border-radius:2px}
+  .h.what .d{background:var(--acc2)} .h.find .d{background:var(--warn)} .h.fix .d{background:var(--acc)}
+  .blk p{margin:0;color:var(--txt)}
+  pre{margin:8px 0 0;padding:12px 14px;background:var(--card2);border:1px solid var(--line);border-radius:10px;
+    overflow-x:auto;font-family:var(--mono);font-size:13px;color:#e8eef9;line-height:1.55}
+  pre .c{color:var(--mut2)} pre .k{color:var(--acc)} pre .s{color:var(--warn)} pre .r{color:var(--crit)}
+  code.inl{font-family:var(--mono);font-size:.9em;background:var(--card2);border:1px solid var(--line);padding:1px 6px;border-radius:6px}
+  .fixbox{background:#0e1f1a;border:1px solid #1f5e44;border-radius:10px;padding:10px 13px;margin-top:8px}
+  .cve{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--crit);border:1px solid #5e2a2a;background:#2a1115;border-radius:6px;padding:1px 7px;margin:0 4px 4px 0}
+  .tagok{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;background:#0e2a20;color:var(--acc);border:1px solid #1f5e44;margin-left:8px;vertical-align:middle}
+
+  .vfig{margin:14px 0 0;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px}
+  .vfig svg{display:block;width:100%;height:auto}
+  .vfig .cap{color:var(--mut2);font-size:12px;text-align:center;margin-top:6px;font-family:var(--mono)}
+
+  .soonbox{border:1px dashed var(--line);border-radius:14px;padding:30px;text-align:center;color:var(--mut)}
+  .soonbox h3{color:var(--txt);margin:0 0 8px}
+  .soonbox ul{display:inline-block;text-align:left;color:var(--mut);margin:14px 0 0;padding-left:20px}
+  /* fundamentos */
+  .gloss{display:grid;grid-template-columns:1fr;gap:10px;margin:8px 0 0}
+  .gi{border:1px solid var(--line);background:var(--card);border-radius:11px;padding:12px 15px}
+  .gi b{color:var(--acc2)}
+  .gi.click{cursor:pointer;transition:.12s;position:relative}
+  .gi.click:hover{border-color:var(--acc2);background:#15203a}
+  .gi .more{float:right;font-size:11px;color:var(--mut2);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+  .gi.click:hover .more{color:var(--acc2);border-color:var(--acc2)}
+  .gi .gx{display:none}
+  /* concept modal */
+  .cmodal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;
+    background:rgba(5,8,13,.72);backdrop-filter:blur(4px)}
+  .cmodal.show{display:flex}
+  .cmbox{background:var(--card);border:1px solid var(--acc2);border-radius:16px;max-width:600px;width:100%;
+    max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .cmbox .cmh{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:var(--card)}
+  .cmbox .cmh h3{margin:0;font-size:19px;flex:1}
+  .cmbox .cmx{cursor:pointer;color:var(--mut);font-size:22px;line-height:1;border:none;background:none;padding:0 4px}
+  .cmbox .cmx:hover{color:var(--crit)}
+  .cmbox .cmb{padding:18px 20px;color:var(--txt);font-size:15px;line-height:1.7}
+  .stdgrid{display:grid;grid-template-columns:1fr;gap:12px;margin:8px 0 0}
+  .std{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:14px 16px}
+  .std .sh{display:flex;align-items:baseline;gap:9px;margin-bottom:5px}
+  .std .sh .ab{font-family:var(--mono);font-weight:700;color:var(--acc);font-size:15px}
+  .std .sh .full{color:var(--mut);font-size:12.5px}
+  .std p{margin:0;color:var(--txt);font-size:14px}
+  .ftable{width:100%;border-collapse:collapse;margin:10px 0 0;font-size:13.5px}
+  .ftable th{text-align:left;color:var(--mut);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    padding:8px 10px;border-bottom:1px solid var(--line)}
+  .ftable td{padding:8px 10px;border-bottom:1px solid #1a2436;vertical-align:top}
+  .ftable td.rk{font-family:var(--mono);color:var(--mut2);width:38px}
+  .ftable td.id{font-family:var(--mono);color:var(--acc2);white-space:nowrap;width:92px}
+  .ftable tr:hover td{background:#131c2b55}
+  .owl{counter-reset:ow;display:grid;grid-template-columns:1fr;gap:8px;margin:8px 0 0}
+  .owl .owi{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px 14px;display:flex;gap:12px}
+  .owl .owi .c{font-family:var(--mono);color:var(--crit);font-weight:700;flex:0 0 auto}
+  .owl .owi .t b{font-size:14.5px}
+  .owl .owi .t .d{color:var(--mut);font-size:13px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+  .flow .st{flex:1 1 150px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px 13px}
+  .flow .st .n{font-family:var(--mono);font-size:11px;color:var(--acc)}
+  .flow .st b{display:block;font-size:14px;margin:3px 0 2px}
+  .flow .st .d{color:var(--mut);font-size:12.5px}
+  @media(min-width:680px){.gloss{grid-template-columns:1fr 1fr}.stdgrid.two{grid-template-columns:1fr 1fr}}
+  /* tools */
+  .feat{display:flex;gap:18px;align-items:center;border:1px solid var(--acc);border-radius:16px;
+    background:linear-gradient(135deg,#0e2336,#0f1724);padding:20px 22px;margin:4px 0 24px}
+  .feat .ic{flex:0 0 auto;width:60px;height:60px;border-radius:14px;background:#0b1a12;border:1px solid #1f5e44;
+    display:flex;align-items:center;justify-content:center;font-size:30px}
+  .feat h3{margin:0 0 4px;font-size:19px}
+  .feat p{margin:0;color:var(--mut);font-size:14px}
+  .feat .go{flex:0 0 auto;margin-left:auto;background:var(--acc);color:#07241a;font-weight:700;
+    padding:9px 16px;border-radius:10px;font-size:14px;white-space:nowrap}
+  .feat .go:hover{text-decoration:none;filter:brightness(1.08)}
+  .tgrid{display:grid;grid-template-columns:1fr;gap:12px}
+  .tgroup h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc2);margin:22px 0 10px;
+    display:flex;align-items:center;gap:8px}
+  .tgroup h4 .d{width:16px;height:2px;background:var(--acc2);border-radius:2px}
+  .tool{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:var(--card);
+    border-radius:11px;padding:13px 15px}
+  .tool .tn{flex:1}
+  .tool .tn a{font-weight:600;font-size:15px}
+  .tool .tn .dsc{color:var(--mut);font-size:13.5px;margin-top:2px}
+  .tool .badge{flex:0 0 auto;font-size:10.5px;color:var(--mut2);border:1px solid var(--line);border-radius:999px;padding:2px 9px;height:fit-content}
+  @media(min-width:680px){.tgrid.two{grid-template-columns:1fr 1fr}}
+  /* cvss calculator */
+  .score{display:flex;gap:20px;align-items:center;border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(135deg,#131c2b,#0f1724);padding:20px 22px;margin:4px 0 22px;
+    position:sticky;top:0;z-index:4}
+  .score .ring{flex:0 0 auto;width:92px;height:92px;border-radius:50%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;border:4px solid var(--acc);background:#0b1220}
+  .score .ring .n{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1}
+  .score .ring .m{font-size:9px;color:var(--mut2);letter-spacing:.1em;margin-top:2px}
+  .score .info{flex:1;min-width:0}
+  .score .sevtag{display:inline-block;font-size:12px;font-weight:700;padding:3px 12px;border-radius:999px;letter-spacing:.04em}
+  .score .vec{font-family:var(--mono);font-size:12.5px;color:var(--mut);margin-top:8px;word-break:break-all;
+    background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  .metric{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px;margin-bottom:12px}
+  .metric .ml{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+  .metric .ml .nm{font-weight:600;font-size:15px}
+  .metric .ml .ab{font-family:var(--mono);font-size:12px;color:var(--mut2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+  .metric .ml .ds{color:var(--mut);font-size:13px}
+  .opts{display:flex;gap:7px;flex-wrap:wrap}
+  .opt{cursor:pointer;border:1px solid var(--line);background:var(--card2);color:var(--mut);
+    border-radius:9px;padding:7px 13px;font-size:13.5px;user-select:none;transition:.12s}
+  .opt:hover{color:var(--txt);border-color:var(--acc2)}
+  .opt.sel{background:#0e2336;color:var(--acc2);border-color:var(--acc2);font-weight:600}
+  .mgroup{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--acc);margin:20px 0 10px;
+    display:flex;align-items:center;gap:8px}
+  .mgroup .d{width:16px;height:2px;background:var(--acc);border-radius:2px}
+  .band{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0 0;font-size:11.5px;text-align:center}
+  .band div{border:1px solid var(--line);border-radius:8px;padding:6px 2px}
+  .band .lv{font-weight:700} .band .rg{color:var(--mut2);font-size:10.5px}
+  .disc{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 15px;color:var(--mut);font-size:13px;margin:20px 0}
+  footer{padding:30px 0 60px;color:var(--mut2);font-size:12.5px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · Instrutor Rafael Reis · Security Assessment</div>
+    <h1>Vulnerabilidades de SO: <span class="g">o que é, como achar e como resolver</span></h1>
+    <p class="sub">Guia de campo para enumeração e correção de vulnerabilidades de sistema operacional. Comece pelo <b>Linux</b> (abaixo). As abas de <b>Windows</b> e <b>Web</b> já estão reservadas para evoluirmos o material.</p>
+
+    <div class="ptabs">
+      <div class="ptab" data-panel="fund"><span class="ic">📚</span> Fundamentos</div>
+      <div class="ptab active" data-panel="linux"><span class="ic">🐧</span> Linux</div>
+      <div class="ptab" data-panel="windows"><span class="ic">🪟</span> Windows</div>
+      <div class="ptab" data-panel="web"><span class="ic">🌐</span> Web</div>
+      <div class="ptab" data-panel="cvss"><span class="ic">🧮</span> CVSS</div>
+      <div class="ptab" data-panel="tools"><span class="ic">🧰</span> Ferramentas</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===================== FUNDAMENTOS ===================== -->
+<div class="panel" id="fund">
+
+  <div class="disc" style="margin-top:4px">📚 Esta aba é o <b>mapa do território</b>: os conceitos, padrões e metodologias que todo especialista precisa dominar. As outras abas (Linux, Windows, Web) são a prática; aqui está a teoria que amarra tudo.</div>
+
+  <div class="mgroup" style="margin-top:24px"><span class="d"></span>1 · Conceitos-chave <span style="font-size:11px;color:var(--mut2);text-transform:none;letter-spacing:0">— clique em cada card para detalhes</span></div>
+  <div class="gloss" id="concepts">
+    <div class="gi click" data-t="Vulnerabilidade">
+      <b>Vulnerabilidade</b> — uma fraqueza que pode ser explorada. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Uma <b>vulnerabilidade</b> é qualquer fraqueza em software, configuração, hardware ou processo que, se explorada, compromete a segurança (confidencialidade, integridade ou disponibilidade). Pode nascer de erro de programação (ex.: falta de validação de entrada), de configuração (ex.: permissão errada no <code class="inl">/etc/shadow</code>) ou de projeto.<br><br><b>Exemplo:</b> um login que concatena a senha direto na query SQL tem uma vulnerabilidade de SQL Injection. <b>Importante:</b> existir a fraqueza não significa que já houve ataque — significa que o ataque é <i>possível</i>.</div>
+    </div>
+    <div class="gi click" data-t="Ameaça (Threat)">
+      <b>Ameaça (threat)</b> — quem ou o que pode explorar a falha. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Uma <b>ameaça</b> é o agente ou evento capaz de explorar uma vulnerabilidade: um atacante externo, um funcionário mal-intencionado, um malware, ou até um evento acidental. O conjunto de ameaças relevantes é o <b>threat model</b> (modelagem de ameaças).<br><br><b>Relação:</b> vulnerabilidade é a "porta aberta"; a ameaça é "quem tenta entrar". Sem ameaça, a vulnerabilidade continua existindo, mas o risco é menor.</div>
+    </div>
+    <div class="gi click" data-t="Risco">
+      <b>Risco</b> — probabilidade × impacto. <span class="more">ⓘ detalhes</span>
+      <div class="gx">O <b>risco</b> combina a <b>probabilidade</b> de uma ameaça explorar a vulnerabilidade com o <b>impacto</b> caso aconteça. É o que realmente importa para priorizar correções.<br><br><b>Fórmula mental:</b> Risco ≈ Probabilidade × Impacto. Uma falha crítica (impacto alto) em um sistema isolado e sem atacantes (probabilidade baixa) pode ter risco menor que uma falha média num servidor exposto à internet. Ferramentas como EPSS (probabilidade) e KEV (exploração real) ajudam a estimar o risco, não só o CVSS.</div>
+    </div>
+    <div class="gi click" data-t="Exploit">
+      <b>Exploit</b> — o código/técnica que usa a falha. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Um <b>exploit</b> é o código ou a sequência de passos que tira proveito de uma vulnerabilidade para produzir um efeito (abrir shell, ler arquivo, elevar privilégio). Pode ser um script pronto (ex.: no Exploit-DB/Metasploit) ou uma técnica manual.<br><br><b>Exemplo:</b> para a CWE-89 (SQLi), o exploit pode ser o payload <code class="inl">admin'-- -</code>. Para o PwnKit (CVE-2021-4034), é um programa em C. <b>Diferença:</b> a vulnerabilidade é a fraqueza; o exploit é a ferramenta que a aciona.</div>
+    </div>
+    <div class="gi click" data-t="PoC (Prova de Conceito)">
+      <b>PoC</b> — demonstração de que a falha é explorável. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Uma <b>Prova de Conceito (Proof of Concept)</b> é uma demonstração mínima de que a vulnerabilidade realmente funciona — sem necessariamente causar dano. Serve para provar o problema ao time/cliente no relatório.<br><br><b>Exemplo:</b> em vez de apagar o banco, a PoC de uma SQLi mostra apenas <code class="inl">' OR '1'='1</code> logando sem senha, ou exibe a versão do banco. Em pentest ético, usa-se a PoC como evidência, evitando impacto real.</div>
+    </div>
+    <div class="gi click" data-t="0-day (Zero-day)">
+      <b>0-day</b> — falha sem patch/conhecimento público. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Um <b>0-day</b> (zero-day) é uma vulnerabilidade que ainda <b>não tem correção</b> disponível — o fornecedor teve "zero dias" para corrigir. Se um exploit para ela circula, é um <b>0-day exploit</b>, extremamente perigoso porque não há patch para se defender.<br><br><b>Ciclo:</b> 0-day → descoberta/divulgação → patch lançado → vira "n-day" (falha conhecida com correção). A maioria dos ataques reais usa <i>n-days</i> sem patch aplicado, não 0-days.</div>
+    </div>
+    <div class="gi click" data-t="Payload">
+      <b>Payload</b> — o que roda após a exploração. <span class="more">ⓘ detalhes</span>
+      <div class="gx">O <b>payload</b> é a "carga útil" — o que o atacante executa depois que o exploit abre caminho. Pode ser um shell reverso, um comando, um beacon de C2, ou um ransomware.<br><br><b>Exemplo:</b> no upload de webshell, o payload é o arquivo <code class="inl">&lt;?php system($_GET['c']); ?&gt;</code>. O exploit é "conseguir subir o arquivo"; o payload é "o que o arquivo faz".</div>
+    </div>
+    <div class="gi click" data-t="Superfície de ataque">
+      <b>Superfície de ataque</b> — todos os pontos expostos. <span class="more">ⓘ detalhes</span>
+      <div class="gx">A <b>superfície de ataque</b> é a soma de todos os pontos por onde um atacante pode tentar entrar ou extrair dados: portas abertas, endpoints web, formulários, parâmetros, APIs, serviços, contas, dependências.<br><br><b>Princípio de defesa:</b> reduzir a superfície (desligar serviços e portas desnecessárias, fechar o firewall, remover software não usado) diminui as oportunidades de ataque. É o oposto de "deixar tudo ligado por via das dúvidas".</div>
+    </div>
+    <div class="gi click" data-t="CVE">
+      <b>CVE</b> — identificador único de uma falha pública. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Uma <b>CVE (Common Vulnerabilities and Exposures)</b> é o identificador único e público de uma vulnerabilidade específica, no formato <code class="inl">CVE-ANO-NÚMERO</code> (ex.: CVE-2021-4034). É catalogada no NVD e permite que todos falem da "mesma" falha.<br><br><b>Analogia:</b> a CVE é como o "RG" de uma vulnerabilidade específica num produto. Já a CWE é a "categoria" do erro. Uma CWE (tipo) pode gerar milhares de CVEs (casos).</div>
+    </div>
+    <div class="gi click" data-t="CWE">
+      <b>CWE</b> — tipo/categoria de fraqueza. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Uma <b>CWE (Common Weakness Enumeration)</b> descreve o <b>tipo</b> de fraqueza — a causa-raiz por trás das CVEs (ex.: CWE-89 = SQL Injection, CWE-22 = Path Traversal). Mantida pela MITRE, é a base do "CWE Top 25".<br><br><b>Como usar:</b> ao achar uma falha, identifique a CWE (o "porquê" aconteceu) para recomendar a correção certa na causa, não só no sintoma. Veja a lista completa na seção 3 desta aba.</div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>2 · Padrões e taxonomias (como o mundo cataloga falhas)</div>
+  <div class="stdgrid two">
+    <div class="std"><div class="sh"><span class="ab">CVE</span><span class="full">Common Vulnerabilities and Exposures</span></div><p>Identificador único por falha (ex.: CVE-2021-4034). Catalogado no NVD. Responde "qual" vulnerabilidade.</p></div>
+    <div class="std"><div class="sh"><span class="ab">CWE</span><span class="full">Common Weakness Enumeration</span></div><p>Tipo de fraqueza (ex.: CWE-89 SQLi). Responde "que classe de erro" causou a CVE. Mantido pela MITRE.</p></div>
+    <div class="std"><div class="sh"><span class="ab">CVSS</span><span class="full">Common Vulnerability Scoring System</span></div><p>Nota de gravidade 0–10 (mantido pelo FIRST). Responde "quão grave". Veja a aba CVSS.</p></div>
+    <div class="std"><div class="sh"><span class="ab">EPSS</span><span class="full">Exploit Prediction Scoring System</span></div><p>Probabilidade (0–100%) de a CVE ser explorada nos próximos 30 dias. Responde "quão provável".</p></div>
+    <div class="std"><div class="sh"><span class="ab">KEV</span><span class="full">Known Exploited Vulnerabilities (CISA)</span></div><p>Catálogo de CVEs <b>comprovadamente exploradas</b> no mundo real. Prioridade máxima de correção.</p></div>
+    <div class="std"><div class="sh"><span class="ab">OWASP</span><span class="full">Open Worldwide Application Security Project</span></div><p>Comunidade e projetos de segurança de aplicações; famoso pelo Top 10 (abaixo).</p></div>
+    <div class="std"><div class="sh"><span class="ab">ATT&amp;CK</span><span class="full">MITRE Adversarial Tactics &amp; Techniques</span></div><p>Base de conhecimento do comportamento do atacante (táticas/técnicas). Responde "como agem".</p></div>
+    <div class="std"><div class="sh"><span class="ab">CAPEC</span><span class="full">Common Attack Pattern Enumeration</span></div><p>Catálogo de padrões de ataque. Complementa o CWE do lado do ataque.</p></div>
+  </div>
+  <div class="disc" style="margin-top:12px">🔗 <b>Como se conectam:</b> uma <b>CWE</b> (tipo de erro) gera uma <b>CVE</b> (falha específica), que recebe uma nota <b>CVSS</b> (gravidade), uma probabilidade <b>EPSS</b> (chance de exploração) e, se já está sendo explorada, entra no <b>KEV</b>. O comportamento do atacante é descrito pelo <b>ATT&amp;CK</b>.</div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>3 · CWE Top 25 (2024) — as fraquezas mais perigosas</div>
+  <p style="color:var(--mut);font-size:13.5px;margin:0 0 4px">Lista da MITRE/CISA com as 25 fraquezas por trás das CVEs mais severas e frequentes (base: 31.770 CVEs). É o "o que estudar primeiro".</p>
+  <table class="ftable">
+    <thead><tr><th>#</th><th>CWE</th><th>Fraqueza</th></tr></thead>
+    <tbody>
+      <tr><td class="rk">1</td><td class="id">CWE-79</td><td>Cross-site Scripting (XSS)</td></tr>
+      <tr><td class="rk">2</td><td class="id">CWE-787</td><td>Out-of-bounds Write (escrita fora dos limites)</td></tr>
+      <tr><td class="rk">3</td><td class="id">CWE-89</td><td>SQL Injection</td></tr>
+      <tr><td class="rk">4</td><td class="id">CWE-352</td><td>Cross-Site Request Forgery (CSRF)</td></tr>
+      <tr><td class="rk">5</td><td class="id">CWE-22</td><td>Path Traversal</td></tr>
+      <tr><td class="rk">6</td><td class="id">CWE-125</td><td>Out-of-bounds Read (leitura fora dos limites)</td></tr>
+      <tr><td class="rk">7</td><td class="id">CWE-78</td><td>OS Command Injection</td></tr>
+      <tr><td class="rk">8</td><td class="id">CWE-416</td><td>Use After Free</td></tr>
+      <tr><td class="rk">9</td><td class="id">CWE-862</td><td>Missing Authorization (autorização ausente)</td></tr>
+      <tr><td class="rk">10</td><td class="id">CWE-434</td><td>Upload irrestrito de arquivo perigoso</td></tr>
+      <tr><td class="rk">11</td><td class="id">CWE-94</td><td>Code Injection</td></tr>
+      <tr><td class="rk">12</td><td class="id">CWE-20</td><td>Improper Input Validation</td></tr>
+      <tr><td class="rk">13</td><td class="id">CWE-77</td><td>Command Injection</td></tr>
+      <tr><td class="rk">14</td><td class="id">CWE-287</td><td>Improper Authentication</td></tr>
+      <tr><td class="rk">15</td><td class="id">CWE-269</td><td>Improper Privilege Management</td></tr>
+      <tr><td class="rk">16</td><td class="id">CWE-502</td><td>Deserialization of Untrusted Data</td></tr>
+      <tr><td class="rk">17</td><td class="id">CWE-200</td><td>Exposição de informação sensível</td></tr>
+      <tr><td class="rk">18</td><td class="id">CWE-863</td><td>Incorrect Authorization</td></tr>
+      <tr><td class="rk">19</td><td class="id">CWE-918</td><td>Server-Side Request Forgery (SSRF)</td></tr>
+      <tr><td class="rk">20</td><td class="id">CWE-119</td><td>Operações fora dos limites do buffer</td></tr>
+      <tr><td class="rk">21</td><td class="id">CWE-476</td><td>NULL Pointer Dereference</td></tr>
+      <tr><td class="rk">22</td><td class="id">CWE-798</td><td>Credenciais embutidas (hard-coded)</td></tr>
+      <tr><td class="rk">23</td><td class="id">CWE-190</td><td>Integer Overflow</td></tr>
+      <tr><td class="rk">24</td><td class="id">CWE-400</td><td>Uncontrolled Resource Consumption (DoS)</td></tr>
+      <tr><td class="rk">25</td><td class="id">CWE-306</td><td>Missing Authentication for Critical Function</td></tr>
+    </tbody>
+  </table>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>4 · OWASP Top 10 (2021) — riscos de aplicação web</div>
+  <div class="owl">
+    <div class="owi"><span class="c">A01</span><div class="t"><b>Broken Access Control</b><div class="d">controle de acesso quebrado — o risco nº 1 atual.</div></div></div>
+    <div class="owi"><span class="c">A02</span><div class="t"><b>Cryptographic Failures</b><div class="d">falhas de criptografia (dados sensíveis expostos).</div></div></div>
+    <div class="owi"><span class="c">A03</span><div class="t"><b>Injection</b><div class="d">injeção (SQLi, XSS, comandos).</div></div></div>
+    <div class="owi"><span class="c">A04</span><div class="t"><b>Insecure Design</b><div class="d">design inseguro (falha na concepção) — categoria nova.</div></div></div>
+    <div class="owi"><span class="c">A05</span><div class="t"><b>Security Misconfiguration</b><div class="d">configuração insegura.</div></div></div>
+    <div class="owi"><span class="c">A06</span><div class="t"><b>Vulnerable and Outdated Components</b><div class="d">componentes desatualizados/vulneráveis.</div></div></div>
+    <div class="owi"><span class="c">A07</span><div class="t"><b>Identification and Authentication Failures</b><div class="d">falhas de autenticação/identificação.</div></div></div>
+    <div class="owi"><span class="c">A08</span><div class="t"><b>Software and Data Integrity Failures</b><div class="d">falhas de integridade (supply chain) — categoria nova.</div></div></div>
+    <div class="owi"><span class="c">A09</span><div class="t"><b>Security Logging and Monitoring Failures</b><div class="d">falhas de registro e monitoramento.</div></div></div>
+    <div class="owi"><span class="c">A10</span><div class="t"><b>Server-Side Request Forgery (SSRF)</b><div class="d">SSRF — categoria nova.</div></div></div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>5 · MITRE ATT&amp;CK — as 14 táticas (Enterprise)</div>
+  <p style="color:var(--mut);font-size:13.5px;margin:0 0 4px">As táticas respondem ao "porquê" de cada ação do atacante, em sequência lógica de um ataque.</p>
+  <div class="gloss">
+    <div class="gi"><b>1. Reconnaissance</b> — coletar informação sobre o alvo.</div>
+    <div class="gi"><b>2. Resource Development</b> — preparar infraestrutura/ferramentas.</div>
+    <div class="gi"><b>3. Initial Access</b> — obter o primeiro acesso.</div>
+    <div class="gi"><b>4. Execution</b> — executar código malicioso.</div>
+    <div class="gi"><b>5. Persistence</b> — manter o acesso entre reinícios.</div>
+    <div class="gi"><b>6. Privilege Escalation</b> — ganhar privilégios mais altos.</div>
+    <div class="gi"><b>7. Defense Evasion</b> — evitar detecção.</div>
+    <div class="gi"><b>8. Credential Access</b> — roubar credenciais.</div>
+    <div class="gi"><b>9. Discovery</b> — mapear o ambiente interno.</div>
+    <div class="gi"><b>10. Lateral Movement</b> — mover-se para outros sistemas.</div>
+    <div class="gi"><b>11. Collection</b> — coletar dados de interesse.</div>
+    <div class="gi"><b>12. Command and Control</b> — comunicação com o C2.</div>
+    <div class="gi"><b>13. Exfiltration</b> — extrair os dados.</div>
+    <div class="gi"><b>14. Impact</b> — destruir/alterar/indisponibilizar.</div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>6 · Metodologia de assessment (as 5 fases)</div>
+  <p style="color:var(--mut);font-size:13.5px;margin:0 0 4px">Todos os padrões (PTES, OSSTMM, NIST SP 800-115) seguem a mesma forma. O PTES detalha em 7 fases; na prática, 5 estágios.</p>
+  <div class="flow">
+    <div class="st"><div class="n">01</div><b>Reconhecimento</b><div class="d">mapear a superfície: serviços, versões, endpoints.</div></div>
+    <div class="st"><div class="n">02</div><b>Varredura</b><div class="d">encontrar serviços e pontos fracos (scan/enum).</div></div>
+    <div class="st"><div class="n">03</div><b>Exploração</b><div class="d">usar as falhas para entrar ou causar impacto.</div></div>
+    <div class="st"><div class="n">04</div><b>Pós-exploração</b><div class="d">medir o alcance: privilégios, pivot, dados.</div></div>
+    <div class="st"><div class="n">05</div><b>Relatório</b><div class="d">evidências, severidade e recomendações.</div></div>
+  </div>
+  <div class="disc" style="margin-top:12px">📋 <b>PTES (7 fases):</b> Pré-engajamento → Coleta de inteligência → Modelagem de ameaças → Análise de vulnerabilidades → Exploração → Pós-exploração → Relatório.</div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>7 · Priorização: além do CVSS</div>
+  <div class="stdgrid two">
+    <div class="std"><div class="sh"><span class="ab">CVSS</span><span class="full">gravidade</span></div><p>Quão séria é a falha (0–10). Ponto de partida, mas não diz se está sendo explorada.</p></div>
+    <div class="std"><div class="sh"><span class="ab">EPSS</span><span class="full">probabilidade</span></div><p>Chance de exploração nos próximos 30 dias. Ajuda a priorizar o que corrigir já.</p></div>
+    <div class="std"><div class="sh"><span class="ab">KEV</span><span class="full">exploração real</span></div><p>Se a CVE está no KEV da CISA, corrija imediatamente — já há ataques reais.</p></div>
+    <div class="std"><div class="sh"><span class="ab">CVSS 4.0</span><span class="full">novidade (FIRST, 2023)</span></div><p>Nova métrica <b>Attack Requirements (AT)</b>, grupo <b>Threat</b> opcional e impacto em sistemas subsequentes. Notas do 4.0 não são diretamente comparáveis às do 3.1.</p></div>
+  </div>
+
+  <div class="disc">🎓 <b>Trilha sugerida p/ virar especialista:</b> dominar os conceitos → estudar CWE Top 25 e OWASP Top 10 → praticar em VulnHub/HTB (aba Ferramentas) → aplicar a metodologia das 5 fases → pontuar com CVSS → escrever bons relatórios. Repetir em muitas máquinas.</div>
+</div>
+
+<!-- ===================== LINUX ===================== -->
+<div class="panel active" id="linux">
+
+  <div class="filters" id="filters">
+    <span class="pill on" data-f="all">Todas</span>
+    <span class="pill" data-f="perm">Permissões</span>
+    <span class="pill" data-f="sudo">Sudo</span>
+    <span class="pill" data-f="suid">SUID/Caps</span>
+    <span class="pill" data-f="cron">Cron/PATH</span>
+    <span class="pill" data-f="kernel">Kernel/CVE</span>
+    <span class="pill" data-f="net">Rede/SSH</span>
+    <span class="pill" data-f="cred">Credenciais</span>
+    <span class="pill" data-f="group">Grupos/NFS</span>
+    <span class="pill" data-f="hard">Hardening</span>
+  </div>
+
+  <div class="count" id="count"></div>
+
+  <!-- 1 shadow -->
+  <div class="v" data-cat="perm">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Permissões frouxas em /etc/shadow <span class="tagok">✓ achada no lab</span></h3>
+        <div class="cat">Permissões · Exposição de credenciais · CWE-732</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>O <code class="inl">/etc/shadow</code> guarda os hashes das senhas de todos os usuários e só o root deveria lê-lo. Se estiver legível por "outros" (permissão 644), qualquer usuário local copia os hashes e os quebra offline com john/hashcat.</p></div>
+      <div class="vfig">
+        <svg viewBox="0 0 880 120" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+          <defs><marker id="s1" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#f87171"/></marker></defs>
+          <text x="20" y="40" font-size="20">🧑‍💻</text><text x="20" y="70" fill="#93a3bd" font-size="10">usuário comum</text>
+          <line x1="70" y1="40" x2="150" y2="40" stroke="#f87171" stroke-width="2" marker-end="url(#s1)"/><text x="110" y="30" fill="#e8eef9" font-size="10" text-anchor="middle">cat</text>
+          <rect x="156" y="18" width="250" height="52" rx="8" fill="#0f1724" stroke="#f87171"/>
+          <text x="281" y="38" fill="#f87171" font-size="11" text-anchor="middle">/etc/shadow (-rw-r--r--)</text>
+          <text x="281" y="56" fill="#93a3bd" font-size="10" text-anchor="middle">hashes de root e usuários</text>
+          <line x1="406" y1="44" x2="486" y2="44" stroke="#f87171" stroke-width="2" marker-end="url(#s1)"/><text x="446" y="34" fill="#e8eef9" font-size="10" text-anchor="middle">john/hashcat</text>
+          <rect x="492" y="22" width="150" height="44" rx="8" fill="#131c2b" stroke="#223049"/><text x="567" y="48" fill="#fbbf24" font-size="11" text-anchor="middle">quebra offline</text>
+          <line x1="644" y1="44" x2="704" y2="44" stroke="#f87171" stroke-width="2" marker-end="url(#s1)"/>
+          <rect x="710" y="20" width="110" height="48" rx="8" fill="#2a1115" stroke="#f87171"/><text x="765" y="40" font-size="15" text-anchor="middle">👑</text><text x="765" y="58" fill="#f87171" font-size="11" text-anchor="middle">ROOT</text>
+        </svg>
+      </div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">ls</span> -l /etc/shadow /etc/passwd /etc/gshadow   <span class="c"># conferir permissões</span>
+<span class="k">cat</span> /etc/shadow                              <span class="c"># se um user comum lê = falha</span>
+<span class="c"># Seguro: shadow = 0000 ou 0640 root:shadow | Falho: -rw-r--r-- (644)</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><pre><span class="k">chmod</span> 0000 /etc/shadow        <span class="c"># dono root sempre lê</span>
+<span class="k">chown</span> root:root /etc/shadow
+<span class="c"># depois, trocar TODAS as senhas (os hashes podem já ter vazado)</span></pre></div></div>
+    </div>
+  </div>
+
+  <!-- 2 sudo misconfig -->
+  <div class="v" data-cat="sudo">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Sudo mal configurado (NOPASSWD / binário perigoso)</h3>
+        <div class="cat">Sudo · Escalonamento · CWE-250 / CWE-269</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Regras de <code class="inl">sudo</code> que deixam um usuário rodar como root um programa capaz de abrir shell, ler/escrever arquivos ou carregar bibliotecas. Qualquer binário "shell-capable" (ex.: <code class="inl">vim, find, awk, python, less, tar, nano</code>) vira caminho direto para root. Também entram aqui <code class="inl">NOPASSWD</code>, <code class="inl">LD_PRELOAD</code>/<code class="inl">env_keep</code> e injeção por wildcard.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">sudo</span> -l                 <span class="c"># o que posso rodar como root</span>
+<span class="c"># Exemplos de saída perigosa:</span>
+<span class="c">#   (ALL) NOPASSWD: /usr/bin/find   -> sudo find . -exec /bin/sh \; -quit</span>
+<span class="c">#   (ALL) /usr/bin/vim             -> sudo vim -c ':!/bin/sh'</span>
+<span class="c">#   env_keep += LD_PRELOAD          -> carregar .so malicioso</span>
+<span class="c"># Cruze cada binário em https://gtfobins.github.io</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Aplicar privilégio mínimo no <code class="inl">/etc/sudoers</code> (via <code class="inl">visudo</code>): conceder apenas o comando exato necessário, evitar <code class="inl">NOPASSWD</code> e binários do GTFOBins, remover <code class="inl">env_keep</code> desnecessário e nunca usar wildcards em caminhos.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 3 sudo CVE -->
+  <div class="v" data-cat="sudo kernel">
+    <div class="top">
+      <div class="sev crit"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Versão de sudo vulnerável</h3>
+        <div class="cat">Sudo · Exploit conhecido</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>O próprio binário <code class="inl">sudo</code> já teve falhas graves que dão root mesmo com sudoers correto.
+        <span class="cve">CVE-2021-3156</span> "Baron Samedit" (buffer overflow, sudo &lt; 1.9.5p2).
+        <span class="cve">CVE-2025-32462</span> <span class="cve">CVE-2025-32463</span> (2025, corrigidas no sudo 1.9.17p1, entraram no catálogo KEV da CISA).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">sudo</span> --version | <span class="k">head</span> -1     <span class="c"># comparar com versões corrigidas</span>
+<span class="k">rpm</span> -q sudo                    <span class="c"># RHEL/Rocky</span>
+<span class="k">dpkg</span> -l sudo                   <span class="c"># Debian/Ubuntu</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><pre><span class="k">sudo</span> dnf update sudo     <span class="c"># Rocky/RHEL — ir para 1.9.17p1+</span>
+<span class="k">sudo</span> apt update &amp;&amp; sudo apt install --only-upgrade sudo</pre></div></div>
+    </div>
+  </div>
+
+  <!-- 4 SUID -->
+  <div class="v" data-cat="suid">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.4</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Binários SUID/SGID perigosos</h3>
+        <div class="cat">SUID · Escalonamento · CWE-250</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Um binário com o bit <b>SUID</b> roda com o privilégio do <b>dono</b> (normalmente root). Se um programa "shell-capable" estiver SUID (ex.: <code class="inl">bash, cp, find, vim, python, nmap</code>), qualquer usuário o usa para virar root. A lista padrão do sistema é normal; o que importa é o que estiver <b>fora do padrão</b>.</p></div>
+      <div class="vfig">
+        <svg viewBox="0 0 880 90" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+          <defs><marker id="su" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#f87171"/></marker></defs>
+          <rect x="20" y="25" width="220" height="42" rx="8" fill="#0f1724" stroke="#f87171"/><text x="130" y="42" fill="#f87171" font-size="11" text-anchor="middle">-rwsr-xr-x root /usr/bin/find</text><text x="130" y="58" fill="#93a3bd" font-size="9" text-anchor="middle">bit 's' = SUID</text>
+          <line x1="242" y1="46" x2="330" y2="46" stroke="#f87171" stroke-width="2" marker-end="url(#su)"/><text x="286" y="36" fill="#e8eef9" font-size="10" text-anchor="middle">GTFOBins</text>
+          <rect x="336" y="25" width="340" height="42" rx="8" fill="#0f1724" stroke="#223049"/><text x="506" y="50" fill="#36d399" font-size="11" text-anchor="middle">find . -exec /bin/sh -p \; -quit</text>
+          <line x1="678" y1="46" x2="760" y2="46" stroke="#f87171" stroke-width="2" marker-end="url(#su)"/>
+          <rect x="766" y="24" width="94" height="44" rx="8" fill="#2a1115" stroke="#f87171"/><text x="813" y="51" fill="#f87171" font-size="11" text-anchor="middle"># root</text>
+        </svg>
+      </div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">find</span> / -perm -4000 -type f 2&gt;/dev/null   <span class="c"># SUID</span>
+<span class="k">find</span> / -perm -2000 -type f 2&gt;/dev/null   <span class="c"># SGID</span>
+<span class="c"># Compare cada resultado com https://gtfobins.github.io</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><pre><span class="k">chmod</span> u-s /caminho/do/binario   <span class="c"># remover o SUID indevido</span>
+<span class="c"># manter SUID só nos binários padrão do sistema</span></pre></div></div>
+    </div>
+  </div>
+
+  <!-- 5 capabilities -->
+  <div class="v" data-cat="suid">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Linux capabilities perigosas</h3>
+        <div class="cat">Capabilities · Escalonamento · CWE-250</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Capabilities dão "pedaços" de poder de root a um binário sem SUID. Uma como <code class="inl">cap_setuid</code>, <code class="inl">cap_dac_read_search</code> ou <code class="inl">cap_sys_admin</code> em um interpretador (python, perl) permite virar root ou ler qualquer arquivo.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">getcap</span> -r / 2&gt;/dev/null
+<span class="c"># Perigoso, ex.: /usr/bin/python3.9 = cap_setuid+ep</span>
+<span class="c"># Exploração: python3 -c 'import os;os.setuid(0);os.system("/bin/sh")'</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><pre><span class="k">setcap</span> -r /caminho/do/binario   <span class="c"># remover a capability</span></pre></div></div>
+    </div>
+  </div>
+
+  <!-- 6 cron -->
+  <div class="v" data-cat="cron">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Cron jobs inseguros</h3>
+        <div class="cat">Cron · Escalonamento · CWE-732 / CWE-426</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Tarefas agendadas que rodam como root e chamam um script <b>gravável</b> por usuários, usam <b>PATH relativo</b> (você planta um binário com o mesmo nome em pasta gravável) ou usam <b>wildcard</b> (ex.: <code class="inl">tar *</code>) que permite injetar argumentos.</p></div>
+      <div class="vfig">
+        <svg viewBox="0 0 880 90" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+          <defs><marker id="cr" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#fbbf24"/></marker></defs>
+          <rect x="20" y="25" width="200" height="42" rx="8" fill="#0f1724" stroke="#223049"/><text x="120" y="42" fill="#93a3bd" font-size="10" text-anchor="middle">cron (root) a cada 1 min</text><text x="120" y="57" fill="#6b7a96" font-size="9" text-anchor="middle">roda /opt/backup.sh</text>
+          <line x1="222" y1="46" x2="300" y2="46" stroke="#fbbf24" stroke-width="2" marker-end="url(#cr)"/>
+          <rect x="306" y="25" width="240" height="42" rx="8" fill="#0f1724" stroke="#f87171"/><text x="426" y="42" fill="#f87171" font-size="10" text-anchor="middle">backup.sh é gravável por todos ✗</text><text x="426" y="57" fill="#93a3bd" font-size="9" text-anchor="middle">atacante injeta comando</text>
+          <line x1="548" y1="46" x2="628" y2="46" stroke="#fbbf24" stroke-width="2" marker-end="url(#cr)"/>
+          <rect x="634" y="24" width="226" height="44" rx="8" fill="#2a1115" stroke="#f87171"/><text x="747" y="51" fill="#f87171" font-size="11" text-anchor="middle">executa como root no próximo ciclo</text>
+        </svg>
+      </div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">cat</span> /etc/crontab ; <span class="k">ls</span> -la /etc/cron.*
+<span class="k">systemctl</span> list-timers --all
+<span class="k">ls</span> -la /caminho/do/script        <span class="c"># o script é gravável por você?</span>
+<span class="k">grep</span> -r <span class="s">"PATH"</span> /etc/crontab      <span class="c"># PATH relativo?</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Scripts de cron devem pertencer ao root e não ser graváveis por outros (<code class="inl">chmod 700</code>, <code class="inl">chown root:root</code>). Usar caminhos absolutos, PATH fixo e evitar wildcards; preferir listar arquivos explicitamente.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 7 PATH hijack -->
+  <div class="v" data-cat="cron">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.0</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>PATH hijacking (diretório gravável no PATH)</h3>
+        <div class="cat">PATH · Escalonamento · CWE-426</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Se um programa privilegiado chama outro comando pelo nome (sem caminho absoluto) e há um diretório <b>gravável</b> no <code class="inl">PATH</code> antes dos diretórios do sistema, o atacante planta um binário com aquele nome e ele é executado com o privilégio do programa.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">echo</span> $PATH                               <span class="c"># há "." ou pasta gravável?</span>
+<span class="k">find</span> $(echo $PATH | tr ':' ' ') -writable -type d 2&gt;/dev/null</pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Remover <code class="inl">.</code> e pastas graváveis do <code class="inl">PATH</code>; em scripts/serviços, sempre chamar comandos com caminho absoluto e definir um PATH seguro.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 8 kernel -->
+  <div class="v" data-cat="kernel">
+    <div class="top">
+      <div class="sev crit"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Exploits de kernel e componentes do SO</h3>
+        <div class="cat">Kernel · Exploit conhecido</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Falhas no kernel ou em componentes com SUID levam a root local.
+        <span class="cve">CVE-2021-4034</span> "PwnKit" — <code class="inl">pkexec</code> (polkit); afeta todas as versões desde 2009; muito fácil de explorar.
+        <span class="cve">CVE-2022-0847</span> "Dirty Pipe" — kernels 5.8+; escreve em arquivos somente-leitura (inclui binários SUID); corrigido em 5.16.11 / 5.15.25 / 5.10.102.
+        <span class="cve">CVE-2016-5195</span> "Dirty COW" — kernels antigos.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">uname</span> -r                 <span class="c"># versão do kernel -> buscar CVE</span>
+<span class="k">ls</span> -l /usr/bin/pkexec    <span class="c"># existe e é SUID? (PwnKit)</span>
+<span class="k">rpm</span> -q polkit           <span class="c"># versão do polkit</span>
+<span class="c"># referência: cruzar versão com searchsploit / NVD</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><pre><span class="k">sudo</span> dnf update            <span class="c"># aplicar patches (kernel, polkit)</span>
+<span class="c"># mitigação temporária PwnKit, se sem patch:</span>
+<span class="k">chmod</span> 0755 /usr/bin/pkexec  <span class="c"># remove o bit SUID</span></pre></div></div>
+    </div>
+  </div>
+
+  <!-- 9 writable files -->
+  <div class="v" data-cat="perm">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.0</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Arquivos sensíveis graváveis por todos</h3>
+        <div class="cat">Permissões · Escalonamento · CWE-732</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Arquivos críticos graváveis por usuários comuns permitem virar root. Exemplos: <code class="inl">/etc/passwd</code> gravável (adicionar um root sem senha), unit files do systemd, <code class="inl">/etc/sudoers.d/*</code>, scripts de serviço e <code class="inl">authorized_keys</code> de root.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">find</span> / -perm -o+w -type f 2&gt;/dev/null | <span class="k">grep</span> -vE <span class="s">"^/proc|^/sys"</span>
+<span class="k">ls</span> -l /etc/passwd /etc/sudoers /etc/sudoers.d/*
+<span class="k">find</span> /etc/systemd -writable 2&gt;/dev/null</pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Restaurar donos e permissões corretas: <code class="inl">/etc/passwd</code> → 644 root:root, <code class="inl">/etc/sudoers</code> → 440, unit files → 644 root:root. Revisar tudo que aparecer como gravável por "outros".</p></div></div>
+    </div>
+  </div>
+
+  <!-- 10 ssh -->
+  <div class="v" data-cat="net">
+    <div class="top">
+      <div class="sev alto"><div class="num">8.1</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>SSH mal configurado (root + senha) <span class="tagok">✓ achada no lab</span></h3>
+        <div class="cat">Rede · Config insegura · CWE-284</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p><code class="inl">PermitRootLogin yes</code> permite login direto de root pela rede; <code class="inl">PasswordAuthentication yes</code> aceita senha (sujeito a força bruta). Em servidor exposto à internet, é alvo imediato — ainda mais se o hash do root já vazou.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">sudo</span> sshd -T | <span class="k">grep</span> -iE <span class="s">"rootlogin|passwordauthentication"</span>
+<span class="c"># Falho: permitrootlogin yes / passwordauthentication yes</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><pre><span class="c"># em /etc/ssh/sshd_config:</span>
+PermitRootLogin no
+PasswordAuthentication no   <span class="c"># preferir chaves</span>
+<span class="k">sudo</span> systemctl reload sshd
+<span class="c"># + fail2ban e restrição de origem por firewall</span></pre></div></div>
+    </div>
+  </div>
+
+  <!-- 11 credentials -->
+  <div class="v" data-cat="cred">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.5</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Credenciais em texto claro</h3>
+        <div class="cat">Credenciais · Exposição · CWE-312 / CWE-522</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Senhas e tokens guardados em arquivos de configuração, histórico de shell, scripts, backups e variáveis de ambiente. Um achado desses costuma dar acesso a banco, outra conta ou até root.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">cat</span> ~/.bash_history ; <span class="k">history</span>
+<span class="k">grep</span> -rniE <span class="s">"password|senha|secret|api[_-]?key|token"</span> /etc /opt /var/www 2&gt;/dev/null
+<span class="k">env</span> ; <span class="k">cat</span> /home/*/.*_history 2&gt;/dev/null
+<span class="k">find</span> / -name <span class="s">"*.bak"</span> -o -name <span class="s">"*.old"</span> 2&gt;/dev/null</pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Remover segredos de arquivos e histórico; usar cofres (Vault, secrets do systemd), permissões restritas, e rotacionar toda credencial exposta.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 12 groups -->
+  <div class="v" data-cat="group">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Grupos perigosos (docker, lxd, disk, adm)</h3>
+        <div class="cat">Grupos · Escalonamento · CWE-250</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Pertencer a certos grupos equivale a ser root. <code class="inl">docker</code> e <code class="inl">lxd</code> permitem montar o sistema de arquivos do host dentro de um container e sair como root; <code class="inl">disk</code> dá acesso bruto aos discos (ler <code class="inl">/etc/shadow</code> direto do device); <code class="inl">adm</code> lê logs sensíveis.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">id</span> ; <span class="k">groups</span>                 <span class="c"># estou em docker/lxd/disk/adm?</span>
+<span class="c"># docker: docker run -v /:/mnt -it alpine chroot /mnt sh</span>
+<span class="c"># lxd:    montar / do host em um container (grupo lxd)</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Remover usuários desses grupos quando não for estritamente necessário; tratar membros de <code class="inl">docker</code>/<code class="inl">lxd</code> como administradores. Manter LXD/Docker atualizados (correções de LPE no grupo lxd).</p></div></div>
+    </div>
+  </div>
+
+  <!-- 13 NFS -->
+  <div class="v" data-cat="group net">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.2</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>NFS com no_root_squash</h3>
+        <div class="cat">NFS · Escalonamento remoto · CWE-732</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Com <code class="inl">no_root_squash</code>, o root de uma máquina remota é tratado como root no compartilhamento NFS. O atacante monta o share, planta um binário SUID-root e o executa no alvo para virar root.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">cat</span> /etc/exports
+<span class="k">showmount</span> -e &lt;ip&gt;        <span class="c"># exports visíveis</span>
+<span class="c"># procurar a flag: (rw,no_root_squash)</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Usar <code class="inl">root_squash</code> (padrão) no <code class="inl">/etc/exports</code>, montar com <code class="inl">nosuid</code>, limitar os hosts permitidos e recarregar com <code class="inl">exportfs -ra</code>.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 14 hardening -->
+  <div class="v" data-cat="hard">
+    <div class="top">
+      <div class="sev info"><div class="num">5.3</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Endurecimento ausente (SELinux/firewall/patches)</h3>
+        <div class="cat">Hardening · Superfície de ataque · CWE-16</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Defesas desligadas ampliam o impacto de qualquer outra falha: SELinux <code class="inl">disabled/permissive</code>, firewall <code class="inl">inactive</code> (todas as portas expostas), pacotes desatualizados e políticas de senha fracas.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">sestatus</span> ; <span class="k">getenforce</span>              <span class="c"># SELinux</span>
+<span class="k">systemctl</span> is-active firewalld      <span class="c"># firewall de host</span>
+<span class="k">sudo</span> dnf check-update              <span class="c"># pacotes com update</span>
+<span class="k">sudo</span> ss -tulpn                      <span class="c"># o que está exposto</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Manter SELinux em <code class="inl">enforcing</code>, firewall ativo liberando só o necessário, atualizações em dia e política de senha forte (pwquality). Aplicar um baseline CIS.</p></div></div>
+    </div>
+  </div>
+
+  <div class="disc">⚠️ <b>Uso ético.</b> Comandos de enumeração/leitura para uso apenas em sistemas autorizados (laboratório, CTF, pentest com contrato). Testar terceiros sem permissão é crime (Lei 12.737/2012). Os valores de CVSS são estimativas didáticas — ajuste conforme o contexto real.</div>
+</div>
+
+<!-- ===================== WINDOWS ===================== -->
+<div class="panel" id="windows">
+
+  <div class="filters" id="wfilters">
+    <span class="pill on" data-f="all">Todas</span>
+    <span class="pill" data-f="svc">Serviços</span>
+    <span class="pill" data-f="token">Tokens</span>
+    <span class="pill" data-f="reg">Registro</span>
+    <span class="pill" data-f="dll">DLL/PATH</span>
+    <span class="pill" data-f="cred">Credenciais</span>
+    <span class="pill" data-f="cve">CVE</span>
+    <span class="pill" data-f="task">Tarefas</span>
+  </div>
+  <div class="count" id="wcount"></div>
+
+  <div class="disc">🎯 No Windows, o objetivo é virar <b>SYSTEM</b> ou <b>Administrador local</b>. A enumeração é um "problema de checklist": ferramentas como <b>winPEAS</b>, <b>PowerUp</b> e <b>Seatbelt</b> automatizam a varredura; o valor está em interpretar o achado. Comece sempre por <code class="inl">whoami /priv</code> e <code class="inl">whoami /groups</code>.</div>
+
+  <!-- W1 unquoted -->
+  <div class="v" data-cat="svc">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Unquoted Service Path</h3>
+        <div class="cat">Serviços · Escalonamento · CWE-428 · ATT&amp;CK T1574.009</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Um serviço cujo caminho tem <b>espaços</b> e está <b>sem aspas</b>. O Windows tenta executar cada pedaço antes do espaço. Se você tem permissão de escrita em uma pasta intermediária, planta um <code class="inl">.exe</code> que será executado com o privilégio do serviço (muitas vezes SYSTEM).</p></div>
+      <div class="vfig">
+        <svg viewBox="0 0 880 110" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+          <text x="20" y="28" fill="#93a3bd" font-size="11">binPath = C:\Program Files\My App\service.exe  (sem aspas)</text>
+          <text x="20" y="50" fill="#e8eef9" font-size="11">Windows tenta, em ordem:</text>
+          <text x="40" y="68" fill="#f87171" font-size="11">1) C:\Program.exe</text>
+          <text x="260" y="68" fill="#fbbf24" font-size="11">2) C:\Program Files\My.exe  ⬅ se gravável, planta aqui</text>
+          <text x="40" y="86" fill="#93a3bd" font-size="11">3) ...\My App\service.exe (o real, só se os de cima falharem)</text>
+        </svg>
+      </div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">wmic</span> service get name,pathname,startmode | <span class="k">findstr</span> /i /v <span class="s">"C:\Windows"</span> | <span class="k">findstr</span> /i /v <span class="s">'"'</span>
+<span class="c"># ou PowerUp:</span>
+<span class="k">Get-UnquotedService</span>            <span class="c"># (PowerUp / PowerShell)</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Colocar o <code class="inl">binPath</code> do serviço entre <b>aspas</b> (<code class="inl">"C:\Program Files\My App\service.exe"</code>) e remover permissões de escrita de usuários comuns nas pastas de programas.</p></div></div>
+    </div>
+  </div>
+
+  <!-- W2 weak service perms -->
+  <div class="v" data-cat="svc">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Permissões fracas de serviço (ACL/binário gravável)</h3>
+        <div class="cat">Serviços · Escalonamento · CWE-732</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Se um usuário comum pode <b>reconfigurar</b> um serviço (alterar o <code class="inl">binPath</code>) ou <b>substituir o binário</b> dele, basta apontar para um payload e reiniciar o serviço — que roda como SYSTEM.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">accesschk.exe</span> -uwcqv <span class="s">"Users"</span> *        <span class="c"># serviços graváveis (Sysinternals)</span>
+<span class="k">sc</span> qc &lt;servico&gt;                         <span class="c"># ver binPath e conta</span>
+<span class="c"># PowerUp: Get-ModifiableService / Invoke-AllChecks</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Corrigir as ACLs do serviço e do executável para que só Administradores possam alterá-los; aplicar privilégio mínimo à conta do serviço.</p></div></div>
+    </div>
+  </div>
+
+  <!-- W3 AlwaysInstallElevated -->
+  <div class="v" data-cat="reg">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.4</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>AlwaysInstallElevated</h3>
+        <div class="cat">Registro · MSI como SYSTEM · CWE-250</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Política que faz qualquer pacote <code class="inl">.msi</code> ser instalado com privilégio de <b>SYSTEM</b>. Se estiver habilitada (valor 1) em HKLM <b>e</b> HKCU, um usuário comum cria um MSI malicioso e ganha SYSTEM.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">reg</span> query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+<span class="k">reg</span> query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+<span class="c"># ambos = 0x1  -> vulnerável</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Desabilitar a política (valor 0) em HKLM e HKCU via GPO. Nunca habilitar AlwaysInstallElevated em ambiente de produção.</p></div></div>
+    </div>
+  </div>
+
+  <!-- W4 token/potato -->
+  <div class="v" data-cat="token">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Privilégios de token (SeImpersonate → Potato)</h3>
+        <div class="cat">Tokens · Service account → SYSTEM · CWE-269</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Contas de serviço (IIS, MSSQL) costumam ter <code class="inl">SeImpersonatePrivilege</code> ou <code class="inl">SeAssignPrimaryTokenPrivilege</code>. Ferramentas da família "Potato" (PrintSpoofer, GodPotato, RoguePotato) abusam disso para roubar um token de SYSTEM e virar SYSTEM. Privilégios como <code class="inl">SeDebug</code>, <code class="inl">SeBackup/SeRestore</code> também levam a root.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">whoami</span> /priv       <span class="c"># procurar SeImpersonate / SeAssignPrimaryToken = Enabled</span>
+<span class="k">whoami</span> /groups     <span class="c"># integridade e grupos</span>
+<span class="c"># exploração: PrintSpoofer.exe -i -c cmd  /  GodPotato</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Conceder esses privilégios só a contas que realmente precisam; isolar contas de serviço, usar gMSA, e manter o sistema atualizado (muitas técnicas Potato dependem de componentes exploráveis).</p></div></div>
+    </div>
+  </div>
+
+  <!-- W5 DLL hijack -->
+  <div class="v" data-cat="dll">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.3</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>DLL Hijacking / PATH gravável</h3>
+        <div class="cat">DLL · Hijack Execution Flow · ATT&amp;CK T1574</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Um serviço ou programa privilegiado carrega uma DLL <b>pelo nome</b>, sem caminho completo. Se existe uma pasta gravável antes na ordem de busca (ou no <code class="inl">PATH</code>), o atacante coloca uma DLL maliciosa com aquele nome e ela é carregada com o privilégio do processo.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">echo</span> %PATH%                               <span class="c"># há pasta gravável?</span>
+<span class="k">icacls</span> <span class="s">"C:\pasta\no\path"</span>                  <span class="c"># checar (M)/(W) para Users</span>
+<span class="c"># ProcMon para ver DLLs "NAME NOT FOUND"; winPEAS aponta pastas graváveis</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Remover pastas graváveis do <code class="inl">PATH</code>, corrigir ACLs, e fazer os aplicativos carregarem DLLs por caminho absoluto / com assinatura.</p></div></div>
+    </div>
+  </div>
+
+  <!-- W6 credentials -->
+  <div class="v" data-cat="cred">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.5</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Credenciais armazenadas (cmdkey, GPP, unattend)</h3>
+        <div class="cat">Credenciais · Exposição · CWE-312 / CWE-522</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Senhas guardadas em vários lugares: Credential Manager (<code class="inl">cmdkey</code>), <b>GPP cpassword</b> (Group Policy Preferences — chave AES pública, legado), arquivos de instalação <code class="inl">unattend.xml</code>/<code class="inl">Autologon</code> no registro, e histórico do PowerShell.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">cmdkey</span> /list                              <span class="c"># credenciais salvas (usar com runas /savecred)</span>
+<span class="k">reg</span> query <span class="s">"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"</span> <span class="c"># AutoLogon</span>
+<span class="k">findstr</span> /si password *.xml *.ini *.txt      <span class="c"># segredos em arquivos</span>
+<span class="c"># GPP: procurar cpassword em \\dominio\SYSVOL\...\Groups.xml</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Remover credenciais de arquivos/registro, aplicar o patch MS14-025 (GPP cpassword), usar LAPS para senhas de admin local e cofres de segredos. Rotacionar tudo que vazou.</p></div></div>
+    </div>
+  </div>
+
+  <!-- W7 PrintNightmare -->
+  <div class="v" data-cat="cve">
+    <div class="top">
+      <div class="sev crit"><div class="num">8.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>CVEs de SO (PrintNightmare e afins)</h3>
+        <div class="cat">CVE · Exploit conhecido</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Falhas no próprio Windows que dão SYSTEM.
+        <span class="cve">CVE-2021-34527</span> "PrintNightmare" — o Print Spooler carrega uma DLL arbitrária e eleva a SYSTEM (afeta versões sem o patch de agosto/2021).
+        Também vale olhar exploits de kernel conforme o build (ex.: HiveNightmare/SeriousSAM, LocalPotato).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">systeminfo</span>                       <span class="c"># versão/patches instalados</span>
+<span class="k">wmic</span> qfe get HotFixID            <span class="c"># KBs aplicados</span>
+<span class="k">sc</span> query Spooler                 <span class="c"># Print Spooler está rodando?</span>
+<span class="c"># winPEAS traz o Watson embutido (sugere CVEs faltando patch)</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Aplicar as atualizações do Windows; para PrintNightmare, desabilitar o Print Spooler onde não for necessário e restringir instalação de drivers a administradores.</p></div></div>
+    </div>
+  </div>
+
+  <!-- W8 scheduled tasks/autoruns -->
+  <div class="v" data-cat="task">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Tarefas agendadas e Autoruns graváveis</h3>
+        <div class="cat">Tarefas · Escalonamento · CWE-732</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Tarefas agendadas que rodam como SYSTEM e executam um script/binário <b>gravável</b>, ou entradas de inicialização (Autoruns) apontando para arquivos graváveis. Trocando o alvo, seu código roda com privilégio elevado.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">schtasks</span> /query /fo LIST /v        <span class="c"># tarefas, conta e ação</span>
+<span class="k">icacls</span> <span class="s">"C:\caminho\do\script"</span>       <span class="c"># gravável por Users?</span>
+<span class="c"># Sysinternals Autoruns / winPEAS listam autoruns graváveis</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Garantir que scripts e binários de tarefas/autoruns pertençam a Administradores e não sejam graváveis por usuários comuns.</p></div></div>
+    </div>
+  </div>
+
+  <!-- W9 SAM/hives -->
+  <div class="v" data-cat="cred">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Acesso a SAM/SYSTEM e dump de LSASS</h3>
+        <div class="cat">Credenciais · Roubo de hashes · CWE-522</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>As hives <code class="inl">SAM</code> e <code class="inl">SYSTEM</code> guardam os hashes de senhas locais; se um backup delas estiver legível (ex.: HiveNightmare/SeriousSAM) ou o atacante conseguir dump de <code class="inl">LSASS</code>, ele extrai hashes/credenciais e faz pass-the-hash.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">icacls</span> %windir%\System32\config\SAM     <span class="c"># legível por usuários? (SeriousSAM)</span>
+<span class="k">whoami</span> /priv | <span class="k">findstr</span> /i SeBackup     <span class="c"># SeBackup permite ler as hives</span>
+<span class="c"># dump: reg save HKLM\SAM sam.hive  (depois secretsdump/mimikatz offline)</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Aplicar patches (SeriousSAM), restringir ACLs das hives, habilitar Credential Guard e proteção do LSASS (RunAsPPL), e limitar privilégios de backup.</p></div></div>
+    </div>
+  </div>
+
+  <div class="disc">🧰 <b>Ferramentas de enumeração Windows:</b> winPEAS, PowerUp (<code class="inl">Invoke-AllChecks</code>), SharpUp, Seatbelt, PrivescCheck, accesschk. Rode mais de uma — cada script pega coisas diferentes. Veja a aba <b>Ferramentas</b>.</div>
+</div>
+
+<!-- ===================== WEB ===================== -->
+<div class="panel" id="web">
+
+  <div class="filters" id="webfilters">
+    <span class="pill on" data-f="all">Todas</span>
+    <span class="pill" data-f="inj">Injeção</span>
+    <span class="pill" data-f="file">Arquivos</span>
+    <span class="pill" data-f="xss">XSS</span>
+    <span class="pill" data-f="acc">Acesso/Sessão</span>
+    <span class="pill" data-f="conf">Config</span>
+    <span class="pill" data-f="cred">Segredos</span>
+  </div>
+  <div class="count" id="webcount"></div>
+
+  <div class="disc" style="margin-top:4px">🌐 Base de referência: <b>OWASP Top 10</b>. A lógica é a mesma do SO: entender a falha, achar o ponto vulnerável (no código ou em tempo de execução) e corrigir. Teste em ambiente autorizado — ferramentas na aba <b>Ferramentas</b> (Burp, sqlmap, ffuf).</div>
+
+  <!-- SQLi -->
+  <div class="v" data-cat="inj">
+    <div class="top">
+      <div class="sev crit"><div class="num">9.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>SQL Injection</h3><div class="cat">Injeção · OWASP A03 · CWE-89</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>A aplicação concatena entrada do usuário direto na query SQL. O atacante injeta aspas e comandos, burlando login, lendo/alterando o banco inteiro e, às vezes, lendo arquivos ou executando comandos no servidor.</p></div>
+      <div class="vfig">
+        <svg viewBox="0 0 880 150" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+          <rect x="20" y="16" width="840" height="36" rx="7" fill="#0f1724" stroke="#223049"/>
+          <text x="32" y="39" fill="#fbbf24" font-size="12">entrada: usuário = <tspan fill="#f87171">admin'-- -</tspan></text>
+          <rect x="20" y="60" width="840" height="36" rx="7" fill="#0f1724" stroke="#f87171"/>
+          <text x="32" y="83" fill="#e8eef9" font-size="12">código: "...WHERE user='<tspan fill="#f87171">"+entrada+"</tspan>' AND pass='...'"</text>
+          <rect x="20" y="104" width="840" height="36" rx="7" fill="#0f1724" stroke="#223049"/>
+          <text x="32" y="127" fill="#36d399" font-size="12">no banco: ...WHERE user='admin'<tspan fill="#6b7a96">-- -' AND pass='...'</tspan>  <tspan fill="#f87171">→ loga sem senha</tspan></text>
+        </svg>
+      </div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># no código:</span>
+<span class="k">grep</span> -rniE <span class="s">"select|insert|query|mysqli_query|->query"</span> /var/www/html/
+<span class="c"># testes manuais nos campos: </span>  ' OR '1'='1    admin'-- -    1' UNION SELECT NULL--
+<span class="c"># automatizado:</span>  sqlmap -u <span class="s">"http://alvo/item.php?id=1"</span> --batch --dbs</pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Usar <b>consultas parametrizadas</b> (prepared statements) com PDO/MySQLi; nunca concatenar entrada; validar tipos e aplicar privilégio mínimo ao usuário do banco.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Upload -->
+  <div class="v" data-cat="file">
+    <div class="top">
+      <div class="sev crit"><div class="num">9.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Upload de arquivo sem validação (webshell)</h3><div class="cat">Arquivos · RCE · OWASP A04/A05 · CWE-434</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>O formulário de upload aceita qualquer extensão e salva numa pasta que executa PHP. O atacante envia um <code class="inl">.php</code> e acessa a URL dele, ganhando execução remota de comandos (RCE).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># no código:</span>  grep -rni <span class="s">"move_uploaded_file"</span> /var/www/html/
+<span class="c"># teste: subir shell.php (&lt;?php system($_GET['c']); ?&gt;) e acessar</span>
+<span class="k">curl</span> <span class="s">"http://alvo/uploads/shell.php?c=id"</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Validar extensão/MIME por <b>lista de permissões</b>, renomear o arquivo, armazenar <b>fora do webroot</b> e desabilitar execução de scripts na pasta de upload.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Path traversal -->
+  <div class="v" data-cat="file">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.5</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Path Traversal / LFI / RFI</h3><div class="cat">Arquivos · OWASP A01/A03 · CWE-22 / CWE-98</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Um parâmetro vira caminho de arquivo sem sanitização. Com <code class="inl">../</code> o atacante sobe de diretório e lê arquivos do sistema (LFI/Traversal). Se o arquivo for <b>incluído</b> e permitir URL remota, vira RFI → execução de código.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># no código:</span>  grep -rniE <span class="s">"include|require|fopen|readfile|file_get_contents"</span> /var/www/html/
+<span class="c"># teste:</span>  curl <span class="s">"http://alvo/download.php?file=../../../../etc/passwd"</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Nunca usar entrada como caminho; usar lista de permissões, <code class="inl">basename()</code> e validar com <code class="inl">realpath()</code> garantindo que fique dentro da pasta esperada. Desativar <code class="inl">allow_url_include</code>.</p></div></div>
+    </div>
+  </div>
+
+  <!-- XSS -->
+  <div class="v" data-cat="xss">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.4</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Cross-Site Scripting (XSS)</h3><div class="cat">XSS · OWASP A03 · CWE-79</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>A aplicação devolve entrada do usuário no HTML sem tratar. O atacante injeta JavaScript que roda no navegador da vítima — roubando sessão (cookies), fazendo ações no lugar dela ou desfigurando a página. Pode ser <b>refletido</b> (via link) ou <b>armazenado</b> (salvo no banco, atinge todos).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># teste em campos/parâmetros:</span>  &lt;script&gt;alert(1)&lt;/script&gt;   "&gt;&lt;img src=x onerror=alert(1)&gt;
+<span class="c"># no código: saída sem escaping</span>  grep -rniE <span class="s">"echo|print"</span> /var/www/html/ | grep -i <span class="s">"\$_"</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Escapar a saída conforme o contexto (<code class="inl">htmlspecialchars()</code>), validar entrada, usar <b>Content-Security-Policy</b> e cookies <code class="inl">HttpOnly</code>.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Command injection -->
+  <div class="v" data-cat="inj">
+    <div class="top">
+      <div class="sev crit"><div class="num">9.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Command Injection</h3><div class="cat">Injeção · RCE · OWASP A03 · CWE-78</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>A aplicação passa entrada do usuário para um comando do sistema (ex.: <code class="inl">ping</code>). Com <code class="inl">;</code>, <code class="inl">|</code> ou <code class="inl">$()</code> o atacante anexa comandos próprios, executando-os com o usuário do servidor web.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># no código:</span>  grep -rniE <span class="s">"system|exec|shell_exec|passthru|popen|proc_open"</span> /var/www/html/
+<span class="c"># teste em campos:</span>  127.0.0.1; id      |  | whoami</pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Evitar chamar o shell; usar APIs nativas. Se inevitável, validar por lista de permissões e usar <code class="inl">escapeshellarg()</code>/<code class="inl">escapeshellcmd()</code>.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Broken access / IDOR -->
+  <div class="v" data-cat="acc">
+    <div class="top">
+      <div class="sev alto"><div class="num">8.1</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Controle de acesso quebrado / IDOR</h3><div class="cat">Acesso · OWASP A01 · CWE-639 / CWE-284</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>A aplicação não verifica se o usuário tem direito ao recurso. Trocando um identificador (<code class="inl">?id=123</code> → <code class="inl">124</code>) o atacante acessa dados de outros (IDOR), ou chega a páginas administrativas sem autenticação.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># trocar IDs/parâmetros e ver se acessa dados alheios</span>
+<span class="k">curl</span> <span class="s">"http://alvo/perfil.php?id=124"</span>     <span class="c"># sem ser o dono</span>
+<span class="c"># acessar /admin diretamente sem login; comparar respostas</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Verificar autorização no servidor em cada requisição (o objeto pertence ao usuário?); negar por padrão; usar identificadores não previsíveis quando fizer sentido.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Auth/session -->
+  <div class="v" data-cat="acc">
+    <div class="top">
+      <div class="sev alto"><div class="num">8.2</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Autenticação e sessão fracas</h3><div class="cat">Acesso · OWASP A07 · CWE-287 / CWE-384</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Senhas fracas/sem bloqueio (força bruta), senhas guardadas em texto ou MD5, cookies de sessão previsíveis ou sem <code class="inl">HttpOnly/Secure</code>, e ausência de expiração de sessão.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># armazenamento de senha no código:</span>  grep -rniE <span class="s">"md5|sha1|password"</span> /var/www/html/
+<span class="c"># testar força bruta/credenciais padrão:</span>  hydra -l admin -P wordlist http-post-form ...
+<span class="c"># inspecionar cookies: flags HttpOnly/Secure presentes?</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Hash forte com sal (bcrypt/argon2), bloqueio após tentativas e MFA, cookies <code class="inl">HttpOnly/Secure/SameSite</code>, e expiração/rotação de sessão.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Secrets -->
+  <div class="v" data-cat="cred">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.5</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Segredos no código-fonte</h3><div class="cat">Segredos · OWASP A05 · CWE-312 / CWE-798</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Credenciais de banco, chaves de API e tokens escritos direto no código (<code class="inl">config.php</code>, <code class="inl">.env</code>) — muitas vezes acessíveis se o arquivo ficar exposto ou via LFI.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">grep</span> -rniE <span class="s">"password|db_pass|secret|api[_-]?key|token"</span> /var/www/html/
+<span class="k">cat</span> /var/www/html/config.php          <span class="c"># credenciais do banco em claro?</span>
+<span class="c"># tentar acessar .env / .git pela web:</span>  curl http://alvo/.env</pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Tirar segredos do código (variáveis de ambiente/cofre), bloquear arquivos sensíveis no servidor web, remover <code class="inl">.git</code>/<code class="inl">.env</code> do webroot e rotacionar o que vazou.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Misconfig -->
+  <div class="v" data-cat="conf">
+    <div class="top">
+      <div class="sev med"><div class="num">6.5</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Configuração insegura (headers, listagem, padrão)</h3><div class="cat">Config · OWASP A05 · CWE-16</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Directory listing habilitado, mensagens de erro detalhadas, páginas/credenciais padrão, falta de headers de segurança (CSP, HSTS, X-Frame-Options) e métodos HTTP perigosos ativos.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">nikto</span> -h http://alvo              <span class="c"># scanner de misconfig</span>
+<span class="k">curl</span> -I http://alvo              <span class="c"># conferir headers de segurança</span>
+<span class="k">ffuf</span> -w wordlist -u http://alvo/FUZZ   <span class="c"># achar pastas/arquivos expostos</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Desabilitar directory listing e erros detalhados, remover contas/arquivos padrão, aplicar headers de segurança e limitar métodos HTTP. Seguir um baseline (CIS/OWASP ASVS).</p></div></div>
+    </div>
+  </div>
+
+  <div class="disc">⚠️ <b>Uso ético.</b> Payloads e testes apenas em aplicações autorizadas. Para a prova, lembre de registrar a <b>evidência</b> (payload usado + resposta) de cada achado.</div>
+</div>
+
+<!-- ===================== CVSS ===================== -->
+<div class="panel" id="cvss">
+
+  <div class="disc" style="margin-top:4px">
+    <b>O que é CVSS?</b> O <b>Common Vulnerability Scoring System</b> é o padrão aberto (mantido pelo FIRST.org) para medir a gravidade de uma vulnerabilidade com uma nota de <b>0 a 10</b>. Ele não mede risco sozinho — mede as características técnicas da falha. Tem três grupos de métricas: <b>Base</b> (intrínsecas e fixas — é o que calculamos aqui), <b>Temporal</b> (mudam com o tempo: existe exploit? há correção?) e <b>Ambiental</b> (ajuste ao seu ambiente). O resultado vira uma nota + um <b>vetor</b> (ex.: <code class="inl">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code>) e uma faixa de severidade.
+  </div>
+
+  <div class="band">
+    <div><div class="lv" style="color:#9aa7bd">Nenhuma</div><div class="rg">0.0</div></div>
+    <div><div class="lv" style="color:var(--acc)">Baixa</div><div class="rg">0.1–3.9</div></div>
+    <div><div class="lv" style="color:var(--acc2)">Média</div><div class="rg">4.0–6.9</div></div>
+    <div><div class="lv" style="color:var(--warn)">Alta</div><div class="rg">7.0–8.9</div></div>
+    <div><div class="lv" style="color:var(--crit)">Crítica</div><div class="rg">9.0–10.0</div></div>
+  </div>
+
+  <h3 style="margin:26px 0 2px">Calculadora de Base Score (CVSS 3.1)</h3>
+  <p style="color:var(--mut);margin:0 0 16px;font-size:14px">Clique em uma opção de cada métrica — a nota, a severidade e o vetor atualizam na hora.</p>
+
+  <div class="score">
+    <div class="ring" id="ring"><div class="n" id="scoreN">0.0</div><div class="m">BASE</div></div>
+    <div class="info">
+      <span class="sevtag" id="sevTag">—</span>
+      <div class="vec" id="vec">CVSS:3.1/AV:_/AC:_/PR:_/UI:_/S:_/C:_/I:_/A:_</div>
+    </div>
+  </div>
+
+  <div class="mgroup"><span class="d"></span>Explorabilidade (como a falha é alcançada)</div>
+
+  <div class="metric" data-k="AV">
+    <div class="ml"><span class="nm">Vetor de Ataque</span><span class="ab">AV</span><span class="ds">de onde o atacante explora</span></div>
+    <div class="opts">
+      <span class="opt" data-v="N">Rede (N)</span><span class="opt" data-v="A">Adjacente (A)</span>
+      <span class="opt" data-v="L">Local (L)</span><span class="opt" data-v="P">Físico (P)</span>
+    </div>
+  </div>
+
+  <div class="metric" data-k="AC">
+    <div class="ml"><span class="nm">Complexidade</span><span class="ab">AC</span><span class="ds">quão difícil é explorar</span></div>
+    <div class="opts"><span class="opt" data-v="L">Baixa (L)</span><span class="opt" data-v="H">Alta (H)</span></div>
+  </div>
+
+  <div class="metric" data-k="PR">
+    <div class="ml"><span class="nm">Privilégios Necessários</span><span class="ab">PR</span><span class="ds">que acesso o atacante já precisa ter</span></div>
+    <div class="opts"><span class="opt" data-v="N">Nenhum (N)</span><span class="opt" data-v="L">Baixo (L)</span><span class="opt" data-v="H">Alto (H)</span></div>
+  </div>
+
+  <div class="metric" data-k="UI">
+    <div class="ml"><span class="nm">Interação do Usuário</span><span class="ab">UI</span><span class="ds">precisa de uma vítima clicando?</span></div>
+    <div class="opts"><span class="opt" data-v="N">Nenhuma (N)</span><span class="opt" data-v="R">Necessária (R)</span></div>
+  </div>
+
+  <div class="metric" data-k="S">
+    <div class="ml"><span class="nm">Escopo</span><span class="ab">S</span><span class="ds">a falha afeta além do componente?</span></div>
+    <div class="opts"><span class="opt" data-v="U">Inalterado (U)</span><span class="opt" data-v="C">Alterado (C)</span></div>
+  </div>
+
+  <div class="mgroup"><span class="d"></span>Impacto (o que o atacante compromete)</div>
+
+  <div class="metric" data-k="C">
+    <div class="ml"><span class="nm">Confidencialidade</span><span class="ab">C</span><span class="ds">vazamento de dados</span></div>
+    <div class="opts"><span class="opt" data-v="N">Nenhum (N)</span><span class="opt" data-v="L">Baixo (L)</span><span class="opt" data-v="H">Alto (H)</span></div>
+  </div>
+
+  <div class="metric" data-k="I">
+    <div class="ml"><span class="nm">Integridade</span><span class="ab">I</span><span class="ds">alteração de dados</span></div>
+    <div class="opts"><span class="opt" data-v="N">Nenhum (N)</span><span class="opt" data-v="L">Baixo (L)</span><span class="opt" data-v="H">Alto (H)</span></div>
+  </div>
+
+  <div class="metric" data-k="A">
+    <div class="ml"><span class="nm">Disponibilidade</span><span class="ab">A</span><span class="ds">derruba o serviço</span></div>
+    <div class="opts"><span class="opt" data-v="N">Nenhum (N)</span><span class="opt" data-v="L">Baixo (L)</span><span class="opt" data-v="H">Alto (H)</span></div>
+  </div>
+
+  <div class="disc" id="presets" style="margin-top:20px">
+    <b>Exemplos rápidos (clique para carregar):</b><br>
+    <span class="opt" data-preset="shadow" style="margin:8px 8px 0 0;display:inline-block">/etc/shadow legível (local)</span>
+    <span class="opt" data-preset="ssh" style="margin:8px 8px 0 0;display:inline-block">SSH root + senha (rede)</span>
+    <span class="opt" data-preset="sqli" style="margin:8px 8px 0 0;display:inline-block">SQL Injection (web)</span>
+  </div>
+
+  <div class="disc">📎 <b>Observação:</b> esta calculadora cobre o <b>Base Score do CVSS 3.1</b> (o mais usado em relatórios). As métricas Temporal e Ambiental refinam a nota, mas a Base é o ponto de partida que você coloca na tabela da prova, junto do vetor.</div>
+</div>
+
+<!-- ===================== FERRAMENTAS ===================== -->
+<div class="panel" id="tools">
+
+  <a class="feat" href="https://www.vulnhub.com/" target="_blank" rel="noopener">
+    <div class="ic">🎯</div>
+    <div>
+      <h3>VulnHub</h3>
+      <p>Repositório gratuito de máquinas virtuais propositalmente vulneráveis para você praticar enumeração, exploração e escalonamento de privilégio em laboratório — exatamente o estilo desta prova. Baixe a VM, suba no VMware/VirtualBox e treine com segurança.</p>
+    </div>
+    <span class="go">Acessar →</span>
+  </a>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Plataformas de treino (labs)</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://www.vulnhub.com/" target="_blank" rel="noopener">VulnHub</a><div class="dsc">VMs vulneráveis para baixar e rodar localmente. Ótimo para praticar offline.</div></div><span class="badge">grátis</span></div>
+      <div class="tool"><div class="tn"><a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe</a><div class="dsc">Trilhas guiadas no navegador, do básico ao avançado. Ideal para começar.</div></div><span class="badge">web</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.hackthebox.com/" target="_blank" rel="noopener">Hack The Box</a><div class="dsc">Máquinas e labs mais desafiadores; bom para OSCP e prática avançada.</div></div><span class="badge">web</span></div>
+      <div class="tool"><div class="tn"><a href="https://overthewire.org/wargames/" target="_blank" rel="noopener">OverTheWire</a><div class="dsc">Wargames de fundamentos Linux/segurança via SSH (comece por "Bandit").</div></div><span class="badge">grátis</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Enumeração &amp; escalonamento (Linux)</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://github.com/carlospolop/PEASS-ng" target="_blank" rel="noopener">LinPEAS</a><div class="dsc">Script que varre o sistema e destaca caminhos de privesc automaticamente.</div></div><span class="badge">auto</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/rebootuser/LinEnum" target="_blank" rel="noopener">LinEnum</a><div class="dsc">Enumeração local clássica: SUID, cron, serviços, permissões.</div></div><span class="badge">auto</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/diego-treitos/linux-smart-enumeration" target="_blank" rel="noopener">lse.sh</a><div class="dsc">Linux Smart Enumeration, com níveis de verbosidade.</div></div><span class="badge">auto</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/The-Z-Labs/linux-exploit-suggester" target="_blank" rel="noopener">linux-exploit-suggester</a><div class="dsc">Sugere exploits de kernel conforme a versão detectada.</div></div><span class="badge">kernel</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/DominicBreuker/pspy" target="_blank" rel="noopener">pspy</a><div class="dsc">Monitora processos e cron em tempo real sem precisar de root.</div></div><span class="badge">cron</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/TH3xACE/SUDO_KILLER" target="_blank" rel="noopener">SUDO_KILLER</a><div class="dsc">Procura configurações e versões de sudo exploráveis.</div></div><span class="badge">sudo</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Referências de exploração</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://gtfobins.github.io/" target="_blank" rel="noopener">GTFOBins</a><div class="dsc">Como abusar de binários Unix (SUID/sudo/caps) para virar root.</div></div><span class="badge">Linux</span></div>
+      <div class="tool"><div class="tn"><a href="https://lolbas-project.github.io/" target="_blank" rel="noopener">LOLBAS</a><div class="dsc">Equivalente do GTFOBins para binários do Windows.</div></div><span class="badge">Windows</span></div>
+      <div class="tool"><div class="tn"><a href="https://book.hacktricks.wiki/" target="_blank" rel="noopener">HackTricks</a><div class="dsc">Enciclopédia de técnicas de pentest e privesc.</div></div><span class="badge">wiki</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener">PayloadsAllTheThings</a><div class="dsc">Coleção de payloads para web e pós-exploração.</div></div><span class="badge">payloads</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.exploit-db.com/" target="_blank" rel="noopener">Exploit-DB / searchsploit</a><div class="dsc">Base de exploits públicos; <code class="inl">searchsploit</code> busca offline.</div></div><span class="badge">CVE</span></div>
+      <div class="tool"><div class="tn"><a href="https://attack.mitre.org/" target="_blank" rel="noopener">MITRE ATT&amp;CK</a><div class="dsc">Taxonomia de táticas e técnicas de adversários.</div></div><span class="badge">framework</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Scan, web &amp; senhas</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://nmap.org/" target="_blank" rel="noopener">Nmap</a><div class="dsc">Varredura de portas, serviços e versões; scripts NSE.</div></div><span class="badge">rede</span></div>
+      <div class="tool"><div class="tn"><a href="https://portswigger.net/burp" target="_blank" rel="noopener">Burp Suite</a><div class="dsc">Proxy para interceptar e testar aplicações web.</div></div><span class="badge">web</span></div>
+      <div class="tool"><div class="tn"><a href="https://sqlmap.org/" target="_blank" rel="noopener">sqlmap</a><div class="dsc">Detecção e exploração automatizada de SQL Injection.</div></div><span class="badge">web</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/ffuf/ffuf" target="_blank" rel="noopener">ffuf / gobuster</a><div class="dsc">Fuzzing de diretórios, arquivos e parâmetros.</div></div><span class="badge">web</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.openwall.com/john/" target="_blank" rel="noopener">John the Ripper</a><div class="dsc">Quebra de hashes de senha (ex.: os do /etc/shadow).</div></div><span class="badge">senhas</span></div>
+      <div class="tool"><div class="tn"><a href="https://hashcat.net/hashcat/" target="_blank" rel="noopener">hashcat</a><div class="dsc">Quebra de hashes acelerada por GPU.</div></div><span class="badge">senhas</span></div>
+    </div>
+  </div>
+
+  <div class="disc">💡 Comece pelo <b>VulnHub</b> ou <b>TryHackMe</b> para praticar o fluxo completo; use <b>LinPEAS</b> para acelerar a enumeração e <b>GTFOBins</b> para confirmar cada caminho de root. Sempre em ambiente autorizado.</div>
+</div>
+
+</div>
+
+<div class="cmodal" id="cModal">
+  <div class="cmbox">
+    <div class="cmh"><h3 id="cmTitle">—</h3><button class="cmx" id="cmClose" aria-label="Fechar">✕</button></div>
+    <div class="cmb" id="cmBody"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    Cyber SENAI Porto · Instrutor Rafael Reis · Guia de campo de Security Assessment · atualizado em 24/11/2026.<br>
+    Referências: GTFOBins, HackTricks, MITRE ATT&amp;CK, CISA KEV, Red Hat / Ubuntu Security. ·
+    Repositório: <a href="https://github.com/instrutorrafaelreis/cybersenaiporto" target="_blank" rel="noopener">github.com/instrutorrafaelreis/cybersenaiporto</a>
+  </div>
+</footer>
+
+<script>
+  // platform tabs
+  document.querySelectorAll('.ptab').forEach(function(t){
+    t.addEventListener('click',function(){
+      if(t.classList.contains('soon')) {
+        // still allow viewing the "coming soon" panels
+      }
+      document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById(t.dataset.panel).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+
+  // expand/collapse cards
+  document.querySelectorAll('.v > .top').forEach(function(top){
+    top.addEventListener('click',()=>top.parentElement.classList.toggle('open'));
+  });
+
+  // filters (generic for each panel that has a .filters bar)
+  function setupFilters(panelId, filtersId, countId){
+    var cards = Array.from(document.querySelectorAll('#'+panelId+' .v'));
+    var countEl = document.getElementById(countId);
+    function applyFilter(f){
+      var n=0;
+      cards.forEach(function(c){
+        var show = (f==='all') || c.dataset.cat.split(' ').indexOf(f)>=0;
+        c.style.display = show ? '' : 'none';
+        if(show) n++;
+      });
+      if(countEl) countEl.textContent = n + ' vulnerabilidade' + (n>1?'s':'') + ' exibida' + (n>1?'s':'');
+    }
+    document.querySelectorAll('#'+filtersId+' .pill').forEach(function(p){
+      p.addEventListener('click',function(){
+        document.querySelectorAll('#'+filtersId+' .pill').forEach(x=>x.classList.remove('on'));
+        p.classList.add('on');
+        applyFilter(p.dataset.f);
+      });
+    });
+    applyFilter('all');
+  }
+  setupFilters('linux','filters','count');
+  setupFilters('windows','wfilters','wcount');
+  setupFilters('web','webfilters','webcount');
+
+  // concept modal
+  (function(){
+    var modal=document.getElementById('cModal'), t=document.getElementById('cmTitle'),
+        b=document.getElementById('cmBody');
+    function open(card){
+      t.textContent = card.dataset.t || '';
+      var gx = card.querySelector('.gx');
+      b.innerHTML = gx ? gx.innerHTML : '';
+      modal.classList.add('show');
+    }
+    function close(){ modal.classList.remove('show'); }
+    document.querySelectorAll('#concepts .gi.click').forEach(function(c){
+      c.addEventListener('click',function(){ open(c); });
+    });
+    document.getElementById('cmClose').addEventListener('click',close);
+    modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  })();
+
+  // ===== CVSS 3.1 Base Score calculator =====
+  (function(){
+    var sel = {AV:null,AC:null,PR:null,UI:null,S:null,C:null,I:null,A:null};
+    var W = {
+      AV:{N:0.85,A:0.62,L:0.55,P:0.2},
+      AC:{L:0.77,H:0.44},
+      UI:{N:0.85,R:0.62},
+      C:{N:0,L:0.22,H:0.56}, I:{N:0,L:0.22,H:0.56}, A:{N:0,L:0.22,H:0.56}
+    };
+    function prW(v,scopeChanged){
+      if(v==='N') return 0.85;
+      if(v==='L') return scopeChanged?0.68:0.62;
+      if(v==='H') return scopeChanged?0.5:0.27;
+      return null;
+    }
+    function roundup(x){
+      var i = Math.round(x*100000);
+      if(i % 10000 === 0) return i/100000;
+      return (Math.floor(i/10000)+1)/10;
+    }
+    var scoreN=document.getElementById('scoreN'), ring=document.getElementById('ring'),
+        sevTag=document.getElementById('sevTag'), vec=document.getElementById('vec');
+    function colorFor(s){
+      if(s===0) return '#9aa7bd';
+      if(s<4) return '#36d399';
+      if(s<7) return '#38bdf8';
+      if(s<9) return '#fbbf24';
+      return '#f87171';
+    }
+    function labelFor(s){
+      if(s===0) return 'Nenhuma';
+      if(s<4) return 'Baixa';
+      if(s<7) return 'Média';
+      if(s<9) return 'Alta';
+      return 'Crítica';
+    }
+    function recompute(){
+      vec.textContent = 'CVSS:3.1/AV:'+(sel.AV||'_')+'/AC:'+(sel.AC||'_')+'/PR:'+(sel.PR||'_')
+        +'/UI:'+(sel.UI||'_')+'/S:'+(sel.S||'_')+'/C:'+(sel.C||'_')+'/I:'+(sel.I||'_')+'/A:'+(sel.A||'_');
+      for(var k in sel){ if(!sel[k]){ setScore(null); return; } }
+      var scopeChanged = sel.S==='C';
+      var iss = 1 - ((1-W.C[sel.C])*(1-W.I[sel.I])*(1-W.A[sel.A]));
+      var impact = scopeChanged ? 7.52*(iss-0.029) - 3.25*Math.pow(iss-0.02,15)
+                                : 6.42*iss;
+      var expl = 8.22 * W.AV[sel.AV] * W.AC[sel.AC] * prW(sel.PR,scopeChanged) * W.UI[sel.UI];
+      var base;
+      if(impact<=0) base=0;
+      else base = scopeChanged ? roundup(Math.min(1.08*(impact+expl),10))
+                               : roundup(Math.min(impact+expl,10));
+      setScore(base);
+    }
+    function setScore(s){
+      if(s===null){ scoreN.textContent='0.0'; sevTag.textContent='selecione tudo';
+        sevTag.style.background='#1b2436'; sevTag.style.color='#9aa7bd';
+        ring.style.borderColor='#2a3850'; return; }
+      scoreN.textContent = s.toFixed(1);
+      var c = colorFor(s);
+      ring.style.borderColor = c; scoreN.style.color = c;
+      sevTag.textContent = labelFor(s)+' · '+s.toFixed(1);
+      sevTag.style.background = c+'22'; sevTag.style.color = c; sevTag.style.border='1px solid '+c;
+    }
+    document.querySelectorAll('#cvss .metric').forEach(function(m){
+      var k = m.dataset.k;
+      m.querySelectorAll('.opt').forEach(function(o){
+        o.addEventListener('click',function(){
+          sel[k]=o.dataset.v;
+          m.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+          o.classList.add('sel');
+          recompute();
+        });
+      });
+    });
+    // presets
+    var presets = {
+      shadow:{AV:'L',AC:'L',PR:'L',UI:'N',S:'U',C:'H',I:'H',A:'H'},
+      ssh:{AV:'N',AC:'L',PR:'N',UI:'N',S:'U',C:'H',I:'H',A:'H'},
+      sqli:{AV:'N',AC:'L',PR:'N',UI:'N',S:'U',C:'H',I:'H',A:'H'}
+    };
+    document.querySelectorAll('#presets .opt').forEach(function(p){
+      p.addEventListener('click',function(){
+        var cfg=presets[p.dataset.preset]; if(!cfg) return;
+        for(var k in cfg){ sel[k]=cfg[k]; }
+        document.querySelectorAll('#cvss .metric').forEach(function(m){
+          var k=m.dataset.k;
+          m.querySelectorAll('.opt').forEach(function(o){ o.classList.toggle('sel', o.dataset.v===sel[k]); });
+        });
+        recompute();
+        document.getElementById('cvss').querySelector('.score').scrollIntoView({behavior:'smooth',block:'center'});
+      });
+    });
+    recompute();
+  })();
+</script>
+</body>
+</html>
