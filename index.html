@@ -355,6 +355,13 @@
   .exfb.show{display:block}
   .exfb .fbi{padding:6px 0;border-bottom:1px dashed var(--line)}
   .exfb .fbi:last-child{border-bottom:none}
+  /* ===== Anti-colar (digitação manual obrigatória) ===== */
+  .thint,.exhint,.exchip{user-select:none;-webkit-user-select:none}
+  .nptoast{position:fixed;bottom:22px;right:22px;z-index:200;background:#2a1115;color:var(--crit);
+    border:1px solid var(--crit);border-radius:11px;padding:10px 15px;font-size:13px;font-weight:600;
+    box-shadow:0 12px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);pointer-events:none;
+    transition:opacity .18s,transform .18s;max-width:340px}
+  .nptoast.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -3375,10 +3382,8 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
       const ok = cur.key.some(function(k){ return v.indexOf(k.toLowerCase())>=0; });
       if(ok){ applyOk(); }
       else {
-        hint.innerHTML='❌ Não parece a correção certa. <a id="tShow2">ver sugestão</a> ou clique em "Aplicar correção sugerida".';
-        document.getElementById("tShow2").onclick=function(){ hint.innerHTML="💡 "+esc(cur.fix); };
-        let sg=document.getElementById("tSug");
-        if(!sg){ sg=document.createElement("button"); sg.id="tSug"; sg.className="tbtn"; sg.style.background="var(--card2)"; sg.style.color="var(--acc2)"; sg.style.border="1px solid var(--acc2)"; sg.textContent="Aplicar correção sugerida"; sg.onclick=function(){ inp.value=cur.fix; applyOk(); }; ctrl.appendChild(sg); }
+        hint.innerHTML='❌ Não parece a correção certa. <a id="tShow2">ver sugestão</a> e digite manualmente para praticar.';
+        document.getElementById("tShow2").onclick=function(){ hint.innerHTML="💡 "+esc(cur.fix)+" (digite manualmente acima)"; };
       }
     };
     inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); ap.click(); } });
@@ -4388,7 +4393,7 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
 
     function renderArena(){
       var ex=activeExam;
-      if(!termLogs[ex.id]) termLogs[ex.id]=[{c:"sys", t:"Sessão de auditoria iniciada. Digite 'help' ou clique nos comandos rápidos abaixo para investigar o servidor."}];
+      if(!termLogs[ex.id]) termLogs[ex.id]=[{c:"sys", t:"Sessão de auditoria iniciada. Digite 'help' ou escreva manualmente os comandos de referência abaixo para investigar o servidor."}];
       if(!foundEv[ex.id]) foundEv[ex.id]=[];
       var saved=state[ex.id]||{};
       var rows=saved.rows || [{v:"",l:"SO",r:"Alto",i:"",f:""},{v:"",l:"SO",r:"Alto",i:"",f:""},{v:"",l:"Web",r:"Alto",i:"",f:""},{v:"",l:"Web",r:"Alto",i:"",f:""}];
@@ -4450,7 +4455,7 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
         var key=Object.keys(ex.commands).find(k=>k.toLowerCase()===cmd.toLowerCase()) ||
                 Object.keys(ex.commands).find(k=>cmd.toLowerCase().indexOf(k.toLowerCase().split(" ")[0])===0 && k.toLowerCase().indexOf(cmd.toLowerCase().split(" ")[1]||"")>=0);
         if(!key){
-          termLogs[ex.id].push({c:"out", t:"Comando não simulado neste sandbox. Digite 'help' ou use os botões de comandos rápidos."});
+          termLogs[ex.id].push({c:"out", t:"Comando não simulado neste sandbox. Digite 'help' ou escreva manualmente um dos comandos de referência listados acima."});
         } else {
           var res=ex.commands[key];
           if(typeof res==="string"){
@@ -4473,7 +4478,11 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
           var ch=document.getElementById("exBChips");
           ex.quickCmds.forEach(function(c){
             var b=document.createElement("button"); b.type="button"; b.className="exchip"; b.textContent=c;
-            b.onclick=function(){ runBCmd(c); };
+            b.title="Referência de comando — digite manualmente no terminal";
+            b.onclick=function(){
+              var ci=document.getElementById("exBCmdInp"); if(ci) ci.focus();
+              if(window.csNoPasteWarn) window.csNoPasteWarn("⌨️ Digite o comando manualmente no terminal abaixo!");
+            };
             ch.appendChild(b);
           });
           var tEl=document.getElementById("exBTerm");
@@ -4591,6 +4600,73 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
 
     renderGrid(); renderArena();
   })();
+})();
+</script>
+<script>
+/* ===== Bloqueio global Anti-Colar (digitação manual obrigatória em todas as caixas) ===== */
+(function(){
+  var toast=document.createElement("div");
+  toast.className="nptoast";
+  toast.setAttribute("role","status");
+  document.body.appendChild(toast);
+  var tmr=null;
+  function warn(msg){
+    toast.textContent = msg || "🚫 Colar bloqueado — digite manualmente para fixar o conteúdo!";
+    toast.classList.add("show");
+    if(tmr) clearTimeout(tmr);
+    tmr=setTimeout(function(){ toast.classList.remove("show"); }, 2600);
+  }
+  window.csNoPasteWarn = warn;
+
+  function isTextField(el){
+    if(!el || !el.tagName) return false;
+    var tag=el.tagName.toUpperCase();
+    if(tag==="TEXTAREA") return true;
+    if(tag==="INPUT"){
+      var tp=(el.type||"text").toLowerCase();
+      return ["text","search","email","url","password","tel","number"].indexOf(tp)>=0;
+    }
+    return false;
+  }
+
+  document.addEventListener("focusin", function(e){
+    if(isTextField(e.target)){
+      e.target.setAttribute("autocomplete","off");
+      e.target.setAttribute("spellcheck","false");
+    }
+  }, true);
+
+  document.addEventListener("paste", function(e){
+    if(isTextField(e.target)){
+      e.preventDefault(); e.stopImmediatePropagation(); warn();
+    }
+  }, true);
+
+  document.addEventListener("drop", function(e){
+    if(isTextField(e.target)){
+      e.preventDefault(); e.stopImmediatePropagation(); warn("🚫 Arrastar/soltar texto bloqueado — digite manualmente!");
+    }
+  }, true);
+
+  document.addEventListener("beforeinput", function(e){
+    if(isTextField(e.target) && (e.inputType==="insertFromPaste" || e.inputType==="insertFromPasteAsQuotation" || e.inputType==="insertFromDrop")){
+      e.preventDefault(); e.stopImmediatePropagation(); warn();
+    }
+  }, true);
+
+  document.addEventListener("keydown", function(e){
+    if(!isTextField(e.target)) return;
+    var k=(e.key||"").toLowerCase();
+    if(((e.ctrlKey || e.metaKey) && k==="v") || (e.shiftKey && k==="insert")){
+      e.preventDefault(); e.stopImmediatePropagation(); warn();
+    }
+  }, true);
+
+  document.addEventListener("contextmenu", function(e){
+    if(isTextField(e.target)){
+      e.preventDefault(); warn("🚫 Menu colar bloqueado — digite manualmente!");
+    }
+  }, true);
 })();
 </script>
 </body>
