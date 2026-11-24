@@ -416,12 +416,26 @@
     <span class="pill" data-f="cron">Cron/PATH</span>
     <span class="pill" data-f="kernel">Kernel/CVE</span>
     <span class="pill" data-f="net">Rede/SSH</span>
+    <span class="pill" data-f="proc">Processos</span>
     <span class="pill" data-f="cred">Credenciais</span>
     <span class="pill" data-f="group">Grupos/NFS</span>
+    <span class="pill" data-f="auto">Automático</span>
     <span class="pill" data-f="hard">Hardening</span>
   </div>
 
   <div class="count" id="count"></div>
+
+  <div class="disc" style="border-color:var(--acc);background:#0e1f1a">
+    🚀 <b>Início rápido — cole este bloco primeiro</b> (enumeração essencial em segundos):
+<pre style="margin-top:8px"><span class="k">id</span>; <span class="k">sudo</span> -l; <span class="k">uname</span> -a; <span class="k">hostname</span>          <span class="c"># quem sou eu + kernel</span>
+<span class="k">cat</span> /etc/os-release | head -2                 <span class="c"># distro</span>
+<span class="k">find</span> / -perm -4000 -type f 2&gt;/dev/null        <span class="c"># SUID</span>
+<span class="k">getcap</span> -r / 2&gt;/dev/null                        <span class="c"># capabilities</span>
+<span class="k">ls</span> -l /etc/shadow /etc/passwd                  <span class="c"># permissões críticas</span>
+<span class="k">sudo</span> ss -tulpn                                 <span class="c"># portas/serviços</span>
+<span class="k">crontab</span> -l; cat /etc/crontab                   <span class="c"># tarefas agendadas</span></pre>
+    Depois rode a <b>enumeração automatizada</b> (card abaixo) para varrer tudo de uma vez.
+  </div>
 
   <!-- 1 shadow -->
   <div class="v" data-cat="perm">
@@ -754,6 +768,117 @@ PasswordAuthentication no   <span class="c"># preferir chaves</span>
 <span class="k">sudo</span> ss -tulpn                      <span class="c"># o que está exposto</span></pre></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Manter SELinux em <code class="inl">enforcing</code>, firewall ativo liberando só o necessário, atualizações em dia e política de senha forte (pwquality). Aplicar um baseline CIS.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 15 automated enum -->
+  <div class="v" data-cat="auto">
+    <div class="top">
+      <div class="sev info"><div class="num">★</div><div class="lbl">tooling</div></div>
+      <div class="ttl"><h3>Enumeração automatizada (LinPEAS &amp; cia)</h3>
+        <div class="cat">Automático · varre todos os vetores de uma vez</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Scripts que verificam <b>automaticamente</b> dezenas de vetores de privesc (SUID, sudo, cron, capabilities, kernel, credenciais...) e destacam o que é suspeito. Rode um deles logo no início — eles pegam o que uma checagem manual pode esquecer. Depois valide cada achado manualmente.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como usar</div>
+<pre><span class="c"># LinPEAS (o mais completo) — se tiver internet:</span>
+curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | sh
+<span class="c"># sem internet: transfira o arquivo e rode</span>
+./linpeas.sh | tee linpeas.txt       <span class="c"># salva a saída</span>
+<span class="c"># outros:</span>
+./LinEnum.sh                          <span class="c"># enumeração clássica</span>
+./lse.sh -l2                          <span class="c"># Linux Smart Enumeration (verboso)</span>
+./linux-exploit-suggester.sh          <span class="c"># sugere exploits de kernel</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Observação</div>
+        <div class="fixbox"><p>Do lado da <b>defesa</b>, a execução desses scripts (muitos comandos de enumeração em sequência) é detectável — EDR/auditd podem alertar. Rodar como o próprio usuário de serviço reproduz a visão de um atacante com foothold.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 16 processes/services -->
+  <div class="v" data-cat="proc">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.0</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Processos e serviços internos</h3>
+        <div class="cat">Processos · Superfície interna · CWE-250</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Processos rodando como root, serviços que só escutam em <code class="inl">localhost</code> (ex.: banco de dados, Redis, painéis) e jobs periódicos. Um serviço interno vulnerável ou um banco como root é caminho para escalonamento. O <b>pspy</b> revela cron/processos em tempo real sem precisar de root.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">ps</span> auxf                              <span class="c"># processos (quem roda como root)</span>
+<span class="k">ps</span> -ef --forest
+<span class="k">sudo</span> ss -tulpn                       <span class="c"># portas locais só em 127.0.0.1?</span>
+<span class="k">./pspy64</span>                            <span class="c"># monitora cron/processos ao vivo</span>
+<span class="k">ls</span> -la /etc/systemd/system/          <span class="c"># unit files graváveis?</span>
+<span class="k">systemctl</span> list-units --type=service --state=running</pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Rodar serviços com usuário dedicado (não root), expor só o necessário, manter softwares internos atualizados e proteger sockets/unit files com permissões corretas.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 17 drives/mounts -->
+  <div class="v" data-cat="proc">
+    <div class="top">
+      <div class="sev med"><div class="num">6.1</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Drives, montagens e fstab</h3>
+        <div class="cat">Discos · Exposição · CWE-200 / CWE-732</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Discos montados ou <b>não montados</b> podem conter backups, credenciais em <code class="inl">/etc/fstab</code> (ex.: senha de share SMB/NFS) e dados sensíveis. Montagens sem <code class="inl">nosuid</code> permitem binários SUID vindos de fora.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">mount</span>; <span class="k">cat</span> /etc/fstab            <span class="c"># montagens + credenciais em claro</span>
+<span class="k">lsblk</span>; <span class="k">cat</span> /proc/mounts         <span class="c"># discos e opções (nosuid?)</span>
+<span class="k">lsblk</span> -o NAME,FSTYPE,SIZE,MOUNTPOINT  <span class="c"># discos não montados</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Tirar credenciais do <code class="inl">/etc/fstab</code> (usar arquivo de credenciais protegido), montar sistemas de arquivos de dados com <code class="inl">nosuid,nodev</code> e restringir acesso a backups.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 18 wildcard injection -->
+  <div class="v" data-cat="cron">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.8</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Wildcard injection (tar, rsync, chown)</h3>
+        <div class="cat">Cron · Escalonamento · CWE-88</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Quando um script privilegiado usa <code class="inl">*</code> (ex.: <code class="inl">tar -czf bk.tar *</code>) numa pasta onde você pode criar arquivos, o <code class="inl">*</code> expande os <b>nomes dos arquivos como argumentos</b>. Criando arquivos com nomes especiais, você injeta opções (ex.: <code class="inl">--checkpoint-action=exec=sh script.sh</code>) e o comando executa seu código com o privilégio do script.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="c"># procurar wildcard em scripts/cron privilegiados:</span>
+<span class="k">grep</span> -rnE <span class="s">"tar .*\*|rsync .*\*|chown .*\*|chmod .*\*"</span> /etc/cron* /opt /usr/local 2&gt;/dev/null
+<span class="c"># exemplo de abuso (tar) numa pasta gravável:</span>
+echo <span class="s">'cp /bin/bash /tmp/b; chmod +s /tmp/b'</span> &gt; shell.sh
+touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoint-action=exec=sh shell.sh"</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Nunca usar <code class="inl">*</code> em comandos privilegiados; usar caminhos absolutos e <code class="inl">./</code> antes de globs (<code class="inl">tar ... -- ./*</code>), ou listar arquivos explicitamente. Garantir que a pasta de trabalho não seja gravável por usuários.</p></div></div>
+    </div>
+  </div>
+
+  <!-- 19 interesting files / ssh keys -->
+  <div class="v" data-cat="cred">
+    <div class="top">
+      <div class="sev alto"><div class="num">7.4</div><div class="lbl">CVSS</div></div>
+      <div class="ttl"><h3>Arquivos interessantes e chaves SSH</h3>
+        <div class="cat">Credenciais · Exposição · CWE-200 / CWE-522</div></div>
+      <div class="chev">›</div>
+    </div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é</div>
+        <p>Chaves SSH privadas legíveis, arquivos de configuração com segredos, arquivos modificados recentemente e tudo que pertence ao seu usuário em lugares inesperados. Uma chave privada de root legível = acesso direto.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
+<pre><span class="k">find</span> / -name <span class="s">"id_rsa*"</span> -o -name <span class="s">"*.pem"</span> -o -name authorized_keys 2&gt;/dev/null
+<span class="k">find</span> / -type f -readable -newermt <span class="s">"2 days ago"</span> 2&gt;/dev/null | grep -vE <span class="s">"/proc|/sys"</span>
+<span class="k">find</span> / -user $(whoami) -type f 2&gt;/dev/null | grep -vE <span class="s">"/proc|/sys|/home/$(whoami)"</span>
+<span class="k">getfacl</span> -R /caminho 2&gt;/dev/null       <span class="c"># ACLs além do rwx tradicional</span></pre></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
+        <div class="fixbox"><p>Chaves privadas com permissão <code class="inl">600</code> e dono correto; remover segredos de configs legíveis; revisar ACLs; não deixar backups/arquivos sensíveis acessíveis a usuários comuns.</p></div></div>
     </div>
   </div>
 
