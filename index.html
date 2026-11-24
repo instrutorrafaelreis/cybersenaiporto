@@ -248,6 +248,21 @@
   .provaempty h2{margin:16px 0 8px;font-size:26px}
   .provaempty p{color:var(--mut);font-size:15px}
   .provaempty .tag{display:inline-block;margin-top:18px;font-size:12.5px;color:var(--mut2);border:1px dashed var(--line);border-radius:999px;padding:6px 16px}
+  /* Prova A tabs (isoladas) */
+  .atabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 18px;position:sticky;top:0;z-index:4;
+    background:rgba(11,15,23,.92);backdrop-filter:blur(8px);padding:12px 0;border-bottom:1px solid var(--line)}
+  .atab{font-size:13px;color:var(--mut);border:1px solid var(--line);background:var(--card);
+    padding:7px 13px;border-radius:9px;cursor:pointer;user-select:none;line-height:1.2;text-align:center}
+  .atab:hover{color:var(--txt);border-color:var(--acc2)}
+  .atab.active{background:#0e2336;color:var(--acc2);border-color:var(--acc2);font-weight:600}
+  .atab .pt{display:block;font-size:9px;opacity:.7}
+  .apanel{display:none} .apanel.active{display:block}
+  .os{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:middle}
+  .os.win{background:#10243a;color:#5eb3f5;border:1px solid #1d4e7a}
+  .os.lin{background:#0e2a20;color:var(--acc);border:1px solid #1f5e44}
+  .os.net{background:#241c3a;color:var(--info);border:1px solid #3b2e63}
+  .h fazer, .h verif{}
+  .h.faz .d{background:var(--warn)} .h.ver .d{background:var(--acc)}
 </style>
 </head>
 <body>
@@ -1552,8 +1567,373 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 </div><!-- /#provaB -->
 
 <div class="prova-content" id="provaA">
-  <div class="provaempty"><div class="big">🅰️</div><h2>Prova A</h2><p>Conteúdo em construção. Esta prova ainda não foi montada — podemos criá-la no mesmo formato da Prova B (abas, comandos, treino).</p><span class="tag">em breve</span></div>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · WorldSkills Skill 54 · Prova A — Enterprise Security</div>
+    <h1>Prova A: <span class="g">Enterprise Security (Hardening)</span></h1>
+    <p class="sub">Módulo A1 do WorldSkills Cyber Security: aplicar políticas de segurança a uma infraestrutura Windows Server + Linux (RHEL/CentOS 9) + pfSense. 7 tarefas, 100 pontos. Base criada por Thaylon R. M. da Silva — pode mudar a cada edição.</p>
+    <div style="margin-top:10px;color:var(--mut2);font-size:12.5px">⚠️ Material de treino. As tarefas de nuvem/GUI (ADCS, pfSense) têm passos de interface; as de Linux trazem os comandos prontos.</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="atabs" id="atabs">
+    <span class="atab active" data-ap="a-vg">Visão geral</span>
+    <span class="atab" data-ap="a-t1">T1 · Infra<span class="pt">28 pts</span></span>
+    <span class="atab" data-ap="a-t2">T2 · CA/Serviços<span class="pt">10 pts</span></span>
+    <span class="atab" data-ap="a-t3">T3 · Cripto<span class="pt">12 pts</span></span>
+    <span class="atab" data-ap="a-t4">T4 · SSH<span class="pt">10 pts</span></span>
+    <span class="atab" data-ap="a-t5">T5 · IAM/SELinux<span class="pt">10 pts</span></span>
+    <span class="atab" data-ap="a-t6">T6 · Logs<span class="pt">10 pts</span></span>
+    <span class="atab" data-ap="a-t7">T7 · VPN<span class="pt">20 pts</span></span>
+  </div>
+
+  <!-- ============ VISÃO GERAL ============ -->
+  <div class="apanel active" id="a-vg">
+    <div class="disc" style="border-color:var(--acc)">🎯 <b>Objetivo:</b> os serviços já estão no ar, mas sem segurança. Você aplica as políticas de hardening seguindo as melhores práticas. Entregue um Word com prints no desktop (ex.: <code class="inl">AM_João_Ninguem</code>). Deixe as VMs ligadas e acessíveis para avaliação.</div>
+    <h3 style="margin:18px 0 6px">Topologia (Tabela 1.0)</h3>
+    <table class="ftable">
+      <thead><tr><th>VM</th><th>IP</th><th>Login</th></tr></thead>
+      <tbody>
+        <tr><td>WinServer (HQ)</td><td class="id">10.6.6.2 / 10.6.7.1</td><td>Administrator / P@ssw0rd</td></tr>
+        <tr><td>Manager (Win10)</td><td class="id">10.6.7.2</td><td>Skills / P@ssw0rd</td></tr>
+        <tr><td>LinuxServer</td><td class="id">10.8.7.1 / 10.8.8.2</td><td>root / P@ssw0rd</td></tr>
+        <tr><td>Staff1 (CentOS 9)</td><td class="id">10.8.7.2</td><td>Skills / P@ssw0rd</td></tr>
+        <tr><td>FW1 (pfSense)</td><td class="id">10.8.8.1 / 10.6.6.1 / 100.10.1.10</td><td>admin / pfsense</td></tr>
+        <tr><td>FW2 (pfSense)</td><td class="id">100.20.1.10 / 10.0.2.1</td><td>admin / pfsense</td></tr>
+        <tr><td>Staff2 / RemoteUser (Win10)</td><td class="id">10.0.2.10 / 100.30.1.10</td><td>Skills / P@ssw0rd</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin:22px 0 6px">Resumo de pontuação</h3>
+    <div class="owl">
+      <div class="owi"><span class="c">T1</span><div class="t"><b>Infrastructure Setup &amp; Hardening</b><div class="d">28 pts</div></div></div>
+      <div class="owi"><span class="c">T2</span><div class="t"><b>Certificate Authority &amp; Public service protection</b><div class="d">10 pts</div></div></div>
+      <div class="owi"><span class="c">T3</span><div class="t"><b>Cryptography</b><div class="d">12 pts</div></div></div>
+      <div class="owi"><span class="c">T4</span><div class="t"><b>SSH service hardening</b><div class="d">10 pts</div></div></div>
+      <div class="owi"><span class="c">T5</span><div class="t"><b>IAM (SELinux)</b><div class="d">10 pts</div></div></div>
+      <div class="owi"><span class="c">T6</span><div class="t"><b>Logging &amp; Log security</b><div class="d">10 pts</div></div></div>
+      <div class="owi"><span class="c">T7</span><div class="t"><b>Secure communication (VPN)</b><div class="d">20 pts</div></div></div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 1 ============ -->
+  <div class="apanel" id="a-t1">
+    <div class="disc">🔐 <b>Políticas de login, senha, usuários e grupos</b> no WinServer (GPO de domínio) e LinuxServer (política local). 28 pontos.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Política de senha (expiração/aviso)</h3><div class="cat">trocar a cada 14 dias · 3 de aviso · 1 após expirar</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># /etc/login.defs  (novos usuários)
+PASS_MAX_DAYS   14
+PASS_WARN_AGE   3
+# inatividade após expirar (1 dia)
+useradd -D -f 1
+# aplicar a um usuário existente:
+chage -M 14 -W 3 -I 1 User01</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>chage -l User01</pre></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Complexidade de senha (pwquality)</h3><div class="cat">min 10 · 1 maiúscula/minúscula/dígito · 3 iguais seguidos</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># /etc/security/pwquality.conf
+minlen = 10          # comprimento mínimo
+dcredit = -1         # exige >=1 dígito
+ucredit = -1         # exige >=1 maiúscula
+lcredit = -1         # exige >=1 minúscula
+maxclassrepeat = 3   # máx. 3 caracteres consecutivos da mesma classe
+# garantir o módulo (authselect):
+authselect enable-feature with-pwquality 2>/dev/null; authselect apply-changes</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>echo 'senha123' | pwscore   # testa a força; passwd User01 para testar na prática</pre></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Histórico de senhas</h3><div class="cat">lembrar das 15 anteriores</div></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># em /etc/pam.d/system-auth e /etc/pam.d/password-auth,
+# logo após a linha pam_pwquality.so:
+password requisite pam_pwhistory.so use_authtok remember=15</pre></div></div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Bloqueio de conta (faillock)</h3><div class="cat">3 tentativas → bloqueia 25 min</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># /etc/security/faillock.conf
+deny = 3
+unlock_time = 1500     # 25 min
+# habilitar o módulo:
+authselect enable-feature with-faillock; authselect apply-changes</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>faillock --user User01        # mostra as falhas / faillock --user User01 --reset</pre></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Banner, timeout e usuários/grupos</h3><div class="cat">aviso legal · 20 min inativo · User01-03, developer/technical</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># banner de login:
+echo 'Apenas usuários autorizados' > /etc/issue; cp /etc/issue /etc/issue.net
+# timeout de inatividade (20 min) — /etc/profile.d/timeout.sh
+echo 'TMOUT=1200; readonly TMOUT; export TMOUT' > /etc/profile.d/timeout.sh
+# grupos e usuários:
+groupadd developer; groupadd technical
+for u in User01 User02 User03; do useradd -m $u; echo "$u:P@ssw0rd" | chpasswd; done</pre></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">WINDOWS</span>GPO: senha, bloqueio, banner, cache</h3><div class="cat">Default Domain Policy + Default Domain Controllers Policy</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer (gpmc.msc)</div>
+<pre>Computer Config &gt; Policies &gt; Windows Settings &gt; Security Settings:
+• Account Policies &gt; Password Policy:
+    Minimum password length = 10
+    Enforce password history = 15
+    Maximum password age = 14 dias
+    Password must meet complexity requirements = Enabled
+• Account Policies &gt; Account Lockout Policy:
+    Account lockout threshold = 3 · Lockout duration = 25 min
+• Local Policies &gt; Security Options:
+    "Interactive logon: Message text/title" (banner)
+    "Interactive logon: Number of previous logons to cache" = 0  (sem cache)
+# aplicar: gpupdate /force</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 2 ============ -->
+  <div class="apanel" id="a-t2">
+    <div class="disc">📜 <b>ADCS + IIS</b> (certificados no Windows) e <b>vsftpd com FTPS</b> (Linux). 10 pontos.</div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">WINDOWS</span>ADCS + certificado no IIS</h3><div class="cat">cert de servidor e de cliente, vincular ao site</div></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Passos</div>
+<pre>1. Server Manager &gt; Add Roles &gt; Active Directory Certificate Services
+   (Certification Authority + Web Enrollment) → configurar como Enterprise CA.
+2. IIS &gt; servidor &gt; Server Certificates &gt; Create Domain Certificate (cert de servidor web).
+3. Para o cert de cliente: certmgr / web enrollment (http://winserver/certsrv).
+4. IIS &gt; Default Web Site &gt; Bindings &gt; Add &gt; https &gt; escolher o certificado.</pre></div></div>
+    </div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>vsftpd com SSL/TLS, sem anônimo</h3><div class="cat">FTPS obrigatório</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># gerar cert (ou usar a CA):
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/ssl/private/vsftpd.key -out /etc/ssl/certs/vsftpd.pem
+# /etc/vsftpd/vsftpd.conf
+anonymous_enable=NO
+ssl_enable=YES
+force_local_logins_ssl=YES
+force_local_data_ssl=YES
+rsa_cert_file=/etc/ssl/certs/vsftpd.pem
+rsa_private_key_file=/etc/ssl/private/vsftpd.key
+systemctl restart vsftpd</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>ftp (deve recusar texto claro) · openssl s_client -connect IP:21 -starttls ftp</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 3 ============ -->
+  <div class="apanel" id="a-t3">
+    <div class="disc">🔑 <b>Apache com RSA 4096 autoassinado</b>, redirect HTTP→HTTPS, SNI, sem listagem, não-root, HSTS, .htaccess e <code class="inl">.bak</code> → 403. 12 pontos.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Certificado RSA 4096 + vhosts (SNI)</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre>openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
+  -keyout /etc/pki/tls/private/wsc.key -out /etc/pki/tls/certs/wsc.crt
+mkdir -p /var/www/site /var/www/files
+echo 'Hello World' > /var/www/site/index.html; touch /var/www/site/backup.bak
+# vhost (SNI por ServerName): /etc/httpd/conf.d/sites.conf
+# &lt;VirtualHost *:443&gt; ServerName site.wsc.local  ... SSLEngine on
+#   SSLCertificateFile /etc/pki/tls/certs/wsc.crt ...
+# &lt;VirtualHost *:443&gt; ServerName files.wsc.local ...</pre></div></div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Redirect HTTP→HTTPS, HSTS, sem listagem</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># no &lt;VirtualHost *:80&gt;:
+Redirect permanent / https://site.wsc.local/
+# no vhost 443:
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+&lt;Directory /var/www/files&gt;
+    Options -Indexes            # desabilita directory listing
+    AllowOverride All
+&lt;/Directory&gt;
+# firewall:
+firewall-cmd --add-service=http --add-service=https --permanent; firewall-cmd --reload</pre></div></div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Apache não-root · .htaccess · bloquear .bak</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># rodar como usuário não-root: /etc/httpd/conf/httpd.conf
+User apache
+Group apache
+# .htaccess auth em files.wsc.local:
+htpasswd -c /etc/httpd/.htpasswd usuario     # senha: pwd123
+#   AuthType Basic / AuthUserFile /etc/httpd/.htpasswd / Require valid-user
+# bloquear .bak com 403 (mas permitir .bak em query string):
+&lt;FilesMatch "\.bak$"&gt;
+    Require all denied
+&lt;/FilesMatch&gt;
+systemctl restart httpd</pre></div></div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 4 ============ -->
+  <div class="apanel" id="a-t4">
+    <div class="disc">🛡️ <b>Hardening do SSH</b> no LinuxServer. 10 pontos. Edite <code class="inl">/etc/ssh/sshd_config</code> e rode <code class="inl">systemctl restart sshd</code>.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Banner, idle logout e logging verbose</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre>echo 'acesso não autorizado a este sistema não permitido' > /etc/ssh/banner
+# sshd_config:
+Banner /etc/ssh/banner
+ClientAliveInterval 1200     # 20 min
+ClientAliveCountMax 0
+LogLevel VERBOSE</pre></div></div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Match por usuário/grupo · desabilitar X11/túnel</h3><div class="cat">User02 · grupo developer</div></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># config global:
+X11Forwarding no
+AllowTcpForwarding no
+PermitTunnel no
+# regras específicas (no fim do arquivo):
+Match User User02
+    Banner /etc/ssh/banner_user02
+Match Group developer
+    X11Forwarding no</pre></div></div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>TCP Wrappers · porta 22222</h3><div class="cat">permitir só 192.168.10.5</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># TCP Wrappers:
+echo 'sshd: 192.168.10.5' >> /etc/hosts.allow
+echo 'sshd: ALL' >> /etc/hosts.deny
+# porta: sshd_config
+Port 22222
+# SELinux + firewall para a porta nova:
+semanage port -a -t ssh_port_t -p tcp 22222
+firewall-cmd --add-port=22222/tcp --permanent; firewall-cmd --reload</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>ssh -p 22222 user@IP</pre></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SSH</span>Só chave · sem root · login sem senha</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># no cliente:
+ssh-keygen -t ed25519
+ssh-copy-id -p 22222 user@IP
+# sshd_config:
+PubkeyAuthentication yes
+PasswordAuthentication no
+PermitRootLogin no
+systemctl restart sshd</pre></div></div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 5 ============ -->
+  <div class="apanel" id="a-t5">
+    <div class="disc">🔏 <b>SELinux + vsftpd</b> no LinuxServer. 10 pontos.</div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SELinux</span>Habilitar e verificar</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># /etc/selinux/config
+SELINUX=enforcing
+setenforce 1
+sestatus            # verificar (Current mode: enforcing)
+getenforce</pre></div></div>
+    </div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SELinux</span>Porta FTP, contexto do diretório e booleans</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># porta 21 (se preciso):
+semanage port -a -t ftp_port_t -p tcp 21
+# diretório de upload + contexto:
+mkdir -p /var/ftp/upload
+semanage fcontext -a -t public_content_rw_t "/var/ftp/upload(/.*)?"
+restorecon -Rv /var/ftp/upload
+# booleans (permitir leitura/gravação e login):
+setsebool -P ftpd_full_access on
+setsebool -P ftp_home_dir on</pre></div></div>
+    </div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SELinux</span>Monitorar negações (audit)</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h ver"><span class="d"></span>Como fazer</div>
+<pre>ausearch -m avc -ts recent | grep ftp
+# gerar política a partir de uma negação:
+ausearch -c vsftpd --raw | audit2allow -M meu_ftp
+semodule -i meu_ftp.pp</pre></div></div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 6 ============ -->
+  <div class="apanel" id="a-t6">
+    <div class="disc">📋 <b>Logs centralizados (rsyslog), rotação, prioridades e NTP</b>. 10 pontos.</div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LOGS</span>Retenção 7 dias + logrotate</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># journald — /etc/systemd/journald.conf
+MaxRetentionSec=7day
+systemctl restart systemd-journald
+# logrotate diário, comprimido, 1 mês, com data no nome — /etc/logrotate.d/custom
+/var/log/custom/*.log {
+    daily
+    rotate 30
+    compress
+    dateext
+    missingok
+}</pre></div></div>
+    </div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LOGS</span>Prioridade de processos (nice)</h3><div class="cat">Doe baixa · John alta</div></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># /etc/security/limits.conf
+@Doe   -   priority   10     # prioridade baixa (nice +10)
+@John  -   priority  -10     # prioridade alta (nice -10)
+# ad hoc: nice -n 10 comando   |   renice -n -10 -u John</pre></div></div>
+    </div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LOGS</span>rsyslog remoto + httpd + pfSense</h3></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># no LogServer — /etc/rsyslog.conf (receber):
+module(load="imtcp")  input(type="imtcp" port="514")
+module(load="imudp")  input(type="imudp" port="514")
+firewall-cmd --add-port=514/tcp --add-port=514/udp --permanent; firewall-cmd --reload
+# no WebServer — enviar httpd para o LogServer:
+#   httpd.conf: ErrorLog "| /usr/bin/logger -t httpd -n LOGSERVER -P 514"
+# pfSense: Status &gt; System Logs &gt; Settings &gt; Remote Logging → IP do LogServer</pre></div></div>
+    </div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">NTP</span>Sincronizar e servir (chrony)</h3><div class="cat">pool 2.centos.pool.ntp.org · servir 10.8.8.0/24</div></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre># /etc/chrony.conf
+pool 2.centos.pool.ntp.org iburst     # sincronização rápida
+allow 10.8.8.0/24                      # servir só essa sub-rede
+local stratum 10
+systemctl restart chronyd
+chronyc sources; chronyc clients</pre></div></div>
+    </div>
+  </div>
+
+  <!-- ============ TASK 7 ============ -->
+  <div class="apanel" id="a-t7">
+    <div class="disc">🔗 <b>VPN no pfSense</b>: Site-to-Site IPsec (IKEv2, cert da CA do WinServer) + OpenVPN Remote Access com certificados. 20 pontos. Feito pela interface web do pfSense.</div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">pfSense</span>Site-to-Site IPsec (IKEv2)</h3><div class="cat">FW1 ↔ FW2, autenticação por certificado</div></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Passos</div>
+<pre>1. Importar a CA do WinServer: System &gt; Cert Manager &gt; CAs (e o cert de cada FW).
+2. VPN &gt; IPsec &gt; Tunnels &gt; Add P1:
+     Key Exchange: IKEv2 · Authentication: Mutual Certificate
+     Remote Gateway: WAN do outro FW · My Certificate: cert do FW.
+3. Add P2: redes locais (10.8.8.0/24 ↔ 10.0.2.0/24), ESP.
+4. Firewall &gt; Rules &gt; IPsec: permitir o tráfego das LANs.
+5. Status &gt; IPsec: túnel "ESTABLISHED".</pre></div></div>
+    </div>
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">pfSense</span>OpenVPN Remote Access (certificado)</h3><div class="cat">usuário Skills, acesso à rede do FW1</div></div><div class="chev">›</div></div>
+      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Passos</div>
+<pre>1. Cert Manager: criar CA/Server cert e um User cert para "Skills".
+2. VPN &gt; OpenVPN &gt; Wizard (ou Servers &gt; Add):
+     Server mode: Remote Access (SSL/TLS) · TLS Authentication.
+3. Firewall: permitir UDP 1194 na WAN + tráfego na interface OpenVPN.
+4. Exportar o perfil (OpenVPN Client Export) e conectar no RemoteUser.
+5. Status &gt; OpenVPN: cliente conectado, acessando o LinuxServer.</pre></div></div>
+    </div>
+  </div>
 </div>
+</div>
+
 <div class="prova-content" id="provaC">
   <div class="provaempty"><div class="big">🅲</div><h2>Prova C</h2><p>Conteúdo em construção. Me diga o tema desta prova que eu monto as abas e os comandos.</p><span class="tag">em breve</span></div>
 </div>
@@ -1758,6 +2138,16 @@ document.querySelectorAll('.provanav .pbtn').forEach(function(b){
     var el=document.getElementById(b.dataset.prova);
     if(el) el.classList.add('active');
     window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+/* abas internas da Prova A */
+document.querySelectorAll('#provaA .atab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('#provaA .atab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('#provaA .apanel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    var el=document.getElementById(t.dataset.ap);
+    if(el) el.classList.add('active');
   });
 });
 </script>
