@@ -372,7 +372,7 @@
     <button class="pbtn" data-prova="provaA" type="button">Prova A <span class="st">Enterprise Security</span></button>
     <button class="pbtn active" data-prova="provaB" type="button">Prova B <span class="st">Security Assessment</span></button>
     <button class="pbtn" data-prova="provaC" type="button">Prova C <span class="st">Incident Response</span></button>
-    <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">Blue Team &amp; SIEM</span></button>
     <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">em breve</span></button>
     <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">em breve</span></button>
   </div>
@@ -4013,8 +4013,803 @@ rule Detect_Custom_Artifact {
 </div><!-- /.wrap -->
 </div><!-- /#provaC -->
 <div class="prova-content" id="provaD">
-  <div class="provaempty"><div class="big">🅳</div><h2>Prova D</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · Instrutor Rafael Reis · Prova D — Blue Team &amp; Defesa Ativa</div>
+    <h1>Blue Team, Detection Engineering &amp; SIEM/XDR: <span class="g">monitorar, detectar e reagir</span></h1>
+    <p class="sub">Guia completo de operações Blue Team: fundamentos universais de SOC e Engenharia de Detecção (independentes de ferramenta), aplicação prática em <b>Wazuh (SIEM/XDR)</b>, equivalentes em <b>Sigma / Elastic / Splunk</b> e alternativas <b>sem SIEM</b> (Fail2Ban, AIDE, Osquery, Suricata) — para o aluno dominar qualquer cenário.</p>
+
+    <div class="aprog" id="dProg">
+      <span>🎯 Progresso nos treinos práticos: <b id="dProgTxt">0 / 22</b></span>
+      <span class="bar"><i id="dProgBar"></i></span>
+    </div>
+
+    <div class="atabs" id="dtabs">
+      <div class="atab active" data-dp="d-fund"><span class="ic">📚</span> Fundamentos</div>
+      <div class="atab" data-dp="d-telem"><span class="ic">📡</span> Telemetria</div>
+      <div class="atab" data-dp="d-detect"><span class="ic">⚙️</span> Detecção &amp; Regras</div>
+      <div class="atab" data-dp="d-fim"><span class="ic">🛡️</span> FIM, CTI &amp; SCA</div>
+      <div class="atab" data-dp="d-active"><span class="ic">⚡</span> Defesa Ativa &amp; Iscas</div>
+      <div class="atab" data-dp="d-tools"><span class="ic">🧰</span> Matriz &amp; Ferramentas</div>
+      <div class="atab" data-dp="d-provas"><span class="ic">📝</span> Provas</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===================== D · FUNDAMENTOS ===================== -->
+<div class="apanel active" id="d-fund">
+  <div class="disc" style="margin-top:4px">📚 Um verdadeiro especialista de <b>Blue Team</b> nunca fica refém de uma única ferramenta. Nesta aba você domina a <b>arquitetura universal de monitoramento, engenharia de detecção e resposta ativa</b> — entendendo os princípios que funcionam tanto no <b>Wazuh</b> quanto no <b>Elastic/Splunk</b> ou até num <b>servidor puro sem SIEM</b>.</div>
+
+  <div class="mgroup" style="margin-top:24px"><span class="d"></span>1 · Conceitos universais do Blue Team &amp; SOC <span style="font-size:11px;color:var(--mut2);text-transform:none;letter-spacing:0">— clique em cada card para aprofundar</span></div>
+  <div class="gloss">
+    <div class="gi click popc" data-t="Defesa Passiva vs. Defesa Ativa &amp; Assume Breach">
+      <b>Defesa Passiva × Ativa</b> — por que muros estáticos não bastam. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>Defesa Passiva:</b> controles fixos preventivos (firewalls, políticas de senha, patches). Essencial, mas basta o atacante acertar <i>uma</i> brecha para entrar.<br>• <b>Defesa Ativa &amp; Assume Breach:</b> parte da premissa de que o adversário vai entrar em algum momento. O foco passa a ser <b>visibilidade contínua, detecção rápida, armadilhas e contenção automatizada</b>.<br><br><b>Equação fundamental do Blue Team:</b> Tempo de Detecção (<i>Dt</i>) + Tempo de Reação (<i>Rt</i>) &lt; Tempo do Ataque (<i>At</i>). Quanto menor o <b>Dwell Time</b> (tempo livre do invasor na rede), menor o impacto.</div>
+    </div>
+    <div class="gi click popc" data-t="Estrutura do SOC (Tier 1, Tier 2, Tier 3 e Detection Engineer)">
+      <b>Papéis no SOC</b> — da triagem inicial à engenharia de detecção. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Alinhado ao <b>NIST NICE Framework (Protect &amp; Defend)</b>:<br>• <b>Analista L1 (Triage):</b> monitora a fila do SIEM, separa falsos positivos de incidentes reais e aciona contenção inicial.<br>• <b>Analista L2 (Incident Responder):</b> aprofunda o escopo, correlaciona hosts/redes e conduz erradicação.<br>• <b>Analista L3 (Threat Hunter):</b> busca proativamente invasores furtivos que não geraram alertas.<br>• <b>Detection Engineer:</b> constrói, testa e afina os parsers, regras e automações que alimentam todo o SOC.</div>
+    </div>
+    <div class="gi click popc" data-t="Pipeline Universal de um SIEM / XDR">
+      <b>Pipeline SIEM/XDR</b> — o caminho do log bruto até a ação. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Todo SIEM do mercado (Wazuh, Elastic, Splunk, Sentinel, QRadar) executa exatamente as mesmas 5 etapas:<br>1. <b>Coleta (Collection/Shipping):</b> agentes ou syslog capturam eventos nos endpoints/rede.<br>2. <b>Parsing / Decodificação:</b> quebra o texto bruto em campos estruturados.<br>3. <b>Normalização:</b> padroniza nomes de campos (ex.: <code class="inl">srcip</code> / <code class="inl">source.ip</code>).<br>4. <b>Detecção &amp; Correlação:</b> avalia regras, listas de IOCs e janelas de tempo.<br>5. <b>Indexação &amp; Resposta:</b> grava no banco de busca, exibe no dashboard e dispara bloqueios/alertas.</div>
+    </div>
+    <div class="gi click popc" data-t="Normalização de Logs (ECS, OCSF e CIM)">
+      <b>Normalização</b> — fazer logs diferentes falarem a mesma língua. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Um firewall chama a origem de <code class="inl">src</code>, o Windows chama de <code class="inl">IpAddress</code> e o Nginx de <code class="inl">client_ip</code>. Sem normalização, você precisaria escrever 10 regras diferentes para o mesmo ataque!<br><br>Esquemas padrões de mercado resolvem isso:<br>• <b>ECS (Elastic Common Schema):</b> ex. <code class="inl">source.ip</code>, <code class="inl">user.name</code>, <code class="inl">process.command_line</code>.<br>• <b>OCSF:</b> padrão aberto multi-fornecedor.<br>• <b>CIM:</b> modelo padrão do Splunk.<br>• <b>Wazuh Dynamic Fields:</b> <code class="inl">srcip</code>, <code class="inl">dstuser</code>, <code class="inl">url</code>, <code class="inl">data.*</code>.</div>
+    </div>
+    <div class="gi click popc" data-t="4 Tipos de Lógica de Detecção">
+      <b>Tipos de Detecção</b> — atômica, limiar, sequencial e anomalia. <span class="more">ⓘ detalhes</span>
+      <div class="gx">1. <b>Atômica (IOC / Evento único):</b> um único evento já é grave (ex.: log de segurança apagado <code class="inl">1102</code>, IP na blocklist de C2).<br>2. <b>Estatística / Limiar (Threshold):</b> repetição acima do normal em janela curta (ex.: 8 falhas de login do mesmo IP em 60 segundos).<br>3. <b>Correlação Sequencial:</b> encadeamento lógico (ex.: várias falhas de senha seguidas de 1 login aceito + execução de <code class="inl">sudo</code>).<br>4. <b>Comportamental / Baseline:</b> desvio da rotina histórica (ex.: servidor de banco fazendo upload externo às 03h).</div>
+    </div>
+    <div class="gi click popc" data-t="Alert Fatigue &amp; Tuning (Afinação de Regras)">
+      <b>Alert Fatigue &amp; Tuning</b> — excesso de ruído cega a equipe. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Se um SIEM dispara 5.000 alertas falsos por dia, o analista se acostuma a ignorá-los e deixa passar o ataque real (<i>Alert Fatigue</i>).<br><br><b>Boa prática de Tuning:</b> nunca apague uma regra global importante porque um scanner interno legítimo disparou alerta! Crie uma <b>exceção cirúrgica (regra filha ou filtro <code class="inl">not</code>)</b> restrita apenas ao IP/usuário/caminho específico da rotina autorizada.</div>
+    </div>
+    <div class="gi click popc" data-t="Threat Hunting (Guiado por Hipótese vs. Dados)">
+      <b>Threat Hunting</b> — caçar invasores antes do alerta tocar. <span class="more">ⓘ detalhes</span>
+      <div class="gx">O <b>Threat Hunting</b> assume que o invasor contornou as regras automáticas:<br>• <b>Por Hipótese:</b> parte de uma técnica ATT&amp;CK ("<i>Será que alguém usou <code class="inl">certutil</code> ou <code class="inl">python</code> para baixar arquivos nos servidores web?</i>") e consulta os dados.<br>• <b>Por Dados / Outliers:</b> agrupa processos/domínios mais raros da rede (*long-tail analysis*).<br><br>Todo hunt que encontra algo real deve virar uma <b>nova regra automatizada</b>!</div>
+    </div>
+    <div class="gi click popc" data-t="FIM (File Integrity Monitoring) &amp; Whodata">
+      <b>FIM &amp; Whodata</b> — vigiar alterações críticas em tempo real. <span class="more">ⓘ detalhes</span>
+      <div class="gx">O <b>FIM</b> monitora criação, alteração de conteúdo, permissões e exclusão em pastas sensíveis (<code class="inl">/etc</code>, <code class="inl">/var/www/html</code>, <code class="inl">System32</code>).<br>• <b>Scan periódico (ex.: AIDE):</b> compara hashes atuais contra um banco baseline.<br>• <b>Realtime + Diff:</b> avisa no segundo em que o arquivo muda e mostra qual linha foi alterada.<br>• <b>Whodata (Auditd / SACL):</b> revela também <b>qual usuário e qual processo</b> modificou o arquivo!</div>
+    </div>
+    <div class="gi click popc" data-t="HIDS / EDR vs. NIDS / NDR">
+      <b>Host × Rede</b> — por que você precisa enxergar os dois lados. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>No Host (HIDS / EDR / Sysmon / Osquery):</b> enxerga dentro do SO (argumentos de comando, arquivos, usuários, memória), mesmo que o tráfego de rede esteja cifrado em TLS 1.3.<br>• <b>Na Rede (NIDS Suricata / NDR Zeek):</b> enxerga dispositivos sem agente, varreduras externas, DNS tunneling e movimentação lateral no fio — e o invasor no endpoint não consegue apagar o log do sensor de rede!</div>
+    </div>
+    <div class="gi click popc" data-t="SOAR &amp; Resposta Ativa (Active Response)">
+      <b>SOAR &amp; Resposta Ativa</b> — conter ataques em milissegundos. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Quando uma regra de alta confiança dispara, esperar um humano ler o alerta pode levar minutos preciosos. A <b>Resposta Ativa</b> (no Wazuh, Fail2Ban, CrowdSec ou playbooks SOAR como Shuffle) executa contenção imediata: bloquear o <code class="inl">srcip</code> no firewall local/perímetro, suspender a conta alvo ou colocar o arquivo recém-criado em quarentena após bater numa regra YARA.</div>
+    </div>
+    <div class="gi click popc" data-t="Perigo de Auto-Sabotagem &amp; Allowlist (White List)">
+      <b>Allowlist Crítica</b> — nunca deixe o atacante usar sua defesa contra você! <span class="more">ⓘ detalhes</span>
+      <div class="gx">Imagine uma regra que bloqueia automaticamente no firewall qualquer IP que gere alerta de scan. Se o atacante enviar pacotes com IP de origem <b>falsificado (IP Spoofing)</b> fingindo ser o seu <b>Gateway, Servidor DNS, Controlador de Domínio ou a máquina do Avaliador da prova</b>, seu próprio servidor se auto-isola e cai!<br><br><b>Regra inegociável:</b> toda automação de bloqueio (Wazuh <code class="inl">white_list</code>, Fail2Ban <code class="inl">ignoreip</code>) <b>exige</b> lista de proteção da infraestrutura crítica!</div>
+    </div>
+    <div class="gi click popc" data-t="Cyber Deception (Honeypots, Honeyfiles &amp; Canarytokens)">
+      <b>Cyber Deception</b> — armadilhas com zero falso positivo. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Pelo framework <b>MITRE Engage</b>, espalhar iscas estratégicas vira o jogo a favor do defensor:<br>• <b>Honeyfile / Canarytoken:</b> arquivo como <code class="inl">/root/senhas_cofre.xlsx</code> ou credencial falsa em <code class="inl">.env</code>. Nenhum usuário legítimo precisa abrir aquilo — <b>1 toque = 100% de certeza de invasor!</b><br>• <b>Honeypot / Honeyport (Cowrie, OpenCanary):</b> serviço falso que atrasa o invasor e entrega de bandeja seus IPs e comandos.</div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>2 · Padrões, linguagens e arquiteturas de referência</div>
+  <p style="color:var(--mut2);font-size:12px;margin:0 0 6px">clique em cada item para aprofundar</p>
+  <div class="stdgrid two">
+    <div class="std popc" data-t="Arquitetura Wazuh 4.x (Manager, Indexer, Dashboard &amp; Agent)"><div class="sh"><span class="ab">WAZUH</span><span class="full">Plataforma Open-Source SIEM + XDR Unificada</span><span class="more">ⓘ</span></div><p>Reúne SIEM, FIM, SCA, detecção de vulnerabilidades e resposta ativa sem licença paga.</p>
+      <div class="gx">Os 4 componentes do <b>Wazuh</b>:<br>• <b>Wazuh Agent:</b> roda em Linux/Windows coletando logs, FIM, inventário e SCA.<br>• <b>Wazuh Server (Manager):</b> recebe eventos na porta <code class="inl">1514/TCP</code> (registro na <code class="inl">1515/TCP</code>, API na <code class="inl">55000/TCP</code>) e processa decoders/rules.<br>• <b>Wazuh Indexer:</b> motor OpenSearch (<code class="inl">9200/TCP</code>) que armazena e indexa os JSONs.<br>• <b>Wazuh Dashboard:</b> interface web (<code class="inl">443/TCP</code>) para hunting, MITRE ATT&amp;CK e gestão.</div>
+    </div>
+    <div class="std popc" data-t="Sigma — A Linguagem Universal de Detecção"><div class="sh"><span class="ab">SIGMA</span><span class="full">Detection-as-Code Independente de SIEM</span><span class="more">ⓘ</span></div><p>Escreva a detecção uma vez em YAML e converta para Wazuh, Elastic, Splunk ou Sentinel.</p>
+      <div class="gx">Uma regra <b>Sigma</b> define <code class="inl">logsource</code> (qual log), <code class="inl">detection</code> (seleções e filtros) e <code class="inl">condition</code> (lógica booleana), além da tag <code class="inl">attack.tXXXX</code>. Dominar Sigma garante que você consiga traduzir qualquer ameaça para a sintaxe do SIEM que estiver disponível na hora!</div>
+    </div>
+    <div class="std popc" data-t="NIST NICE Framework (SP 800-181)"><div class="sh"><span class="ab">NICE</span><span class="full">Taxonomia de Papéis e Competências em Cyber</span><span class="more">ⓘ</span></div><p>Padrão usado na WorldSkills para estruturar as habilidades de Protect &amp; Defend.</p>
+      <div class="gx">O <b>NIST NICE</b> mapeia conhecimentos e tarefas das funções de <i>Cyber Defense Analyst</i>, <i>Infrastructure Support</i>, <i>Incident Responder</i> e <i>Threat Analysis</i> — garantindo cobertura equilibrada entre engenharia preventiva, detecção contínua e resposta rápida.</div>
+    </div>
+    <div class="std popc" data-t="MITRE ATT&amp;CK + D3FEND + Engage"><div class="sh"><span class="ab">MITRE</span><span class="full">Tríade Completa: Ataque, Contramedida e Decepção</span><span class="more">ⓘ</span></div><p>Como conectar comportamento ofensivo, regra defensiva e iscas.</p>
+      <div class="gx">• <b>ATT&amp;CK:</b> qual técnica o invasor usou (ex.: <code class="inl">T1110</code> Brute Force, <code class="inl">T1505.003</code> Web Shell).<br>• <b>D3FEND:</b> qual controle técnico mitiga ou detecta aquela técnica.<br>• <b>Engage:</b> como usar armadilhas (honeypots/canarytokens) para expor e atrasar o atacante.</div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>3 · Visão visual — Pipeline Universal Blue Team (Com ou Sem SIEM)</div>
+  <div class="vfig">
+    <svg viewBox="0 0 880 180" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,monospace">
+      <defs><marker id="da1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#36d399"/></marker></defs>
+      <rect x="14" y="20" width="168" height="140" rx="10" fill="#10243a" stroke="#38bdf8"/>
+      <text x="98" y="44" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle">1. FONTES &amp; ISCAS</text>
+      <text x="98" y="68" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Linux (auditd / auth / web)</text>
+      <text x="98" y="88" fill="#97a6c0" font-size="10" text-anchor="middle">Windows (Sysmon / PS 4104)</text>
+      <text x="98" y="108" fill="#97a6c0" font-size="10" text-anchor="middle">Rede (Suricata / Zeek / FW)</text>
+      <text x="98" y="128" fill="#fbbf24" font-size="10" text-anchor="middle">Honeyfiles / Canarytokens</text>
+      <line x1="182" y1="90" x2="210" y2="90" stroke="#36d399" stroke-width="2" marker-end="url(#da1)"/>
+
+      <rect x="216" y="20" width="176" height="140" rx="10" fill="#0e2a20" stroke="#36d399"/>
+      <text x="304" y="44" fill="#36d399" font-size="11" font-weight="700" text-anchor="middle">2. COLETA &amp; PARSING</text>
+      <text x="304" y="68" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Wazuh Agent (1514/TCP)</text>
+      <text x="304" y="88" fill="#97a6c0" font-size="10" text-anchor="middle">ou Beats / UF / rsyslog</text>
+      <text x="304" y="108" fill="#97a6c0" font-size="10" text-anchor="middle">Decoders / Grok / Regex</text>
+      <text x="304" y="128" fill="#97a6c0" font-size="10" text-anchor="middle">Normalização (ECS/OCSF)</text>
+      <line x1="392" y1="90" x2="420" y2="90" stroke="#36d399" stroke-width="2" marker-end="url(#da1)"/>
+
+      <rect x="426" y="20" width="210" height="140" rx="10" fill="#2a220e" stroke="#fbbf24"/>
+      <text x="531" y="44" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">3. MOTOR DE DETECÇÃO</text>
+      <text x="531" y="68" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Rules XML / Sigma / KQL / SPL</text>
+      <text x="531" y="88" fill="#97a6c0" font-size="10" text-anchor="middle">Correlação (frequency/time)</text>
+      <text x="531" y="108" fill="#97a6c0" font-size="10" text-anchor="middle">FIM Whodata / AIDE + YARA</text>
+      <text x="531" y="128" fill="#97a6c0" font-size="10" text-anchor="middle">CDB Lists / CTI + SCA CIS</text>
+      <line x1="636" y1="90" x2="664" y2="90" stroke="#36d399" stroke-width="2" marker-end="url(#da1)"/>
+
+      <rect x="670" y="20" width="196" height="140" rx="10" fill="#241c3a" stroke="#a78bfa"/>
+      <text x="768" y="44" fill="#a78bfa" font-size="11" font-weight="700" text-anchor="middle">4. AÇÃO &amp; HUNTING</text>
+      <text x="768" y="68" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Dashboard SOC + MITRE</text>
+      <text x="768" y="88" fill="#36d399" font-size="10" text-anchor="middle">Active Response / Fail2Ban</text>
+      <text x="768" y="108" fill="#97a6c0" font-size="10" text-anchor="middle">Playbooks SOAR / Quarentena</text>
+      <text x="768" y="128" fill="#f87171" font-size="10" text-anchor="middle">+ Allowlist obrigatória!</text>
+    </svg>
+    <div class="cap">Entendendo este fluxo, o aluno opera com naturalidade em Wazuh, Elastic, Splunk ou ferramentas nativas do SO.</div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>4 · Ciclo de Engenharia de Detecção (6 passos práticos)</div>
+  <div class="flow">
+    <div class="st"><div class="n">01</div><b>Ameaça (ATT&amp;CK)</b><div class="d">definir qual comportamento ofensivo precisa ser detectado.</div></div>
+    <div class="st"><div class="n">02</div><b>Telemetria</b><div class="d">garantir que o log necessário está sendo gerado e coletado.</div></div>
+    <div class="st"><div class="n">03</div><b>Parsing</b><div class="d">extrair e normalizar os campos-chave (IP, usuário, comando).</div></div>
+    <div class="st"><div class="n">04</div><b>Regra</b><div class="d">escrever a condição (Sigma / Wazuh XML / KQL) com severidade certa.</div></div>
+    <div class="st"><div class="n">05</div><b>Teste</b><div class="d">simular o evento (<code>wazuh-logtest</code> / teste atômico) antes de publicar.</div></div>
+    <div class="st"><div class="n">06</div><b>Tuning &amp; Ação</b><div class="d">filtrar falsos positivos e acoplar resposta ativa segura.</div></div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>5 · Trilhas práticas — clique para avançar</div>
+  <div class="owl">
+    <div class="owi jumpcard" data-djump="d-telem"><span class="c" style="color:var(--acc)">📡</span><div class="t"><b>Telemetria &amp; Visibilidade</b><div class="d">Agentes Wazuh/Beats, grupos centralizados, logs Linux/Windows (Sysmon/PS), Suricata/Zeek e SQL no host com Osquery.</div></div></div>
+    <div class="owi jumpcard" data-djump="d-detect"><span class="c" style="color:var(--warn)">⚙️</span><div class="t"><b>Engenharia de Detecção &amp; Regras</b><div class="d">Regras Sigma universais, Custom Decoders e Rules no Wazuh, correlação temporal, tuning e wazuh-logtest.</div></div></div>
+    <div class="owi jumpcard" data-djump="d-fim"><span class="c" style="color:var(--acc2)">🛡️</span><div class="t"><b>FIM, Threat Intel &amp; Compliance</b><div class="d">FIM Whodata + Diff no Wazuh, FIM sem SIEM com AIDE, integração YARA, CDB Lists e auditoria SCA/OpenSCAP.</div></div></div>
+    <div class="owi jumpcard" data-djump="d-active"><span class="c" style="color:var(--info)">⚡</span><div class="t"><b>Defesa Ativa, SOAR &amp; Deception</b><div class="d">Wazuh Active Response, proteção de Allowlist, bloqueio sem SIEM (Fail2Ban/CrowdSec), SOAR e Honeyfiles/Canarytokens.</div></div></div>
+    <div class="owi jumpcard" data-djump="d-provas"><span class="c" style="color:var(--crit)">📝</span><div class="t"><b>Arena de 3 Provas Blue Team</b><div class="d">D1 (Wazuh SIEM/XDR) · D2 (Multi-SIEM Sigma/KQL/Osquery) · D3 (Servidor Puro sem SIEM: Fail2Ban + AIDE + Iscas).</div></div></div>
+  </div>
 </div>
+
+<!-- ===================== D · TELEMETRIA & VISIBILIDADE ===================== -->
+<div class="apanel" id="d-telem">
+  <div class="filters" id="df-tel">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="agent">Agentes &amp; Grupos</span>
+    <span class="pill" data-f="host">Linux &amp; Windows</span>
+    <span class="pill" data-f="net">Rede (Suricata/Zeek)</span>
+    <span class="pill" data-f="osq">Sem SIEM (Osquery)</span>
+  </div>
+  <div class="count" id="dc-tel"></div>
+
+  <!-- 1 Agentes -->
+  <div class="v" data-cat="agent">
+    <div class="top"><div class="ttl"><h3><span class="os log">SIEM AGENT</span>Onboarding e saúde de agentes (Wazuh Agent e equivalentes Beats/UF)</h3><div class="cat">portas 1514/TCP (eventos) e 1515/TCP (registro) · diagnosticar agente desconectado</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Você não detecta o que não coleta. Em uma prova Blue Team, a primeira checagem é confirmar que <b>todos os servidores estão reportando ativamente</b> ao SIEM. No Wazuh, o agente registra-se na porta <code>1515/TCP</code> e envia eventos criptografados na <code>1514/TCP</code> (no Elastic usa-se <code>Filebeat/Elastic Agent → 5044/9200</code>; no Splunk, <code>Universal Forwarder → 9997</code>).</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como configurar e diagnosticar</div>
+<pre><span class="c"># 1) No endpoint Linux — apontar o IP do Wazuh Manager (/var/ossec/etc/ossec.conf):</span>
+&lt;client&gt;
+  &lt;server&gt;
+    &lt;address&gt;10.10.10.50&lt;/address&gt;
+    &lt;port&gt;1514&lt;/port&gt;
+    &lt;protocol&gt;tcp&lt;/protocol&gt;
+  &lt;/server&gt;
+&lt;/client&gt;
+<span class="k">systemctl</span> enable --now wazuh-agent
+
+<span class="c"># 2) No Wazuh Manager — listar status real de todos os agentes (Active / Disconnected / Never connected):</span>
+<span class="k">/var/ossec/bin/agent_control</span> -l
+<span class="c"># Se estiver Disconnected: checar firewall (1514/1515 TCP) e /var/ossec/logs/ossec.log no agente!</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Ponto cego</span>Agente <code>Never connected</code> ou <code>Disconnected</code> por IP errado ou porta 1514 bloqueada.</div>
+        <div class="r safe"><span class="lab">🟢 Visibilidade total</span>Todos os endpoints em <code>Active</code> enviando telemetria em tempo real.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-tel-agent" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Grupos agent.conf -->
+  <div class="v" data-cat="agent">
+    <div class="top"><div class="ttl"><h3><span class="os log">GERÊNCIA</span>Grupos de agentes e configuração centralizada (agent.conf)</h3><div class="cat">aplicar regras de coleta e FIM para 50 servidores de uma só vez</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Editar <code>ossec.conf</code> máquina por máquina consome tempo e gera inconsistência. Organizando endpoints em grupos funcionais (<code>webservers</code>, <code>domain-controllers</code>, <code>databases</code>), você edita um único arquivo central no Manager (<code>/var/ossec/etc/shared/&lt;grupo&gt;/agent.conf</code>) e o Wazuh distribui automaticamente para todos os membros!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (Wazuh Manager)</div>
+<pre><span class="c"># 1) Criar grupo e adicionar o agente (ex.: ID 002):</span>
+<span class="k">/var/ossec/bin/agent_groups</span> -a -g webservers -q
+<span class="k">/var/ossec/bin/agent_groups</span> -a -i 002 -g webservers -q
+
+<span class="c"># 2) Editar /var/ossec/etc/shared/webservers/agent.conf e validar sintaxe XML:</span>
+&lt;agent_config&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;apache&lt;/log_format&gt;
+    &lt;location&gt;/var/log/httpd/access_log&lt;/location&gt;
+  &lt;/localfile&gt;
+&lt;/agent_config&gt;
+<span class="k">/var/ossec/bin/verify-agent-conf</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Sem padronização</span>Um servidor web envia <code>access_log</code> e outro esqueceu de configurar.</div>
+        <div class="r safe"><span class="lab">🟢 Gestão central</span><code>verify-agent-conf: OK</code> e todos os agentes do grupo sincronizados (`synced`).</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-tel-group" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 Coleta Linux e Web -->
+  <div class="v" data-cat="host">
+    <div class="top"><div class="ttl"><h3><span class="os lin">LINUX LOGS</span>Ingestão de logs Linux, Web e aplicações próprias (localfile / rsyslog)</h3><div class="cat">syslog · apache · audit · json · logs customizados</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Por padrão, agentes coletam apenas logs básicos do SO. Se o servidor roda Nginx/Apache, banco de dados, Docker ou uma aplicação web customizada em <code>/var/log/app/auth.log</code>, você precisa declarar explicitamente a fonte para que os ataques web e de negócio cheguem ao motor de detecção.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># No Wazuh (ossec.conf ou agent.conf):</span>
+&lt;localfile&gt;
+  &lt;log_format&gt;syslog&lt;/log_format&gt;
+  &lt;location&gt;/var/log/app/custom_auth.log&lt;/location&gt;
+&lt;/localfile&gt;
+&lt;localfile&gt;
+  &lt;log_format&gt;audit&lt;/log_format&gt;
+  &lt;location&gt;/var/log/audit/audit.log&lt;/location&gt;
+&lt;/localfile&gt;
+
+<span class="c"># Equivalente sem Wazuh (rsyslog encaminhando arquivo customizado via imfile):</span>
+module(load="imfile")
+input(type="imfile" File="/var/log/app/custom_auth.log" Tag="custom-app:")</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Cegueira de aplicação</span>Ataques SQLi, LFI e força bruta na app web ocorrem sem nenhum evento chegar ao SIEM.</div>
+        <div class="r safe"><span class="lab">🟢 Coleta completa</span>Logs de SO, kernel (<code>audit</code>) e aplicação fluindo continuamente para análise.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-tel-lin" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 Coleta Windows Sysmon + PS -->
+  <div class="v" data-cat="host">
+    <div class="top"><div class="ttl"><h3><span class="os win">WINDOWS LOGS</span>Ingestão profunda Windows: Sysmon e PowerShell Script Block (4104)</h3><div class="cat">eventchannel · Microsoft-Windows-Sysmon/Operational</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Instalar o <b>Sysmon</b> no Windows não adianta nada se o agente SIEM não estiver configurado para ler o canal <code>Microsoft-Windows-Sysmon/Operational</code>! Ao ingerir Sysmon + PowerShell Operational, você passa a enxergar hashes de executáveis, processos pais/filhos, conexões de rede por processo e scripts ofuscados.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (Wazuh agent.conf / ossec.conf Windows)</div>
+<pre>&lt;localfile&gt;
+  &lt;location&gt;Microsoft-Windows-Sysmon/Operational&lt;/location&gt;
+  &lt;log_format&gt;eventchannel&lt;/log_format&gt;
+&lt;/localfile&gt;
+&lt;localfile&gt;
+  &lt;location&gt;Microsoft-Windows-PowerShell/Operational&lt;/location&gt;
+  &lt;log_format&gt;eventchannel&lt;/log_format&gt;
+&lt;/localfile&gt;
+<span class="c"># (Em Elastic Stack: módulo sysmon e powershell habilitados no Winlogbeat)</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Só Security básico</span>Vê que alguém logou, mas não vê o que executou nem para qual C2 conectou.</div>
+        <div class="r safe"><span class="lab">🟢 Visibilidade EDR</span>Eventos Sysmon (ID 1, 3, 11, 22) e PowerShell (4104) indexados e mapeados ao MITRE ATT&amp;CK.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-tel-win" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Rede Suricata / Zeek -->
+  <div class="v" data-cat="net">
+    <div class="top"><div class="ttl"><h3><span class="os net">NIDS / NDR</span>Integração de sensores de rede: Suricata (eve.json) e Zeek</h3><div class="cat">unificar alertas de pacotes com eventos de host em um único painel</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>O <b>Suricata</b> grava todos os seus alertas, fluxos HTTP, DNS e TLS em formato estruturado JSON (<code>/var/log/suricata/eve.json</code>), enquanto o <b>Zeek</b> gera logs comportamentais ricos de todas as conexões. Como ambos são JSON nativo, basta apontar um <code>&lt;localfile&gt;</code> com formato <code>json</code> para que o SIEM decodifique todos os campos automaticamente!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c"># No host/firewall que roda o Suricata (ossec.conf do agente):</span>
+&lt;localfile&gt;
+  &lt;log_format&gt;json&lt;/log_format&gt;
+  &lt;location&gt;/var/log/suricata/eve.json&lt;/location&gt;
+&lt;/localfile&gt;
+<span class="k">systemctl</span> restart wazuh-agent</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Silos isolados</span>Suricata detecta scan/exploit no disco local, mas ninguém no painel central vê.</div>
+        <div class="r safe"><span class="lab">🟢 Correlação XDR</span>Alertas de rede cruzados instantaneamente com processos e arquivos do host alvo.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-tel-net" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 Osquery -->
+  <div class="v" data-cat="osq">
+    <div class="top"><div class="ttl"><h3><span class="os lin">OSQUERY</span>Visibilidade ao vivo em SQL com Osquery (mesmo sem SIEM!)</h3><div class="cat">consultar processos ocultos, sockets abertos e persistência usando SQL padrão</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Caiu em uma prova ou cliente que não tem SIEM instalado — ou precisa inspecionar Linux, Windows e macOS usando exatamente a mesma sintaxe? O <b>Osquery</b> transforma o sistema operacional inteiro em tabelas SQL relacionais (<code>processes</code>, <code>listening_ports</code>, <code>process_open_sockets</code>, <code>logged_in_users</code>, <code>crontab</code>, <code>startup_items</code>)!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Consultas SQL matadoras para Blue Team (osqueryi)</div>
+<pre><span class="c"># 1) Achar processos rodando em memória cujo binário já foi deletado do disco (malware fileless!):</span>
+SELECT pid, name, path, cmdline FROM processes WHERE on_disk = 0;
+
+<span class="c"># 2) Cruzar processos com conexões externas abertas (quem está falando para fora?):</span>
+SELECT p.pid, p.name, s.remote_address, s.remote_port
+FROM process_open_sockets s JOIN processes p ON s.pid = p.pid
+WHERE s.remote_port != 0 AND s.remote_address NOT LIKE '127.%';</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Resultado limpo</span>Zero processos com <code>on_disk = 0</code> e sockets coerentes com serviços documentados.</div>
+        <div class="r vuln"><span class="lab">🔴 Ameaça detectada</span><code>on_disk = 0</code> retorna <code>pid=4190 name=.kworker</code> conectado a IP externo!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-tel-osq" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== D · ENGENHARIA DE DETECÇÃO & REGRAS ===================== -->
+<div class="apanel" id="d-detect">
+  <div class="filters" id="df-det">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="sigma">Sigma (Universal)</span>
+    <span class="pill" data-f="xml">Wazuh Decoders &amp; Rules</span>
+    <span class="pill" data-f="corr">Correlação</span>
+    <span class="pill" data-f="tune">Tuning &amp; Teste</span>
+  </div>
+  <div class="count" id="dc-det"></div>
+
+  <!-- 1 Sigma -->
+  <div class="v" data-cat="sigma">
+    <div class="top"><div class="ttl"><h3><span class="os pki">SIGMA</span>Regras Sigma (YAML): escrever uma vez e rodar em qualquer SIEM</h3><div class="cat">logsource + detection + condition → KQL / SPL / Wazuh</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / como estruturar</div>
+        <p><b>Sigma</b> é o padrão aberto universal para regras de detecção em logs. Você descreve a lógica do ataque em YAML limpo e usa <code>sigma-cli</code> (ou traduz manualmente em segundos) para Elastic KQL, Splunk SPL, Sentinel ou Wazuh. Observe os modificadores chave: <code>|contains</code>, <code>|endswith</code>, <code>|startswith</code> e a lógica booleana em <code>condition</code> (incluindo exclusão de falsos positivos com <code>and not filter</code>).</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Exemplo prático (Webshell gerando shell no servidor)</div>
+<pre>title: Web Server Spawning Interactive Shell
+status: stable
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection:
+    ParentImage|endswith:
+      - '/httpd'
+      - '/nginx'
+      - '/apache2'
+    Image|endswith:
+      - '/sh'
+      - '/bash'
+      - '/python3'
+  condition: selection
+level: critical
+tags:
+  - attack.persistence
+  - attack.t1505.003</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Sem regra comportamental</span>Atacante envia webshell com nome aleatório novo (hash inédito) e executa comandos sem disparar antivírus.</div>
+        <div class="r safe"><span class="lab">🟢 Detecção por TTP</span>Qualquer shell iniciado pelo processo web dispara alerta crítico imediatamente em qualquer SIEM!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-det-sigma" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Custom Decoders -->
+  <div class="v" data-cat="xml">
+    <div class="top"><div class="ttl"><h3><span class="os log">WAZUH XML</span>Criando Custom Decoders (local_decoder.xml) e equivalentes Regex/Grok</h3><div class="cat">extrair srcip, user, action de logs que o SIEM não conhece de fábrica</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Em provas Blue Team, é muito comum existir uma aplicação interna própria gravando logs em formato customizado (ex.: <code>portal-erp: LOGIN_FAIL user=joao ip=192.168.50.9</code>). Sem um <b>decoder</b> (ou filtro Grok no Logstash), o SIEM não extrai <code>user</code> nem <code>srcip</code> — impedindo correlação e bloqueio automático!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como criar (/var/ossec/etc/decoders/local_decoder.xml)</div>
+<pre><span class="c">&lt;!-- 1) Decoder pai identifica o programa; 2) Decoder filho extrai os campos na ordem: --&gt;</span>
+&lt;decoder name="portal-erp"&gt;
+  &lt;program_name&gt;^portal-erp&lt;/program_name&gt;
+&lt;/decoder&gt;
+
+&lt;decoder name="portal-erp-fields"&gt;
+  &lt;parent&gt;portal-erp&lt;/parent&gt;
+  &lt;regex&gt;(\S+) user=(\S+) ip=(\S+)&lt;/regex&gt;
+  &lt;order&gt;action, dstuser, srcip&lt;/order&gt;
+&lt;/decoder&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Sem decoder</span><code>No decoder matched</code> — o log passa ignorado sem extrair <code>srcip</code>.</div>
+        <div class="r safe"><span class="lab">🟢 Campos estruturados</span><code>decoder: 'portal-erp'</code> · <code>action: 'LOGIN_FAIL'</code> · <code>dstuser: 'joao'</code> · <code>srcip: '192.168.50.9'</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-det-dec" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 Custom Rules -->
+  <div class="v" data-cat="xml">
+    <div class="top"><div class="ttl"><h3><span class="os log">WAZUH XML</span>Criando Custom Rules (local_rules.xml · IDs 100000–120000 + MITRE)</h3><div class="cat">avaliar campos extraídos, definir severidade (0–15) e mapear ATT&amp;CK</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / regras de ouro</div>
+        <p>No Wazuh, regras customizadas ficam em <code>/var/ossec/etc/rules/local_rules.xml</code> e <b>devem usar IDs entre <code>100000</code> e <code>120000</code></b> (nunca edite arquivos em <code>/var/ossec/ruleset/rules/</code>, pois atualizações sobrescrevem!). Use níveis coerentes: <code>0</code> (ignorar), <code>3</code> (evento informativo), <code>5–7</code> (aviso/erro), <code>10–11</code> (alta severidade) e <code>12–15</code> (crítico / aciona resposta imediata), sempre marcando o ID do <b>MITRE ATT&amp;CK</b>.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como criar (/var/ossec/etc/rules/local_rules.xml)</div>
+<pre>&lt;group name="portal_erp,authentication,"&gt;
+  &lt;rule id="100010" level="5"&gt;
+    &lt;decoded_as&gt;portal-erp&lt;/decoded_as&gt;
+    &lt;field name="action"&gt;^LOGIN_FAIL$&lt;/field&gt;
+    &lt;description&gt;Portal ERP: Falha de login para $(dstuser) a partir de $(srcip)&lt;/description&gt;
+    &lt;mitre&gt;&lt;id&gt;T1110&lt;/id&gt;&lt;/mitre&gt;
+  &lt;/rule&gt;
+&lt;/group&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Erro clássico</span>Usar ID baixo (ex.: <code>id="500"</code>) colidindo com regras nativas e impedindo o Manager de subir.</div>
+        <div class="r safe"><span class="lab">🟢 Regra limpa</span>ID <code>100010</code> disparando com variáveis dinâmicas <code>$(dstuser)</code>/<code>$(srcip)</code> e painel MITRE alimentado.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-det-rule" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 Correlação -->
+  <div class="v" data-cat="corr">
+    <div class="top"><div class="ttl"><h3><span class="os log">CORRELAÇÃO</span>Regras de correlação temporal (Força Bruta e Ataques em Rajada)</h3><div class="cat">if_matched_sid + frequency + timeframe + same_source_ip</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Um único erro de senha (nível 5) acontece quando um colaborador digita errado; já <b>6 erros do mesmo IP em 60 segundos</b> configuram um ataque real de força bruta (nível 10+)! A correlação temporal junta eventos menores em um alerta de alta confiança pronto para acionar bloqueio automático. <i>(Atenção no Wazuh: <code>frequency="6"</code> significa o evento atual + mais 7/6 ocorrências dependendo da versão; teste sempre no <code>wazuh-logtest</code>!)</i></p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre><span class="c">&lt;!-- Regra filha correlacionando múltiplas ocorrências da regra 100010 pelo mesmo IP: --&gt;</span>
+&lt;rule id="100011" level="10" frequency="6" timeframe="60"&gt;
+  &lt;if_matched_sid&gt;100010&lt;/if_matched_sid&gt;
+  &lt;same_source_ip /&gt;
+  &lt;description&gt;Portal ERP: Forca bruta detectada a partir de $(srcip)!&lt;/description&gt;
+  &lt;mitre&gt;&lt;id&gt;T1110.001&lt;/id&gt;&lt;/mitre&gt;
+&lt;/rule&gt;
+
+<span class="c"># Equivalente conceitual em SIEM query (SPL):</span>
+<span class="c"># index=app action=LOGIN_FAIL | bin _time span=1m | stats count by _time srcip | where count &gt;= 6</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Sem correlação</span>Bloquear no 1º erro trava usuários reais; não bloquear no 100º deixa o invasor adivinhar senhas.</div>
+        <div class="r safe"><span class="lab">🟢 Limiar calibrado</span>Erro isolado gera apenas log leve (5); rajada do mesmo IP dispara alerta crítico (10) e bloqueia!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-det-corr" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Tuning de Falsos Positivos -->
+  <div class="v" data-cat="tune">
+    <div class="top"><div class="ttl"><h3><span class="os log">TUNING</span>Supressão cirúrgica de falsos positivos (sem cegar o SOC)</h3><div class="cat">regra filha level="0" restrita por IP/usuário/caminho</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / armadilha em provas</div>
+        <p>Imagine que um script legítimo de monitoramento (IP <code>10.10.99.20</code>, User-Agent <code>HealthCheck/1.0</code>) gera centenas de alertas falsos na regra <code>31101</code> do Apache. Se você colocar <code>level="0"</code> direto na regra <code>31101</code> para todas as origens, você fica <b>cego para ataques reais</b>! A técnica correta é criar uma regra filha (<code>&lt;if_sid&gt;</code>) com <code>level="0"</code> exigindo simultaneamente o IP <i>e</i> o padrão exato da rotina legítima.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar</div>
+<pre>&lt;rule id="100090" level="0"&gt;
+  &lt;if_sid&gt;31101&lt;/if_sid&gt;
+  &lt;srcip&gt;10.10.99.20&lt;/srcip&gt;
+  &lt;match&gt;GET /healthz&lt;/match&gt;
+  &lt;description&gt;Suprimir falso positivo do healthcheck interno autorizado&lt;/description&gt;
+&lt;/rule&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Tuning destrutivo</span>Desabilitar a regra inteira — o atacante explora a aplicação sem nenhum alerta.</div>
+        <div class="r safe"><span class="lab">🟢 Tuning cirúrgico</span>Apenas <code>10.10.99.20</code> em <code>/healthz</code> é silenciado; qualquer outro IP ou rota continua gerando alerta!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-det-tune" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 wazuh-logtest -->
+  <div class="v" data-cat="tune">
+    <div class="top"><div class="ttl"><h3><span class="os log">TESTE</span>Validação segura de decoders e regras com wazuh-logtest</h3><div class="cat">testar Fase 1, Fase 2 e Fase 3 antes de reiniciar o Manager</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que usar sempre</div>
+        <p>Um erro de sintaxe XML em <code>local_rules.xml</code> impede o <code>wazuh-manager</code> de iniciar! Antes de reiniciar o serviço, rode sempre o <b><code>/var/ossec/bin/wazuh-logtest</code></b>: cole uma linha real do log que você quer detectar e confira as 3 fases — <b>Phase 1</b> (pré-decodificação de data/hostname/programa), <b>Phase 2</b> (qual decoder bateu e quais campos extraiu) e <b>Phase 3</b> (qual ID de regra disparou e qual nível gerou).</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como executar</div>
+<pre><span class="k">/var/ossec/bin/wazuh-analysisd</span> -t     <span class="c"># valida sintaxe XML de todos os decoders e regras (0 = OK!)</span>
+<span class="k">/var/ossec/bin/wazuh-logtest</span>          <span class="c"># abre simulador interativo — cole a linha de log de teste</span>
+<span class="c"># Somente após Phase 3 confirmar "**Alert to be generated**", aplique em produção:</span>
+<span class="k">systemctl</span> restart wazuh-manager</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Deploy às cegas</span>Reiniciar o SIEM com erro de regex/XML — derruba toda a coleta de alertas durante a prova!</div>
+        <div class="r safe"><span class="lab">🟢 Deploy validado</span><code>wazuh-analysisd -t</code> limpo e <code>Phase 3: id '100010' level '5' -&gt; Alert to be generated</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-det-test" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== D · FIM, THREAT INTEL & COMPLIANCE ===================== -->
+<div class="apanel" id="d-fim">
+  <div class="filters" id="df-fim">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="fim">FIM (Wazuh &amp; AIDE)</span>
+    <span class="pill" data-f="yara">FIM + YARA</span>
+    <span class="pill" data-f="cti">Threat Intel (CDB)</span>
+    <span class="pill" data-f="sca">SCA &amp; Compliance</span>
+  </div>
+  <div class="count" id="dc-fim"></div>
+
+  <!-- 1 FIM Whodata -->
+  <div class="v" data-cat="fim">
+    <div class="top"><div class="ttl"><h3><span class="os lin">FIM XDR</span>Monitoramento de Integridade em Tempo Real com Whodata e Diff (syscheck)</h3><div class="cat">saber instantaneamente QUAL arquivo mudou, O QUE mudou e QUEM mudou</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / diferença crítica</div>
+        <p>O <code>&lt;syscheck&gt;</code> padrão faz varredura periódica (ex.: a cada 12h) — lento demais para parar um ataque! Habilitando <b><code>realtime="yes"</code></b> (inotify), <b><code>report_changes="yes"</code></b> (mostra o <code>diff</code> exato das linhas alteradas em configs de texto) e <b><code>whodata="yes"</code></b> (integração com <code>auditd</code> / SACL do Windows), o alerta sai em menos de 1 segundo trazendo o <b>usuário, UID e caminho do processo</b> que tocou no arquivo!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (ossec.conf / agent.conf)</div>
+<pre>&lt;syscheck&gt;
+  &lt;disabled&gt;no&lt;/disabled&gt;
+  &lt;directories whodata="yes" report_changes="yes"&gt;/etc/passwd,/etc/shadow,/etc/sudoers,/etc/ssh/sshd_config&lt;/directories&gt;
+  &lt;directories realtime="yes" check_all="yes"&gt;/var/www/html&lt;/directories&gt;
+&lt;/syscheck&gt;
+<span class="c"># No Linux, garanta que o auditd esteja rodando para o whodata funcionar:</span>
+<span class="k">systemctl</span> enable --now auditd &amp;&amp; <span class="k">systemctl</span> restart wazuh-agent</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 FIM padrão lento</span>Descobre horas depois que <code>/etc/sudoers</code> mudou, sem mostrar qual linha nem qual processo alterou.</div>
+        <div class="r safe"><span class="lab">🟢 FIM Whodata + Diff</span>Alerta em tempo real exibindo <code>audit.user.name: deploy</code>, <code>process.name: vim</code> e a linha adicionada!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-fim-who" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 AIDE sem SIEM -->
+  <div class="v" data-cat="fim">
+    <div class="top"><div class="ttl"><h3><span class="os lin">FIM PURO</span>Integridade de arquivos SEM SIEM usando AIDE</h3><div class="cat">aide --init · proteger banco baseline · aide --check</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / quando usar</div>
+        <p>Se o ambiente não tiver Wazuh nem Elastic instalados, o <b>AIDE (Advanced Intrusion Detection Environment)</b> é a ferramenta padrão de mercado e dos CIS Benchmarks para criar uma fotografia criptográfica (hashes SHA-256/SHA-512, permissões, inodes) de <code>/bin</code>, <code>/sbin</code>, <code>/etc</code> e <code>/var/www</code> e detectar qualquer adulteração posterior.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como configurar e verificar</div>
+<pre><span class="c"># 1) Inicializar baseline com o sistema limpo e ativar o banco oficial:</span>
+<span class="k">aide</span> --init
+<span class="k">mv</span> /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+<span class="c"># (Boa prática: guardar cópia somente leitura do aide.db.gz fora do servidor!)</span>
+
+<span class="c"># 2) Checar integridade a qualquer momento (ou via cron enviando saída ao rsyslog):</span>
+<span class="k">aide</span> --check</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Integridade intacta</span><code>AIDE found NO differences between database and filesystem. Looks okay!!</code></div>
+        <div class="r vuln"><span class="lab">🔴 Adulteração detectada</span><code>Changed entries: f ... /usr/bin/ps</code> ou <code>Added entries: /var/www/html/shell.php</code>!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-fim-aide" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 FIM + YARA -->
+  <div class="v" data-cat="yara">
+    <div class="top"><div class="ttl"><h3><span class="os pki">FIM + YARA</span>Caça automática a Webshells e Malware integrando FIM + YARA</h3><div class="cat">arquivo novo em /var/www ou /tmp → escaneia na hora com YARA → alerta/remove</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / como encadear</div>
+        <p>Rodar YARA no disco inteiro consome muita CPU; rodar YARA <b>somente sobre o arquivo que acabou de ser criado ou modificado</b> (detectado pelos alertas FIM <code>554</code> file added e <code>550</code> file modified do Wazuh) entrega detecção instantânea de webshells e malwares com custo quase zero!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como funciona o fluxo no Wazuh</div>
+<pre><span class="c">&lt;!-- 1) Regra eleva adição/alteração em /var/www/html (IDs nativos 550 e 554): --&gt;</span>
+&lt;rule id="100300" level="7"&gt;
+  &lt;if_sid&gt;550, 554&lt;/if_sid&gt;
+  &lt;field name="file"&gt;^/var/www/html&lt;/field&gt;
+  &lt;description&gt;Arquivo criado/modificado no diretorio web: $(file)&lt;/description&gt;
+&lt;/rule&gt;
+
+<span class="c">&lt;!-- 2) Active Response dispara script yara.sh passando o arquivo alterado e gera alerta nível 12 se bater! --&gt;</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Upload silencioso</span>Atacante sobe webshell ofuscada em <code>/var/www/html/uploads/</code> e opera livremente.</div>
+        <div class="r safe"><span class="lab">🟢 Detecção em &lt; 1s</span>FIM detecta <code>554</code> → aciona YARA → identifica assinatura da webshell e dispara contenção!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-fim-yara" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 CDB Lists -->
+  <div class="v" data-cat="cti">
+    <div class="top"><div class="ttl"><h3><span class="os log">THREAT INTEL</span>Listas CDB (Constant Database) para cruzamento rápido de IOCs</h3><div class="cat">cruzar milhares de IPs maliciosos, contas proibidas ou hashes em tempo real</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Escrever 500 IPs maliciosos dentro de um XML de regra deixa o SIEM lento e impossível de manter. As <b>CDB Lists</b> do Wazuh (arquivos chave:valor compilados em tabela hash em <code>/var/ossec/etc/lists/</code>) permitem verificar em microssegundos se o <code>srcip</code>, <code>dstip</code>, <code>user</code> ou hash SHA-256 de qualquer log consta num feed de Threat Intelligence!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como configurar</div>
+<pre><span class="c"># 1) Criar arquivo texto /var/ossec/etc/lists/ioc-ips (formato chave:valor):</span>
+198.51.100.44:C2_Conhecido
+203.0.113.77:Scanner_Hostil
+
+<span class="c"># 2) Declarar a lista dentro de &lt;ruleset&gt; no ossec.conf do Manager:</span>
+&lt;list&gt;etc/lists/ioc-ips&lt;/list&gt;
+
+<span class="c"># 3) Consultar a lista em uma regra customizada:</span>
+&lt;rule id="100400" level="12"&gt;
+  &lt;list field="srcip" lookup="address_match_key"&gt;etc/lists/ioc-ips&lt;/list&gt;
+  &lt;description&gt;Threat Intel: Trafego detectado de IP malicioso catalogado ($(srcip))&lt;/description&gt;
+&lt;/rule&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 CTI desconectado</span>A equipe recebe uma lista de IPs atacantes, mas ninguém cruza automaticamente com os logs.</div>
+        <div class="r safe"><span class="lab">🟢 Enriquecimento ativo</span>Qualquer pacote ou tentativa vinda de um IP da CDB List gera alerta nível 12 imediato.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-fim-cdb" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 SCA -->
+  <div class="v" data-cat="sca">
+    <div class="top"><div class="ttl"><h3><span class="os lin">SCA / CIS</span>Avaliação Contínua de Configuração (Wazuh SCA &amp; OpenSCAP)</h3><div class="cat">medir o percentual de hardening CIS de cada servidor direto no painel</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / conexão com a Prova A</div>
+        <p>O módulo <b>SCA (Security Configuration Assessment)</b> do Wazuh (assim como o <b>OpenSCAP</b> e o <b>Lynis</b> fora do SIEM) testa automaticamente centenas de controles do CIS Benchmark em cada servidor e mostra o <b>Score (%)</b> de conformidade, o motivo da falha e o comando exato de remediação — unindo perfeitamente o trabalho do Blue Team ao Hardening!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como usar e personalizar (/var/ossec/ruleset/sca/)</div>
+<pre><span class="c"># No agente (ossec.conf) — garantir módulo SCA habilitado:</span>
+&lt;sca&gt;
+  &lt;enabled&gt;yes&lt;/enabled&gt;
+  &lt;scan_on_start&gt;yes&lt;/scan_on_start&gt;
+  &lt;interval&gt;12h&lt;/interval&gt;
+&lt;/sca&gt;
+
+<span class="c"># Sem SIEM — auditoria rápida de hardening com Lynis no Linux:</span>
+<span class="k">lynis</span> audit system --quick</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Drift de configuração</span>Alguém reativa <code>PasswordAuthentication yes</code> num servidor e ninguém percebe.</div>
+        <div class="r safe"><span class="lab">🟢 Compliance contínuo</span>Queda no score CIS gera alerta imediato apontando exatamente o controle violado.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-fim-sca" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== D · DEFESA ATIVA, SOAR & DECEPTION ===================== -->
+<div class="apanel" id="d-active">
+  <div class="filters" id="df-act">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="ar">Wazuh Active Response</span>
+    <span class="pill" data-f="f2b">Sem SIEM (Fail2Ban)</span>
+    <span class="pill" data-f="soar">SOAR</span>
+    <span class="pill" data-f="dec">Deception (Iscas)</span>
+  </div>
+  <div class="count" id="dc-act"></div>
+
+  <!-- 1 Active Response -->
+  <div class="v" data-cat="ar">
+    <div class="top"><div class="ttl"><h3><span class="os net">XDR</span>Bloqueio automático com Wazuh Active Response (firewall-drop / netsh)</h3><div class="cat">reagir automaticamente em &lt; 1 segundo quando uma regra crítica dispara</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / como funciona</div>
+        <p>No <code>ossec.conf</code> do Manager, você vincula um <code>&lt;command&gt;</code> (como <code>firewall-drop</code> no Linux ou <code>netsh</code> no Windows) a um bloco <code>&lt;active-response&gt;</code>. Quando as regras listadas em <code>&lt;rules_id&gt;</code> (ou acima de <code>&lt;level&gt;</code>) disparam, o agente executa o bloqueio local imediatamente e desfaz sozinho após o <code>&lt;timeout&gt;</code> definido.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como aplicar (/var/ossec/etc/ossec.conf do Manager)</div>
+<pre>&lt;command&gt;
+  &lt;name&gt;firewall-drop&lt;/name&gt;
+  &lt;executable&gt;firewall-drop&lt;/executable&gt;
+  &lt;timeout_allowed&gt;yes&lt;/timeout_allowed&gt;
+&lt;/command&gt;
+
+&lt;active-response&gt;
+  &lt;command&gt;firewall-drop&lt;/command&gt;
+  &lt;location&gt;local&lt;/location&gt;
+  &lt;rules_id&gt;5763,100011,100400&lt;/rules_id&gt;   <span class="c">&lt;!-- ex.: brute force SSH (5763) + regras custom --&gt;</span>
+  &lt;timeout&gt;600&lt;/timeout&gt;                    <span class="c">&lt;!-- bloqueia por 10 min --&gt;</span>
+&lt;/active-response&gt;
+<span class="c"># Verificar execuções reais no endpoint: tail -f /var/ossec/logs/active-responses.log</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Só passivo</span>O SIEM gera 2.000 alertas de força bruta enquanto o atacante continua testando senhas livremente.</div>
+        <div class="r safe"><span class="lab">🟢 Contenção XDR</span>Na 6ª falha o IP é bloqueado no firewall do host e registrado em <code>active-responses.log</code>!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-act-ar" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Allowlist / White list -->
+  <div class="v" data-cat="ar">
+    <div class="top"><div class="ttl"><h3><span class="os net">SEGURANÇA OP.</span>Proteção contra Auto-Bloqueio (white_list / Allowlist obrigatória)</h3><div class="cat">blindar Gateway, DNS, AD e IPs de Avaliação contra IP Spoofing!</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / armadilha clássica de competição</div>
+        <p>Em competições Attack-Defense / Blue CTF, scripts automatizados verificam a cada minuto se seus serviços estão funcionando. Se você ligar Active Response (ou Fail2Ban) <b>sem</b> colocar os IPs do gateway, DNS, servidores internos e da sub-rede de avaliação (<i>Scoring Engine</i>) na <code>&lt;white_list&gt;</code>, qualquer teste mais agressivo ou pacote forjado faz seu servidor bloquear o próprio avaliador — derrubando sua nota de disponibilidade!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como proteger (/var/ossec/etc/ossec.conf do Manager)</div>
+<pre>&lt;global&gt;
+  &lt;white_list&gt;127.0.0.1&lt;/white_list&gt;
+  &lt;white_list&gt;10.10.10.1&lt;/white_list&gt;        <span class="c">&lt;!-- Gateway / Firewall --&gt;</span>
+  &lt;white_list&gt;10.10.10.2&lt;/white_list&gt;        <span class="c">&lt;!-- DNS / Domain Controller --&gt;</span>
+  &lt;white_list&gt;10.99.0.0/24&lt;/white_list&gt;      <span class="c">&lt;!-- Sub-rede de Gerência / Scoring Engine --&gt;</span>
+&lt;/global&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Auto-DoS</span>Atacante envia SYN forjado com IP do DNS interno → servidor bloqueia o próprio DNS e para de resolver nomes!</div>
+        <div class="r safe"><span class="lab">🟢 Automação blindada</span>Infraestrutura crítica nunca é bloqueada; apenas IPs não confiáveis sofrem <code>firewall-drop</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-act-wl" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 Fail2Ban / CrowdSec sem SIEM -->
+  <div class="v" data-cat="f2b">
+    <div class="top"><div class="ttl"><h3><span class="os lin">SEM SIEM</span>Defesa ativa local com Fail2Ban e CrowdSec (sem depender de SIEM)</h3><div class="cat">/etc/fail2ban/jail.local · ignoreip · maxretry · fail2ban-client</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / quando usar</div>
+        <p>Não há Wazuh no ambiente? O <b>Fail2Ban</b> (e seu sucessor colaborativo <b>CrowdSec</b>) lê diretamente os logs locais (SSH, Apache/Nginx, vsftpd, aplicações customizadas via regex em <code>filter.d/</code>) e bloqueia automaticamente no <code>firewalld</code>/<code>nftables</code> quem ultrapassar <code>maxretry</code> dentro de <code>findtime</code>. Nunca edite <code>jail.conf</code> — crie sempre <b><code>/etc/fail2ban/jail.local</code></b>!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como configurar (/etc/fail2ban/jail.local)</div>
+<pre>[DEFAULT]
+ignoreip = 127.0.0.1/8 ::1 10.10.10.0/24
+bantime  = 15m
+findtime = 10m
+maxretry = 4
+banaction = firewallcmd-rich-rules
+
+[sshd]
+enabled = true
+
+[apache-auth]
+enabled = true
+
+<span class="k">systemctl</span> enable --now fail2ban
+<span class="k">fail2ban-client</span> status sshd                   <span class="c"># ver IPs banidos; unbanip &lt;IP&gt; p/ desbloquear</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Sem proteção local</span>Servidor sem SIEM fica totalmente passivo diante de varreduras e força bruta.</div>
+        <div class="r safe"><span class="lab">🟢 IPS de host ativo</span><code>Status for the jail: sshd -&gt; Currently banned: 1 (198.51.100.44)</code> com <code>ignoreip</code> protegido.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-act-f2b" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 SOAR -->
+  <div class="v" data-cat="soar">
+    <div class="top"><div class="ttl"><h3><span class="os pki">SOAR</span>Orquestração e Playbooks Automatizados (Shuffle, TheHive &amp; Webhooks)</h3><div class="cat">alerta SIEM → webhook SOAR → enriquece CTI → abre ticket TheHive → bloqueia no firewall</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Enquanto o Active Response atua em um único host, uma plataforma <b>SOAR</b> (como <b>Shuffle</b> integrado ao <b>Wazuh + TheHive + Cortex</b>) orquestra toda a empresa: recebe o alerta via webhook, consulta a reputação do IP/hash em bases de Threat Intel, cria o caso documentado no TheHive, bloqueia o IP no firewall de borda para <i>todas</i> as sub-redes e notifica o analista para aprovação humana quando necessário.</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Integração via Webhook no Wazuh (ossec.conf)</div>
+<pre>&lt;integration&gt;
+  &lt;name&gt;shuffle&lt;/name&gt;
+  &lt;hook_url&gt;https://soar.empresa.local/api/v1/hooks/webhook_id&lt;/hook_url&gt;
+  &lt;level&gt;10&lt;/level&gt;
+  &lt;alert_format&gt;json&lt;/alert_format&gt;
+&lt;/integration&gt;</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Triagem 100% manual</span>Analista gasta 20 minutos copiando e colando IPs e hashes a cada alerta.</div>
+        <div class="r safe"><span class="lab">🟢 Playbook orquestrado</span>Alerta já chega no TheHive enriquecido com reputação CTI e opção de bloqueio em 1 clique.</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-act-soar" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Cyber Deception -->
+  <div class="v" data-cat="dec">
+    <div class="top"><div class="ttl"><h3><span class="os pki">DECEPTION</span>Armadilhas de Alta Fidelidade: Honeyfiles, Contas Isca e Canarytokens</h3><div class="cat">1 acesso = 100% certeza de invasor · fácil de criar com auditd, Wazuh ou OpenCanary</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / vantagem tática</div>
+        <p>Regras comuns sempre têm algum risco de falso positivo. Já uma <b>isca (Honeyfile / Honeycredential)</b> — por exemplo, um arquivo <code>/var/backups/senhas_producao.kdbx</code> ou uma conta desativada/isca no AD que ninguém na empresa usa — nunca é tocada em operação normal. Assim que um invasor faz enumeração interna e tenta ler o arquivo, <code>auditd</code> / Wazuh dispara um alerta crítico irrefutável!</p></div>
+      <div class="blk"><div class="h faz"><span class="d"></span>Como plantar uma Honeyfile vigiada no Linux (com ou sem SIEM)</div>
+<pre><span class="c"># 1) Criar arquivo-isca atraente (sem dados reais!) com permissão legível:</span>
+<span class="k">echo</span> "DB_PROD_BACKUP_TOKEN=canary_99812_do_not_use" &gt; /opt/credenciais_legado.conf
+<span class="k">chmod</span> 644 /opt/credenciais_legado.conf
+
+<span class="c"># 2) Vigiar QUALQUER leitura (-p rwa) no kernel via auditd:</span>
+<span class="k">auditctl</span> -w /opt/credenciais_legado.conf -p rwa -k honeyfile_touched
+
+<span class="c"># 3) No Wazuh (ou alerta syslog): disparar nível 15 se a chave 'honeyfile_touched' aparecer!</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Sem iscas internas</span>Invasor que roubou uma credencial válida caminha silenciosamente lendo pastas internas.</div>
+        <div class="r safe"><span class="lab">🟢 Armadilha acionada</span><code>key="honeyfile_touched" uid=1004(carlos) exe="/usr/bin/cat"</code> — intruso pego no ato com zero ruído!</div>
+      </div></div>
+      <button class="trainbtn" data-dlab="bt-act-dec" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== D · MATRIZ & FERRAMENTAS ===================== -->
+<div class="apanel" id="d-tools">
+  <div class="disc" style="margin-top:4px">🧰 <b>Guia de sobrevivência Blue Team:</b> consulte a matriz abaixo para saber exatamente qual ferramenta usar — quer o ambiente tenha <b>Wazuh</b>, <b>Elastic/Splunk</b> ou <b>nenhum SIEM instalado</b>!</div>
+
+  <div class="mgroup" style="margin-top:20px"><span class="d"></span>Matriz de Equivalência Tecnológica Blue Team</div>
+  <div style="overflow-x:auto">
+    <table class="ftable">
+      <thead><tr><th>Camada de Defesa</th><th>Com Wazuh (SIEM/XDR)</th><th>Com Elastic / Splunk</th><th>Sem SIEM (Servidor Puro)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Coleta de Logs</b></td><td><code>wazuh-agent</code> (1514/TCP)</td><td>Filebeat / Winlogbeat / UF</td><td><code>rsyslog</code> remoto + <code>journald</code></td></tr>
+        <tr><td><b>Parsing &amp; Regras</b></td><td><code>local_decoder.xml</code> + <code>local_rules.xml</code></td><td><b>Sigma</b> → KQL / EQL / SPL</td><td><code>ausearch</code> / <code>grep</code> / scripts</td></tr>
+        <tr><td><b>Integridade (FIM)</b></td><td><code>&lt;syscheck&gt;</code> (realtime + whodata)</td><td>Auditbeat FIM / Elastic Defend</td><td><b>AIDE</b> (<code>aide --check</code>) + <code>auditd -w</code></td></tr>
+        <tr><td><b>Estado Ao Vivo</b></td><td><code>syscollector</code></td><td>Fleet / Endpoint Security</td><td><b>Osquery</b> (SQL no SO) + <code>Sysmon</code></td></tr>
+        <tr><td><b>Rede (NIDS/NDR)</b></td><td>Leitura de <code>suricata/eve.json</code></td><td>Elastic Network / Zeek</td><td><b>Suricata / Snort</b> + <b>Zeek</b></td></tr>
+        <tr><td><b>Bloqueio Automático</b></td><td><code>Active Response</code> + <code>white_list</code></td><td>Webhook SOAR (Shuffle)</td><td><b>Fail2Ban / CrowdSec</b> + <code>ignoreip</code></td></tr>
+        <tr><td><b>Deception / Iscas</b></td><td>FIM/Audit rule nível 15 em isca</td><td>Alerta em Canarytoken</td><td><b>OpenCanary / Cowrie</b> + Honeyfile <code>auditd</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Plataformas SIEM, XDR, SOAR &amp; Deception</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://documentation.wazuh.com/" target="_blank" rel="noopener">Wazuh Documentation</a><div class="dsc">Referência oficial de decoders, rules XML, FIM whodata, CDB lists, SCA e Active Response.</div></div><span class="badge">SIEM/XDR</span></div>
+      <div class="tool"><div class="tn"><a href="https://osquery.io/" target="_blank" rel="noopener">Osquery</a><div class="dsc">Consulte processos, portas, usuários e persistência em Linux/Windows usando SQL puro.</div></div><span class="badge">Endpoint SQL</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.crowdsec.net/" target="_blank" rel="noopener">CrowdSec &amp; Fail2Ban</a><div class="dsc">Motores leves de detecção comportamental em logs e bloqueio automático em firewalls/proxies.</div></div><span class="badge">IPS Host</span></div>
+      <div class="tool"><div class="tn"><a href="https://canarytokens.org/" target="_blank" rel="noopener">Canarytokens &amp; OpenCanary</a><div class="dsc">Criação rápida de armadilhas (arquivos, URLs, chaves, DNS e serviços falsos) de altíssima fidelidade.</div></div><span class="badge">Deception</span></div>
+      <div class="tool"><div class="tn"><a href="https://shuffler.io/" target="_blank" rel="noopener">Shuffle SOAR &amp; TheHive</a><div class="dsc">Automação open-source de playbooks e gestão colaborativa de casos para equipes SOC.</div></div><span class="badge">SOAR</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/redcanaryco/atomic-red-team" target="_blank" rel="noopener">Atomic Red Team</a><div class="dsc">Biblioteca de testes seguros mapeados ao MITRE ATT&amp;CK para validar se suas regras realmente disparam!</div></div><span class="badge">Validação</span></div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:28px"><span class="d"></span>Checklist interativo — Operação Blue Team (<span id="dChkCount">0/8</span>)</div>
+  <div class="chklist" id="dChkList">
+    <label class="chkitem"><input type="checkbox" data-dchk="bt1"><div><b>1. Todos os endpoints e sensores reportando (Active)</b><div class="cd">Agentes conectados (1514/TCP) ou rsyslog/shippers ativos, com relógios NTP sincronizados.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-dchk="bt2"><div><b>2. Fontes críticas ingeridas (Web, Auth, Sysmon/PS, Auditd e IDS)</b><div class="cd">Logs de aplicações próprias, PowerShell 4104, Sysmon e Suricata <code>eve.json</code> chegando ao motor de análise.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-dchk="bt3"><div><b>3. Decoders e Regras customizadas testadas antes de aplicar</b><div class="cd">IDs na faixa <code>100000–120000</code>, tags MITRE ATT&amp;CK presentes e validados no <code>wazuh-logtest</code> / Sigma.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-dchk="bt4"><div><b>4. FIM em tempo real com Whodata e Diff nas pastas sensíveis</b><div class="cd"><code>/etc</code>, <code>/var/www/html</code> e pastas críticas monitoradas (via Wazuh <code>syscheck</code> ou baseline <code>AIDE</code>).</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-dchk="bt5"><div><b>5. Listas de Threat Intel (CDB) e YARA operacionais</b><div class="cd">IOCs conhecidos cruzados automaticamente e uploads suspeitos escaneados.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-dchk="bt6"><div><b>6. Allowlist (white_list / ignoreip) conferida ANTES de ligar bloqueios</b><div class="cd">Gateway, DNS, servidores internos e rede dos avaliadores protegidos contra auto-bloqueio!</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-dchk="bt7"><div><b>7. Falsos positivos afinados cirurgicamente</b><div class="cd">Exceções restritas apenas à origem + padrão legítimo, mantendo a regra ativa para todo o resto.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-dchk="bt8"><div><b>8. Deception / Isca plantada e alertas validados ponta a ponta</b><div class="cd">Honeyfile ou Canarytoken monitorado e um evento de teste disparado para provar que o painel alerta.</div></div></label>
+  </div>
+</div>
+
+<!-- ===================== D · PROVAS SIMULADAS ===================== -->
+<div class="apanel" id="d-provas">
+  <div class="disc" style="margin-top:4px;border-color:var(--acc)">📝 <b>Arena de 3 Provas Simuladas — Blue Team &amp; Defesa Ativa:</b> treine nos <b>3 cenários reais possíveis</b> de uma competição ou operação SOC — <b>D1 (com Wazuh SIEM/XDR)</b>, <b>D2 (Multi-SIEM Agnóstico: Sigma + KQL/SPL + Osquery)</b> e <b>D3 (Servidor Puro SEM SIEM: Fail2Ban + AIDE + Suricata + Honeyfile)</b>!</div>
+  <div class="exgrid" id="exDGrid"></div>
+  <div class="exarena" id="exDArena"></div>
+</div>
+
+</div><!-- /.wrap -->
+</div><!-- /#provaD -->
 <div class="prova-content" id="provaE">
   <div class="provaempty"><div class="big">🅴</div><h2>Prova E</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
 </div>
@@ -4102,6 +4897,10 @@ rule Detect_Custom_Artifact {
   setupFilters('c-win','cf-win','cc-win','técnica exibida','técnicas exibidas');
   setupFilters('c-net','cf-net','cc-net','técnica exibida','técnicas exibidas');
   setupFilters('c-forense','cf-for','cc-for','técnica exibida','técnicas exibidas');
+  setupFilters('d-telem','df-tel','dc-tel','controle exibido','controles exibidos');
+  setupFilters('d-detect','df-det','dc-det','controle exibido','controles exibidos');
+  setupFilters('d-fim','df-fim','dc-fim','controle exibido','controles exibidos');
+  setupFilters('d-active','df-act','dc-act','controle exibido','controles exibidos');
 
   // concept modal (Prova B + Prova A)
   (function(){
@@ -6239,6 +7038,685 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
           +'</div>'+details.join("");
         fb.classList.add("show");
       };
+    }
+
+    renderGrid(); renderArena();
+  })();
+})();
+</script>
+<script>
+/* ===== Prova D: Abas, 22 Labs Blue Team, Checklist e 3 Provas Simuladas ===== */
+(function(){
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function fmtTime(sec){
+    var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+    return [h,m,s].map(x=>String(x).padStart(2,"0")).join(":");
+  }
+  function dlText(filename, text){
+    var blob=new Blob([text],{type:"text/plain;charset=utf-8"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename;
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+  }
+
+  // Abas internas da Prova D + cards de atalho
+  function openProvaDTab(panelId){
+    document.querySelectorAll('#provaD .atab').forEach(x=>x.classList.toggle('active', x.dataset.dp===panelId));
+    document.querySelectorAll('#provaD .apanel').forEach(x=>x.classList.remove('active'));
+    var el=document.getElementById(panelId);
+    if(el) el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('#provaD .atab').forEach(function(t){
+    t.addEventListener('click',function(){ openProvaDTab(t.dataset.dp); });
+  });
+  document.querySelectorAll('#provaD .jumpcard').forEach(function(j){
+    j.addEventListener('click',function(){ openProvaDTab(j.dataset.djump); });
+  });
+
+  // 22 Laboratórios interativos "Treinar" da Prova D
+  if(window.csOpenLab){
+    const BAD="⚠  Lacuna de monitoramento / detecção identificada!",
+          GOOD="✅  Controle Blue Team validado e operacional!";
+    const DLABS = {
+      // Telemetria & Visibilidade (6)
+      "bt-tel-agent": {title:"Onboarding e Saúde de Agentes SIEM", prompt:"root@wazuh-mgr:~# ",
+        cmd:"/var/ossec/bin/agent_control -l",
+        vuln:"ID: 002, Name: srv-web01, IP: 10.10.20.11, Disconnected  (porta 1514/TCP bloqueada ou serviço parado!)",
+        fix:"Liberar 1514/tcp e 1515/tcp no firewall + configurar <address> no ossec.conf e rodar systemctl enable --now wazuh-agent",
+        safe:"ID: 002, Name: srv-web01, IP: 10.10.20.11, Active  (telemetria fluindo em tempo real!)",
+        key:["1514","wazuh-agent","systemctl","ossec.conf"]},
+      "bt-tel-group": {title:"Grupos e Configuração Centralizada (agent.conf)", prompt:"root@wazuh-mgr:~# ",
+        cmd:"/var/ossec/bin/agent_groups -l",
+        vuln:"Nenhum grupo funcional criado — agentes web sem coleta padronizada do access_log",
+        fix:"agent_groups -a -g webservers && editar /var/ossec/etc/shared/webservers/agent.conf && verify-agent-conf",
+        safe:"Grupo 'webservers' criado, verify-agent-conf: OK e todos os agentes sincronizados (synced)",
+        key:["agent_groups","agent.conf","verify-agent-conf","webservers"]},
+      "bt-tel-lin": {title:"Ingestão de Logs Linux e Aplicação Customizada", prompt:"root@srv-web01:~# ",
+        cmd:"grep custom_auth /var/ossec/etc/ossec.conf",
+        vuln:"(vazio — eventos de /var/log/app/custom_auth.log não são enviados ao SIEM!)",
+        fix:"<localfile> <log_format>syslog</log_format> <location>/var/log/app/custom_auth.log</location> </localfile>",
+        safe:"wazuh-logcollector: Analyzing file: '/var/log/app/custom_auth.log' (ingestão ativa!)",
+        key:["localfile","custom_auth","log_format","imfile"]},
+      "bt-tel-win": {title:"Ingestão de Sysmon e PowerShell 4104 no Windows", prompt:"PS C:\\WinSrv> ",
+        cmd:"Select-String 'Sysmon' 'C:\\Program Files (x86)\\ossec-agent\\ossec.conf'",
+        vuln:"(vazio — Sysmon instalado, mas canal Operational não é lido pelo agente!)",
+        fix:"<localfile> <location>Microsoft-Windows-Sysmon/Operational</location> <log_format>eventchannel</log_format> </localfile>",
+        safe:"Canais Sysmon/Operational e PowerShell/Operational ingeridos via eventchannel!",
+        key:["sysmon/operational","eventchannel","localfile","winlogbeat"]},
+      "bt-tel-net": {title:"Integração de Rede com Suricata (eve.json)", prompt:"root@fw-sensor:~# ",
+        cmd:"grep eve.json /var/ossec/etc/ossec.conf",
+        vuln:"(vazio — Suricata grava alertas locais, mas não alimenta o painel central!)",
+        fix:"<localfile> <log_format>json</log_format> <location>/var/log/suricata/eve.json</location> </localfile>",
+        safe:"Alertas JSON do Suricata ingeridos e correlacionados com os endpoints no painel!",
+        key:["eve.json","json","localfile","suricata"]},
+      "bt-tel-osq": {title:"Caça Ao Vivo em SQL com Osquery (Sem SIEM)", prompt:"osquery> ",
+        cmd:"(Suspeita de processo malicioso cujo binário foi apagado do disco)",
+        vuln:"ls /tmp não mostra nada, mas há consumo de CPU e tráfego externo ativo",
+        fix:"SELECT pid, name, path, cmdline FROM processes WHERE on_disk = 0;",
+        safe:"pid=4190 | name=.kworker | path=/dev/shm/.kworker | on_disk=0  (ameaça oculta localizada via SQL!)",
+        key:["select","processes","on_disk"]},
+
+      // Engenharia de Detecção & Regras (6)
+      "bt-det-sigma": {title:"Regra Sigma Universal (Webshell gerando Shell)", prompt:"detection-eng:~$ ",
+        cmd:"cat regra_rascunho.yml",
+        vuln:"logsource: linux  (falta definir ParentImage do servidor web gerando Image de shell!)",
+        fix:"ParentImage|endswith: ['/httpd','/nginx'] e Image|endswith: ['/sh','/bash'] -> condition: selection",
+        safe:"Regra Sigma validada (T1505.003) — pronta para compilar para Wazuh, Elastic KQL e Splunk SPL!",
+        key:["parentimage","image","condition","selection"]},
+      "bt-det-dec": {title:"Custom Decoder no Wazuh (local_decoder.xml)", prompt:"root@wazuh-mgr:~# ",
+        cmd:"echo 'Nov 24 10:00:01 app01 portal-erp: LOGIN_FAIL user=ana ip=198.51.100.44' | /var/ossec/bin/wazuh-logtest",
+        vuln:"**Phase 2: Completed decoding.\n   No decoder matched.  (campos user e srcip perdidos!)",
+        fix:"<decoder name='portal-erp'> <program_name>^portal-erp</program_name> </decoder> + regex (\\S+) user=(\\S+) ip=(\\S+) + <order>action, dstuser, srcip</order>",
+        safe:"**Phase 2: decoder: 'portal-erp' · action: 'LOGIN_FAIL' · dstuser: 'ana' · srcip: '198.51.100.44'",
+        key:["decoder","regex","order","srcip"]},
+      "bt-det-rule": {title:"Custom Rule no Wazuh (local_rules.xml · 100000+ + MITRE)", prompt:"root@wazuh-mgr:~# ",
+        cmd:"/var/ossec/bin/wazuh-logtest  (testando LOGIN_FAIL do portal-erp)",
+        vuln:"Phase 2 extraiu os campos, mas Phase 3 não gerou nenhum alerta!",
+        fix:"<rule id='100010' level='5'> <decoded_as>portal-erp</decoded_as> <field name='action'>^LOGIN_FAIL$</field> <mitre><id>T1110</id></mitre> </rule>",
+        safe:"**Phase 3: id: '100010' · level: '5' · mitre: ['T1110'] -> **Alert to be generated.",
+        key:["1000","level","decoded_as","mitre","t1110"]},
+      "bt-det-corr": {title:"Correlação Temporal contra Força Bruta", prompt:"root@wazuh-mgr:~# ",
+        cmd:"Simulação de 8 falhas seguidas do IP 198.51.100.44 em 30 segundos",
+        vuln:"Apenas alertas individuais nível 5 disparados — sem escalar para ataque de força bruta!",
+        fix:"<rule id='100011' level='10' frequency='6' timeframe='60'> <if_matched_sid>100010</if_matched_sid> <same_source_ip /> </rule>",
+        safe:"**Phase 3: id: '100011' · level: '10' -> Força bruta correlacionada por IP de origem!",
+        key:["if_matched_sid","frequency","timeframe","same_source_ip"]},
+      "bt-det-tune": {title:"Tuning Cirúrgico de Falso Positivo", prompt:"root@wazuh-mgr:~# ",
+        cmd:"Painel SOC inundado: 900 alertas da regra 31101 vindos de 10.10.99.20 em GET /healthz",
+        vuln:"Risco de Alert Fatigue (mas desligar a regra 31101 cegaria o servidor web inteiro!)",
+        fix:"<rule id='100090' level='0'> <if_sid>31101</if_sid> <srcip>10.10.99.20</srcip> <match>GET /healthz</match> </rule>",
+        safe:"Healthcheck de 10.10.99.20 silenciado (level 0); ataques externos seguem disparando 31101 normalmente!",
+        key:["level='0'",'level="0"',"if_sid","srcip","healthz"]},
+      "bt-det-test": {title:"Validação Pré-Deploy (wazuh-analysisd -t & wazuh-logtest)", prompt:"root@wazuh-mgr:~# ",
+        cmd:"Editou local_rules.xml e quer colocar em produção sem risco de derrubar o SIEM",
+        vuln:"Reiniciar sem validar pode travar o wazuh-manager se houver tag XML aberta!",
+        fix:"/var/ossec/bin/wazuh-analysisd -t && /var/ossec/bin/wazuh-logtest && systemctl restart wazuh-manager",
+        safe:"Sintaxe XML: OK · Phase 3 confirmada no logtest · wazuh-manager recarregado com zero downtime!",
+        key:["wazuh-analysisd","wazuh-logtest","restart"]},
+
+      // FIM, Threat Intel & Compliance (5)
+      "bt-fim-who": {title:"FIM em Tempo Real com Whodata e Diff (syscheck)", prompt:"root@srv-linux:~# ",
+        cmd:"grep sudoers /var/ossec/etc/ossec.conf",
+        vuln:"<directories>/etc</directories>  (scan lento de 12h, sem whodata e sem diff!)",
+        fix:"<directories whodata='yes' report_changes='yes'>/etc/sudoers,/etc/passwd</directories> + systemctl enable --now auditd",
+        safe:"Alerta FIM em <1s exibindo audit.user.name, process.name e o diff exato da linha modificada!",
+        key:["whodata","report_changes","syscheck","auditd"]},
+      "bt-fim-aide": {title:"FIM sem SIEM com AIDE", prompt:"root@srv-puro:~# ",
+        cmd:"aide --check",
+        vuln:"Couldn't open file /var/lib/aide/aide.db.gz for reading  (baseline ainda não inicializado!)",
+        fix:"aide --init && mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz && aide --check",
+        safe:"AIDE baseline criado e validado: 'NO differences between database and filesystem. Looks okay!!'",
+        key:["aide --init","aide.db.gz","aide --check"]},
+      "bt-fim-yara": {title:"Caça Automática a Webshells (FIM + YARA)", prompt:"root@wazuh-mgr:~# ",
+        cmd:"Arquivo suspeito criado em /var/www/html/uploads/img.php (FIM 554)",
+        vuln:"Alerta 554 nível 5 informa criação do arquivo, mas ainda não verificou se contém código de webshell!",
+        fix:"Criar regra filha para 550,554 em ^/var/www/html e acionar Active Response com script yara.sh",
+        safe:"FIM 554 -> Active Response YARA -> Alerta nível 12: Webshell detectada em /var/www/html/uploads/img.php!",
+        key:["554","yara","/var/www/html"]},
+      "bt-fim-cdb": {title:"Cruzamento de IOCs com Listas CDB", prompt:"root@wazuh-mgr:~# ",
+        cmd:"cat /var/ossec/etc/lists/ioc-ips",
+        vuln:"198.51.100.44:C2_Ativo  (lista criada, mas nenhuma regra consulta a CDB list!)",
+        fix:"Declarar <list>etc/lists/ioc-ips</list> no ossec.conf e criar regra com <list field='srcip' lookup='address_match_key'>etc/lists/ioc-ips</list>",
+        safe:"Alerta nível 12 instantâneo sempre que qualquer IP da lista CDB tocar na infraestrutura!",
+        key:["list","address_match_key","ioc-ips","srcip"]},
+      "bt-fim-sca": {title:"Compliance Contínuo (Wazuh SCA & Lynis)", prompt:"root@srv-linux:~# ",
+        cmd:"Painel SCA mostra Score CIS Benchmark em 42% (falha em SSH root login e firewalld)",
+        vuln:"Servidor monitorado, mas com deriva de hardening exposta no painel SCA",
+        fix:"Corrigir os itens apontados no SCA (PermitRootLogin no + firewalld ativo) e reexecutar scan SCA / lynis audit system",
+        safe:"Novo scan SCA concluído: Score CIS subiu para 91% — conformidade monitorada continuamente!",
+        key:["sca","lynis","permitrootlogin","cis"]},
+
+      // Defesa Ativa, SOAR & Deception (5)
+      "bt-act-ar": {title:"Bloqueio Automático com Wazuh Active Response", prompt:"root@wazuh-mgr:~# ",
+        cmd:"grep -A5 '<active-response>' /var/ossec/etc/ossec.conf",
+        vuln:"(vazio — regra 100011 detecta força bruta, mas não bloqueia o IP atacante!)",
+        fix:"<active-response> <command>firewall-drop</command> <location>local</location> <rules_id>100011</rules_id> <timeout>600</timeout> </active-response>",
+        safe:"active-responses.log: firewall-drop add - 198.51.100.44 (bloqueado automaticamente por 600s!)",
+        key:["active-response","firewall-drop","rules_id","timeout"]},
+      "bt-act-wl": {title:"Blindagem contra Auto-Bloqueio (white_list)", prompt:"root@wazuh-mgr:~# ",
+        cmd:"grep '<white_list>' /var/ossec/etc/ossec.conf",
+        vuln:"<white_list>127.0.0.1</white_list>  (Gateway 10.10.10.1, DNS 10.10.10.2 e Juízes 10.99.0.0/24 desprotegidos!)",
+        fix:"Adicionar <white_list>10.10.10.1</white_list>, <white_list>10.10.10.2</white_list> e <white_list>10.99.0.0/24</white_list> em <global>",
+        safe:"Infraestrutura crítica e Scoring Engine blindados contra ataques de IP Spoofing!",
+        key:["white_list","10.10.10.1","10.99.0.0"]},
+      "bt-act-f2b": {title:"Defesa Ativa Sem SIEM com Fail2Ban", prompt:"root@srv-puro:~# ",
+        cmd:"systemctl is-active fail2ban",
+        vuln:"inactive  (servidor sem SIEM sofrendo força bruta direta no SSH e Apache!)",
+        fix:"Criar /etc/fail2ban/jail.local com ignoreip = 127.0.0.1/8 10.10.10.0/24, maxretry = 4, [sshd] enabled = true && systemctl enable --now fail2ban",
+        safe:"fail2ban-client status sshd -> active (ignoreip configurado e atacantes banidos via firewalld!)",
+        key:["jail.local","ignoreip","fail2ban","sshd"]},
+      "bt-act-soar": {title:"Integração SOAR via Webhook (Shuffle / TheHive)", prompt:"root@wazuh-mgr:~# ",
+        cmd:"Alertas críticos nível >= 10 exigem abertura automática de caso e enriquecimento CTI",
+        vuln:"Nenhuma integração externa configurada no ossec.conf",
+        fix:"<integration> <name>shuffle</name> <hook_url>https://soar.empresa.local/...</hook_url> <level>10</level> <alert_format>json</alert_format> </integration>",
+        safe:"Alertas nível >= 10 enviados em JSON ao SOAR, abrindo caso enriquecido no TheHive automaticamente!",
+        key:["integration","shuffle","hook_url","alert_format"]},
+      "bt-act-dec": {title:"Plantando Armadilha Honeyfile com Zero Falso Positivo", prompt:"root@srv-dados:~# ",
+        cmd:"auditctl -l | grep honeyfile",
+        vuln:"(nenhuma isca configurada — invasor com credencial roubada enumeraria /opt em silêncio)",
+        fix:"Criar /opt/credenciais_legado.conf (token falso) + auditctl -w /opt/credenciais_legado.conf -p rwa -k honeyfile_touched",
+        safe:"Honeyfile ativa! Qualquer leitura dispara evento 'honeyfile_touched' com UID e processo exatos!",
+        key:["auditctl","-w","honeyfile","credenciais"]}
+    };
+
+    const STORE_D = "cs_provaD_done_v1";
+    let doneD = {};
+    try { doneD = JSON.parse(localStorage.getItem(STORE_D) || "{}"); } catch(e){ doneD = {}; }
+
+    const btnsD = Array.from(document.querySelectorAll('#provaD .trainbtn[data-dlab]'));
+    const totD = btnsD.length;
+    const progTxtD = document.getElementById("dProgTxt");
+    const progBarD = document.getElementById("dProgBar");
+
+    function refreshProgD(){
+      let n = 0;
+      btnsD.forEach(function(b){
+        const id = b.dataset.dlab;
+        if(doneD[id]){
+          n++;
+          b.classList.add("done");
+          b.textContent = "✅ Treinado (repetir)";
+        } else {
+          b.classList.remove("done");
+          b.textContent = "🎮 Treinar";
+        }
+      });
+      if(progTxtD) progTxtD.textContent = n + " / " + totD;
+      if(progBarD) progBarD.style.width = (totD ? Math.round((n/totD)*100) : 0) + "%";
+    }
+
+    btnsD.forEach(function(b){
+      const id = b.dataset.dlab;
+      const s = DLABS[id];
+      if(!s) return;
+      b.addEventListener("click", function(e){
+        e.stopPropagation();
+        const scn = Object.assign({}, s, {
+          badMsg: BAD,
+          goodMsg: GOOD,
+          onDone: function(){
+            doneD[id] = 1;
+            try { localStorage.setItem(STORE_D, JSON.stringify(doneD)); } catch(err){}
+            refreshProgD();
+          }
+        });
+        window.csOpenLab(scn, s.title, false);
+      });
+    });
+    refreshProgD();
+  }
+
+  // Checklist interativo da Prova D
+  const DCHK_KEY = "cs_provaD_chk_v1";
+  let dchk = {};
+  try { dchk = JSON.parse(localStorage.getItem(DCHK_KEY) || "{}"); } catch(e){ dchk = {}; }
+  const dchkBoxes = Array.from(document.querySelectorAll('#dChkList input[type="checkbox"]'));
+  const dchkCount = document.getElementById("dChkCount");
+  function refreshDChk(){
+    let n = 0;
+    dchkBoxes.forEach(function(cb){
+      const on = !!dchk[cb.dataset.dchk];
+      cb.checked = on;
+      cb.closest(".chkitem").classList.toggle("checked", on);
+      if(on) n++;
+    });
+    if(dchkCount) dchkCount.textContent = n + "/" + dchkBoxes.length;
+  }
+  dchkBoxes.forEach(function(cb){
+    cb.addEventListener("change", function(){
+      dchk[cb.dataset.dchk] = cb.checked ? 1 : 0;
+      try { localStorage.setItem(DCHK_KEY, JSON.stringify(dchk)); } catch(err){}
+      refreshDChk();
+    });
+  });
+  refreshDChk();
+
+  /* ===================== ARENA DE 3 PROVAS SIMULADAS — PROVA D (BLUE TEAM) ===================== */
+  const EXAMS_D = [
+    {
+      id:"d1", num:"Prova D1", tag:"Wazuh SIEM/XDR · 2h30", duration:9000,
+      title:"Operação Blue Team Completa com Wazuh SIEM/XDR",
+      summary:"Cenário clássico de competição com Wazuh: conecte agentes/Suricata, crie Custom Decoder + Rules com correlação, ative FIM Whodata, CDB List e Active Response seguro.",
+      brief:"O Red Team iniciará ataques em instantes contra sua infraestrutura híbrida. Configure o Wazuh Manager e os agentes para enxergar todas as camadas, detectar ataques na aplicação interna 'fin-api', vigiar arquivos críticos e bloquear invasores sem derrubar os avaliadores (10.99.0.0/24)!",
+      hosts:"Wazuh-Mgr (10.10.10.50) · Web-App (Linux + fin-api) · Win-AD (Sysmon) · FW-Sensor (Suricata)",
+      tasks:[
+        {
+          id:"d1t1", code:"T1", host:"Agentes + Suricata", mode:"cmd", prompt:"root@wazuh-mgr:~# ",
+          title:"Onboarding de Agentes, Sysmon e Suricata (eve.json)",
+          req:"Ativar o agente desconectado (porta 1514/TCP), ingerir o canal Microsoft-Windows-Sysmon/Operational (eventchannel) no Windows e o arquivo /var/log/suricata/eve.json (formato json) no sensor de rede.",
+          auditCmd:"/var/ossec/bin/agent_control -l; grep -E 'eve.json|Sysmon' /var/ossec/etc/shared/*/agent.conf",
+          auditOut:"ID: 002 (Web-App) Disconnected · Sysmon ausente no agent.conf · Suricata eve.json não coletado",
+          placeholder:"Digite manualmente: 1514 + wazuh-agent + Sysmon/Operational eventchannel + eve.json json...",
+          hint:"Garanta porta 1514/tcp e wazuh-agent ativo, adicione <localfile> eventchannel para Microsoft-Windows-Sysmon/Operational e <localfile> json para /var/log/suricata/eve.json.",
+          example:"systemctl enable --now wazuh-agent (1514/tcp); localfile eventchannel Microsoft-Windows-Sysmon/Operational; localfile json /var/log/suricata/eve.json",
+          keys:["1514","wazuh-agent","sysmon","eventchannel","eve.json","json"],
+          minHits:3,
+          safeOut:"Todos os agentes: Active (synced)\nTelemetria Sysmon (Windows) e Suricata eve.json (Rede) chegando ao Wazuh Indexer!"
+        },
+        {
+          id:"d1t2", code:"T2", host:"Wazuh-Mgr (Decoders)", mode:"cmd", prompt:"root@wazuh-mgr:~# ",
+          title:"Custom Decoder para Aplicação Própria (fin-api)",
+          req:"A aplicação grava logs como: 'fin-api: AUTH_DENIED account=tesouraria client=198.51.100.80'. Crie o decoder em local_decoder.xml extraindo action, dstuser e srcip.",
+          auditCmd:"echo 'Nov 24 14:00:01 web01 fin-api: AUTH_DENIED account=tesouraria client=198.51.100.80' | /var/ossec/bin/wazuh-logtest",
+          auditOut:"Phase 2: Completed decoding. No decoder matched.",
+          placeholder:"Escreva a estrutura do <decoder name='fin-api'> com program_name, regex e <order>...",
+          hint:"Defina <program_name>^fin-api</program_name>, <regex>(\\S+) account=(\\S+) client=(\\S+)</regex> e <order>action, dstuser, srcip</order>.",
+          example:"<decoder name='fin-api'><program_name>^fin-api</program_name></decoder> <regex>(\\S+) account=(\\S+) client=(\\S+)</regex> <order>action, dstuser, srcip</order>",
+          keys:["fin-api","regex","order","srcip","dstuser"],
+          minHits:3,
+          safeOut:"Phase 2: decoder: 'fin-api' · action: 'AUTH_DENIED' · dstuser: 'tesouraria' · srcip: '198.51.100.80'"
+        },
+        {
+          id:"d1t3", code:"T3", host:"Wazuh-Mgr (Rules)", mode:"cmd", prompt:"root@wazuh-mgr:~# ",
+          title:"Custom Rule + Correlação de Força Bruta (MITRE T1110) + wazuh-logtest",
+          req:"Em local_rules.xml (IDs >= 100000): crie regra base nível 5 para AUTH_DENIED e regra correlacionada nível 10 quando o mesmo IP falhar 6 vezes em 60s (<if_matched_sid>, <same_source_ip/> e tag MITRE T1110), validando com wazuh-logtest.",
+          auditCmd:"/var/ossec/bin/wazuh-analysisd -t",
+          auditOut:"Nenhuma regra encontrada para o decoder 'fin-api' em local_rules.xml.",
+          placeholder:"Escreva as tags chave da regra base (100020) + correlação (100021 frequency/timeframe/same_source_ip/T1110) + wazuh-logtest...",
+          hint:"Use id='100020' (<decoded_as>fin-api</decoded_as>) e id='100021' level='10' frequency='6' timeframe='60' (<if_matched_sid>100020</if_matched_sid>, <same_source_ip/>, <mitre><id>T1110</id></mitre>) e valide com wazuh-logtest.",
+          example:"rule id=100020 decoded_as fin-api; rule id=100021 level=10 frequency=6 timeframe=60 if_matched_sid 100020 same_source_ip mitre T1110; wazuh-logtest",
+          keys:["1000","if_matched_sid","frequency","timeframe","same_source_ip","t1110","wazuh-logtest"],
+          minHits:4,
+          safeOut:"wazuh-logtest Phase 3: Rule 100021 (level 10, MITRE T1110) disparada com sucesso na rajada do mesmo IP!"
+        },
+        {
+          id:"d1t4", code:"T4", host:"Web-App (FIM + CDB)", mode:"cmd", prompt:"root@wazuh-mgr:~# ",
+          title:"FIM com Whodata/Diff + CDB List de IPs Maliciosos",
+          req:"Habilitar <syscheck> com whodata='yes' e report_changes='yes' em /etc/sudoers e /var/www/html, e criar regra consultando a lista CDB 'etc/lists/ioc-ips' pelo campo srcip.",
+          auditCmd:"grep -E 'whodata|ioc-ips' /var/ossec/etc/ossec.conf /var/ossec/etc/rules/local_rules.xml",
+          auditOut:"FIM em modo agendado simples (sem whodata/diff) e lista etc/lists/ioc-ips não vinculada a regra.",
+          placeholder:"Digite a config de syscheck (whodata, report_changes) + regra <list field='srcip' lookup='address_match_key'>...",
+          hint:"Combine whodata='yes' report_changes='yes' no <syscheck> (+ auditd ativo) e <list field='srcip' lookup='address_match_key'>etc/lists/ioc-ips</list> em local_rules.xml.",
+          example:"<directories whodata='yes' report_changes='yes'>/etc/sudoers,/var/www/html</directories>; <list field='srcip' lookup='address_match_key'>etc/lists/ioc-ips</list>",
+          keys:["whodata","report_changes","address_match_key","ioc-ips","srcip"],
+          minHits:3,
+          safeOut:"FIM Whodata + Diff ativo (usuário e processo auditados em <1s) e CDB List bloqueando IOCs!"
+        },
+        {
+          id:"d1t5", code:"T5", host:"Wazuh-Mgr (XDR)", mode:"policy", prompt:"root@wazuh-mgr:~# ",
+          title:"Active Response Seguro (Bloqueio Automático + Proteção de Allowlist)",
+          req:"Marque TODAS as configurações obrigatórias para bloquear atacantes automaticamente sem correr risco de bloquear o Gateway (10.10.10.1), o DNS (10.10.10.2) ou o Scoring Engine dos juízes (10.99.0.0/24).",
+          auditCmd:"grep -E 'white_list|active-response' /var/ossec/etc/ossec.conf",
+          auditOut:"Active Response desligado e white_list contendo apenas 127.0.0.1.",
+          options:[
+            {id:"o1", text:"Adicionar 10.10.10.1, 10.10.10.2 e 10.99.0.0/24 em <global><white_list> ANTES de ativar o bloqueio", ok:true},
+            {id:"o2", text:"Configurar <active-response> usando firewall-drop vinculado às regras de alta confiança (ex.: 100021 e CDB) com timeout=600", ok:true},
+            {id:"o3", text:"Acionar firewall-drop para qualquer evento nível >= 3 sem nenhuma white_list para bloquear tudo preventivamente", ok:false},
+            {id:"o4", text:"Monitorar /var/ossec/logs/active-responses.log para auditar cada bloqueio executado", ok:true}
+          ],
+          hint:"Jamais dispare firewall-drop em regras baixas (nível 3) nem sem blindar Gateway, DNS e Scoring Engine na white_list!",
+          safeOut:"white_list blindada + Active Response firewall-drop (600s) testado e validado sem afetar avaliadores!"
+        },
+        {
+          id:"d1t6", code:"T6", host:"Wazuh-Mgr (Tuning)", mode:"cmd", prompt:"root@wazuh-mgr:~# ",
+          title:"Tuning Cirúrgico de Falso Positivo",
+          req:"O scanner de disponibilidade dos juízes (IP 10.99.0.15) acessa 'GET /status-check' a cada 10s gerando falso positivo na regra 31101. Crie uma regra filha cirúrgica (level='0') sem desabilitar a regra 31101 para outros IPs/rotas!",
+          auditCmd:"tail -3 /var/ossec/logs/alerts/alerts.log",
+          auditOut:"Rule: 31101 (level 5) -> Src IP: 10.99.0.15 -> GET /status-check HTTP/1.1 (ruído constante!)",
+          placeholder:"Escreva a regra filha com id=100095, level=0, if_sid, srcip e match...",
+          hint:"Use <rule id='100095' level='0'> com <if_sid>31101</if_sid>, <srcip>10.99.0.15</srcip> e <match>/status-check</match>.",
+          example:"<rule id='100095' level='0'><if_sid>31101</if_sid><srcip>10.99.0.15</srcip><match>/status-check</match></rule>",
+          keys:["level='0'",'level="0"',"level=0","31101","10.99.0.15","status-check","if_sid"],
+          minHits:3,
+          safeOut:"Ruído de 10.99.0.15 em /status-check silenciado; ataques externos na regra 31101 continuam alertando 100%!"
+        }
+      ]
+    },
+    {
+      id:"d2", num:"Prova D2", tag:"Multi-SIEM Agnóstico · 2h", duration:7200,
+      title:"Engenharia de Detecção Agnóstica (Sigma, Elastic KQL, Splunk SPL & Osquery)",
+      summary:"Cenário sem Wazuh! O ambiente usa Elastic/Splunk e Osquery nos hosts. Prove que você domina os conceitos universais do Blue Team em qualquer plataforma.",
+      brief:"Você assumiu o turno de Detection Engineer em um SOC que opera com regras Sigma compiladas para Elastic (KQL) e Splunk (SPL), além de Osquery nos servidores. Construa as detecções comportamentais, cace ameaças em memória via SQL e afine os alertas.",
+      hosts:"SIEM-Core (Elastic Kibana / Splunk) · Fleet-Osquery (Linux & Windows Endpoints)",
+      tasks:[
+        {
+          id:"d2t1", code:"T1", host:"Repositório Sigma", mode:"cmd", prompt:"sigma-dev:~$ ",
+          title:"Regra Sigma para PowerShell Codificado / Download Cradle (T1059.001)",
+          req:"Escreva os elementos essenciais de uma regra Sigma (logsource windows process_creation) que detecte CommandLine contendo '-enc', 'FromBase64String' ou 'DownloadString' com condition: selection.",
+          auditCmd:"cat rules/win_ps_suspicious.yml",
+          auditOut:"Arquivo de regra vazio — ataques PowerShell codificados estão passando sem alerta!",
+          placeholder:"Digite logsource (process_creation / windows) + CommandLine|contains (-enc, DownloadString) + condition: selection...",
+          hint:"Inclua category: process_creation, product: windows, CommandLine|contains com '-enc' e 'DownloadString', e condition: selection.",
+          example:"logsource: category: process_creation product: windows | selection: CommandLine|contains: ['-enc','DownloadString'] | condition: selection",
+          keys:["process_creation","commandline","-enc","downloadstring","condition"],
+          minHits:3,
+          safeOut:"Regra Sigma validada (attack.t1059.001) e pronta para tradução automática multi-SIEM!"
+        },
+        {
+          id:"d2t2", code:"T2", host:"Elastic Kibana (KQL)", mode:"cmd", prompt:"kibana-kql > ",
+          title:"Tradução para Consulta KQL no Elastic Security (ECS)",
+          req:"Escreva uma consulta KQL usando campos ECS para achar processos filhos ('sh', 'bash' ou 'cmd.exe') iniciados por servidores web (process.parent.name : httpd, nginx ou w3wp.exe).",
+          auditCmd:"Executar busca de anomalias de processo pai -> filho no índice logs-endpoint*",
+          auditOut:"1,4 milhão de eventos brutos — escreva o filtro KQL usando process.parent.name e process.name.",
+          placeholder:"Ex.: process.parent.name : (\"httpd\" or \"nginx\" or \"w3wp.exe\") and process.name : ...",
+          hint:"No esquema ECS use process.parent.name : (\"httpd\" or \"nginx\" or \"w3wp.exe\") and process.name : (\"sh\" or \"bash\" or \"cmd.exe\").",
+          example:"process.parent.name : (\"httpd\" or \"nginx\" or \"w3wp.exe\") and process.name : (\"sh\" or \"bash\" or \"cmd.exe\")",
+          keys:["process.parent.name","process.name","w3wp","bash","httpd","nginx"],
+          minHits:3,
+          safeOut:"2 eventos críticos encontrados em 0.14s: w3wp.exe -> cmd.exe no host SRV-PORTAL01!"
+        },
+        {
+          id:"d2t3", code:"T3", host:"Splunk SIEM (SPL)", mode:"cmd", prompt:"splunk-spl > ",
+          title:"Detecção por Limiar no Splunk (SPL — Brute Force)",
+          req:"Escreva uma query SPL que agrupe falhas de logon Windows (EventCode=4625) por IP de origem (src_ip) usando stats count e filtre apenas origens com mais de 15 falhas (where count > 15).",
+          auditCmd:"index=win_sec EventCode=4625 | head 5",
+          auditOut:"Eventos 4625 isolados encontrados — falta agregar com stats count by src_ip e filtrar com where!",
+          placeholder:"Ex.: index=win_sec EventCode=4625 | stats count by src_ip | where count > 15",
+          hint:"Use o pipeline padrão do Splunk: index=win_sec EventCode=4625 | stats count by src_ip Account_Name | where count > 15",
+          example:"index=win_sec EventCode=4625 | stats count by src_ip | where count > 15",
+          keys:["4625","stats","count","src_ip","where"],
+          minHits:3,
+          safeOut:"Resultado SPL: src_ip=203.0.113.99 (count=248) isolado e encaminhado para bloqueio!"
+        },
+        {
+          id:"d2t4", code:"T4", host:"Fleet / Osquery", mode:"cmd", prompt:"osquery> ",
+          title:"Threat Hunting em SQL nos Endpoints (Osquery)",
+          req:"Escreva duas verificações ou um JOIN SQL no Osquery para localizar processos sem binário em disco (on_disk = 0) e conexões de rede externas abertas (process_open_sockets).",
+          auditCmd:".tables",
+          auditOut:"Tabelas disponíveis: processes, process_open_sockets, listening_ports, crontab, users",
+          placeholder:"Ex.: SELECT pid, name, path FROM processes WHERE on_disk = 0; SELECT ... FROM process_open_sockets...",
+          hint:"Consulte a tabela processes filtrando WHERE on_disk = 0 e/ou faça JOIN com process_open_sockets onde remote_port != 0.",
+          example:"SELECT pid, name, path FROM processes WHERE on_disk = 0; SELECT pid, remote_address, remote_port FROM process_open_sockets WHERE remote_port != 0;",
+          keys:["select","processes","on_disk","process_open_sockets"],
+          minHits:2,
+          safeOut:"Implant oculto em memória (pid=5520, on_disk=0 -> 198.51.100.44:443) localizado em 3 hosts!"
+        },
+        {
+          id:"d2t5", code:"T5", host:"Arquitetura SOC", mode:"policy", prompt:"soc-lead > ",
+          title:"Decisões de Engenharia de Detecção & Normalização",
+          req:"Marque todas as práticas corretas de arquitetura agnóstica de SOC e Threat Hunting.",
+          auditCmd:"Revisão de maturidade do pipeline de detecção",
+          auditOut:"Regras duplicadas por fabricante, excesso de falsos positivos e hunts manuais não documentados.",
+          options:[
+            {id:"o1", text:"Normalizar logs diferentes em um esquema comum (ECS / OCSF / CIM) antes de avaliar regras", ok:true},
+            {id:"o2", text:"Converter todo achado real de Threat Hunting em uma nova regra automatizada (ciclo de melhoria contínua)", ok:true},
+            {id:"o3", text:"Testar novas regras simulando a técnica com segurança (ex.: Atomic Red Team) para medir TP e FP", ok:true},
+            {id:"o4", text:"Apagar regras de PowerShell e SMB sempre que um administrador gerar um falso positivo", ok:false}
+          ],
+          hint:"Normalização (ECS/OCSF), testes atômicos e retroalimentação do Hunting -> Detection Engineering são pilares universais.",
+          safeOut:"Pipeline padronizado com OCSF/ECS, testes atômicos ativos e taxa de falsos positivos controlada!"
+        }
+      ]
+    },
+    {
+      id:"d3", num:"Prova D3", tag:"Sem SIEM (Linux Puro) · 2h", duration:7200,
+      title:"Defesa Ativa 'Na Unha' (Sem SIEM: Fail2Ban + AIDE + Suricata + Honeyfile)",
+      summary:"A prova entregou apenas servidores Linux puros — sem Wazuh, sem Elastic e sem Splunk! Monte monitoramento de integridade, IPS de rede/host e iscas nativas.",
+      brief:"O ambiente não possui nenhum SIEM instalado e você não tem internet para baixar stacks pesadas. Usando apenas ferramentas leves nativas/padrão de servidor (Fail2Ban, AIDE, auditd, Suricata e rsyslog), monte uma operação completa de detecção e bloqueio ativo!",
+      hosts:"Srv-Prod (RHEL/Ubuntu Puro) · FW-Perimetro (Suricata + Firewalld) · Log-Srv (rsyslog)",
+      tasks:[
+        {
+          id:"d3t1", code:"T1", host:"Srv-Prod (Fail2Ban)", mode:"cmd", prompt:"root@srv-prod:~# ",
+          title:"Bloqueio Automático de Força Bruta com Fail2Ban + ignoreip",
+          req:"Configurar /etc/fail2ban/jail.local protegendo a rede interna/avaliadores em ignoreip (127.0.0.1/8 e 10.10.0.0/16), definindo maxretry=4, habilitando a jail [sshd] e ativando o serviço.",
+          auditCmd:"systemctl is-active fail2ban; ls /etc/fail2ban/jail.local",
+          auditOut:"inactive · /etc/fail2ban/jail.local não existe (ataques SSH livres!)",
+          placeholder:"Digite os parâmetros de /etc/fail2ban/jail.local (ignoreip, maxretry, [sshd] enabled=true) + systemctl...",
+          hint:"Crie /etc/fail2ban/jail.local (nunca edite jail.conf!) com ignoreip, bantime, maxretry=4, [sshd] enabled=true e ative o serviço com systemctl enable --now fail2ban.",
+          example:"/etc/fail2ban/jail.local: ignoreip = 127.0.0.1/8 10.10.0.0/16; maxretry = 4; [sshd] enabled = true; systemctl enable --now fail2ban",
+          keys:["jail.local","ignoreip","maxretry","sshd","fail2ban"],
+          minHits:3,
+          safeOut:"fail2ban ativo · jail [sshd] protegida com ignoreip · atacantes banidos automaticamente no firewall!"
+        },
+        {
+          id:"d3t2", code:"T2", host:"Srv-Prod (AIDE)", mode:"cmd", prompt:"root@srv-prod:~# ",
+          title:"Monitoramento de Integridade de Arquivos (FIM) com AIDE",
+          req:"Inicializar o banco criptográfico baseline do AIDE, mover aide.db.new.gz para aide.db.gz e executar a checagem de validação.",
+          auditCmd:"aide --check",
+          auditOut:"Cannot open /var/lib/aide/aide.db.gz — nenhum baseline de integridade ativo!",
+          placeholder:"Digite os comandos para inicializar, ativar o banco e rodar aide --check...",
+          hint:"Execute aide --init, mova /var/lib/aide/aide.db.new.gz para /var/lib/aide/aide.db.gz e valide com aide --check.",
+          example:"aide --init && mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz && aide --check",
+          keys:["aide --init","aide.db.gz","aide --check","mv"],
+          minHits:3,
+          safeOut:"Baseline AIDE gerado e verificado: 'AIDE found NO differences. Looks okay!!'"
+        },
+        {
+          id:"d3t3", code:"T3", host:"Srv-Prod (Deception)", mode:"cmd", prompt:"root@srv-prod:~# ",
+          title:"Armadilha Honeyfile de Zero Falso Positivo com auditd",
+          req:"Criar um arquivo-isca '/var/backups/credenciais_erp.conf' e adicionar uma regra no auditd (auditctl -w) monitorando leitura/escrita/atributos (-p rwa) com a chave (-k) 'alerta_isca'.",
+          auditCmd:"auditctl -l",
+          auditOut:"No rules — nenhuma armadilha interna configurada para detectar reconhecimento pós-invasão.",
+          placeholder:"Ex.: criar arquivo isca + auditctl -w /var/backups/credenciais_erp.conf -p rwa -k alerta_isca",
+          hint:"Crie o arquivo falso sem segredos reais e monitore qualquer acesso (-p rwa) via auditctl -w /var/backups/credenciais_erp.conf -p rwa -k alerta_isca.",
+          example:"echo 'TOKEN=canary_fake' > /var/backups/credenciais_erp.conf && auditctl -w /var/backups/credenciais_erp.conf -p rwa -k alerta_isca",
+          keys:["auditctl","-w","credenciais_erp","-p","alerta_isca"],
+          minHits:3,
+          safeOut:"Armadilha ativa no kernel! Qualquer leitura de credenciais_erp.conf registra imediatamente UID e processo em alerta_isca!"
+        },
+        {
+          id:"d3t4", code:"T4", host:"FW-Perimetro + Log-Srv", mode:"cmd", prompt:"root@fw-perimetro:~# ",
+          title:"NIDS Suricata + Centralização via rsyslog",
+          req:"Garantir o Suricata ativo inspecionando a interface da rede interna e encaminhar os logs/alertas via rsyslog TCP (@@) para o Log-Srv na porta 514.",
+          auditCmd:"systemctl is-active suricata; grep '@@' /etc/rsyslog.d/*.conf",
+          auditOut:"suricata: inactive · nenhum encaminhamento remoto TCP (@@) configurado no rsyslog.",
+          placeholder:"Ex.: systemctl enable --now suricata + *.* @@10.10.10.60:514 + restart rsyslog",
+          hint:"Inicie o suricata (systemctl enable --now suricata) e adicione *.* @@<IP_LOGSRV>:514 em /etc/rsyslog.d/remote.conf reiniciando o rsyslog.",
+          example:"systemctl enable --now suricata; echo '*.* @@10.10.10.60:514' > /etc/rsyslog.d/99-remote.conf; systemctl restart rsyslog",
+          keys:["suricata","@@","514","rsyslog"],
+          minHits:3,
+          safeOut:"Suricata inspecionando tráfego em tempo real e todos os eventos centralizados via TCP no Log-Srv!"
+        },
+        {
+          id:"d3t5", code:"T5", host:"Operação Defensiva", mode:"policy", prompt:"blue-lead > ",
+          title:"Validação Final de Disponibilidade e Resiliência",
+          req:"Selecione todas as checagens finais obrigatórias antes de encerrar a preparação da defesa sem SIEM.",
+          auditCmd:"Checklist pré-ataque de disponibilidade e detecção",
+          auditOut:"Aguardando confirmação final dos controles implantados.",
+          options:[
+            {id:"o1", text:"Testar o acesso legítimo aos serviços (Web, SSH, Banco) a partir de outra máquina para garantir que nenhuma regra os derrubou", ok:true},
+            {id:"o2", text:"Tocar na Honeyfile com um usuário de teste e confirmar com 'ausearch -k alerta_isca' que o evento chega ao Log-Srv", ok:true},
+            {id:"o3", text:"Salvar uma cópia protegida do banco aide.db.gz fora do servidor monitorado", ok:true},
+            {id:"o4", text:"Bloquear toda a porta 80 e 443 do servidor web público para ninguém conseguir atacar o site", ok:false}
+          ],
+          hint:"Derrubar o serviço público para 'evitar ataques' zera os pontos de disponibilidade — valide sempre acesso legítimo + geração real de alerta!",
+          safeOut:"Defesa sem SIEM 100% operacional: serviços no ar, Fail2Ban blindado, AIDE íntegro, Suricata ativo e Honeyfile validada!"
+        }
+      ]
+    }
+  ];
+
+  // Renderizador das 3 Provas Simuladas da Prova D
+  (function initProvaDExams(){
+    var grid=document.getElementById("exDGrid"), arena=document.getElementById("exDArena");
+    if(!grid || !arena) return;
+    var STORE="cs_exams_D_v1";
+    var state={}; try{ state=JSON.parse(localStorage.getItem(STORE)||"{}"); }catch(e){ state={}; }
+    function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+    var activeExam=EXAMS_D[0], activeTaskIdx=0, timerInt=null, remSec=activeExam.duration, running=false;
+    var logs={};
+
+    function doneCount(ex){
+      var st=state[ex.id]||{};
+      return ex.tasks.filter(t=>!!st[t.id]).length;
+    }
+
+    function renderGrid(){
+      grid.innerHTML="";
+      EXAMS_D.forEach(function(ex){
+        var dc=doneCount(ex), tot=ex.tasks.length;
+        var card=document.createElement("div");
+        card.className="excard"+(ex.id===activeExam.id?" active":"");
+        card.innerHTML='<div class="exbadges"><span class="exnum">'+esc(ex.num)+'</span><span class="extag">'+esc(ex.tag)+'</span></div>'
+          +'<h3>'+esc(ex.title)+'</h3><p>'+esc(ex.summary)+'</p>'
+          +'<div class="exstat">'+(dc===tot?'✅ Concluída ('+dc+'/'+tot+')':'🎯 Progresso: '+dc+' / '+tot+' tarefas')+'</div>';
+        card.onclick=function(){
+          stopTimer(); activeExam=ex; activeTaskIdx=0; remSec=ex.duration;
+          renderGrid(); renderArena();
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function stopTimer(){ if(timerInt){ clearInterval(timerInt); timerInt=null; } running=false; }
+    function updateClk(){ var el=document.getElementById("exDClk"); if(el) el.textContent=fmtTime(remSec); }
+
+    function renderArena(){
+      var ex=activeExam, task=ex.tasks[activeTaskIdx], st=state[ex.id]||{};
+      var dc=doneCount(ex), tot=ex.tasks.length;
+      var tKey=ex.id+":"+task.id;
+      if(!logs[tKey]) logs[tKey]=[{c:"sys", t:"Ambiente conectado: "+task.host+". Clique em '🔍 Auditar estado atual' para verificar as lacunas."}];
+
+      var html='<div class="exhead"><div><h2>'+esc(ex.num)+' — '+esc(ex.title)+'</h2><p class="exdesc">'+esc(ex.brief)+'</p></div>'
+        +'<div class="extimer"><span class="clk" id="exDClk">'+fmtTime(remSec)+'</span>'
+        +'<button class="exbtn blue" id="exDTog" type="button">'+(running?'⏸ Pausar':'▶ Iniciar')+'</button>'
+        +'<button class="exbtn" id="exDRstT" type="button">↺</button>'
+        +'<button class="exbtn pri" id="exDExp" type="button">📄 Exportar</button></div></div>'
+        +'<div class="exbrief">'
+        +'<div class="exbox"><h4>🌐 Arquitetura do Cenário</h4>'+esc(ex.hosts)+'</div>'
+        +'<div class="exbox"><h4>📊 Status Blue Team</h4><b>'+dc+' de '+tot+'</b> controles validados ('+Math.round((dc/tot)*100)+'%). '
+        +'<button class="exbtn" id="exDClear" type="button" style="margin-left:8px;padding:3px 8px;font-size:11.5px">Reiniciar prova</button></div></div>'
+        +'<div class="exsplit"><div class="extlist" id="exDTList"></div><div class="exwork" id="exDWork"></div></div>';
+      arena.innerHTML=html;
+
+      document.getElementById("exDTog").onclick=function(){
+        if(running){ stopTimer(); } else {
+          running=true;
+          timerInt=setInterval(function(){ if(remSec>0){ remSec--; updateClk(); } else { stopTimer(); } },1000);
+        }
+        this.textContent=running?'⏸ Pausar':'▶ Iniciar';
+      };
+      document.getElementById("exDRstT").onclick=function(){ stopTimer(); remSec=ex.duration; updateClk(); document.getElementById("exDTog").textContent='▶ Iniciar'; };
+      document.getElementById("exDClear").onclick=function(){ state[ex.id]={}; save(); logs={}; renderGrid(); renderArena(); };
+      document.getElementById("exDExp").onclick=function(){
+        var lines=["RELATORIO BLUE TEAM (MODULO D) - "+ex.num+" ("+ex.title+")","Data: "+new Date().toLocaleString(),"Status: "+doneCount(ex)+"/"+ex.tasks.length+" tarefas concluidas",""];
+        ex.tasks.forEach(function(t){
+          var ok=!!(state[ex.id]&&state[ex.id][t.id]);
+          lines.push("["+(ok?"OK":"PENDENTE")+"] "+t.code+" - "+t.title+" ("+t.host+")");
+          if(ok && typeof state[ex.id][t.id]==="string") lines.push("   Configuracao aplicada: "+state[ex.id][t.id]);
+        });
+        dlText("RELATORIO_BLUETEAM_"+ex.id.toUpperCase()+".txt", lines.join("\n"));
+      };
+
+      var tlist=document.getElementById("exDTList");
+      ex.tasks.forEach(function(t, idx){
+        var isDone=!!st[t.id];
+        var item=document.createElement("button"); item.type="button";
+        item.className="extitem"+(idx===activeTaskIdx?" active":"")+(isDone?" done":"");
+        item.innerHTML='<div class="etop"><span>'+esc(t.code)+' · '+esc(t.host)+'</span><span>'+(isDone?'✅ OK':'⏳')+'</span></div>'
+          +'<div class="etit">'+esc(t.title)+'</div>';
+        item.onclick=function(){ activeTaskIdx=idx; renderArena(); };
+        tlist.appendChild(item);
+      });
+
+      var work=document.getElementById("exDWork");
+      var wHtml='<div><div style="font-size:11.5px;font-family:var(--mono);color:var(--acc2)">'+esc(task.code)+' · '+esc(task.host)+'</div>'
+        +'<h3 style="margin:4px 0 6px;font-size:17px">'+esc(task.title)+'</h3>'
+        +'<p style="margin:0;color:var(--mut);font-size:13.5px">'+esc(task.req)+'</p></div>'
+        +'<div class="exrow"><button class="exbtn warn" id="exDAudit" type="button">🔍 Auditar estado atual</button>'
+        +'<button class="exbtn" id="exDHintBtn" type="button">💡 Dica conceitual</button>'
+        +(task.example?'<button class="exbtn" id="exDExBtn" type="button">👁 Ver referência (digitação manual)</button>':'')
+        +'</div>'
+        +'<div class="exhint" id="exDHintBox"></div>'
+        +'<div class="exterm" id="exDTerm"></div>';
+
+      if(task.mode==="cmd"){
+        wHtml+='<div class="exrow"><input type="text" id="exDInp" placeholder="'+esc(task.placeholder||"Digite manualmente a regra, query ou comando...")+'" autocapitalize="off" spellcheck="false">'
+          +'<button class="exbtn pri" id="exDVal" type="button">✅ Aplicar e Validar</button></div>';
+      } else {
+        wHtml+='<div class="exopts" id="exDOpts"><div style="font-size:12px;color:var(--mut);margin-bottom:2px">Marque TODAS as ações corretas para esta etapa:</div>';
+        task.options.forEach(function(o){
+          wHtml+='<label><input type="checkbox" value="'+esc(o.id)+'"><span>'+esc(o.text)+'</span></label>';
+        });
+        wHtml+='</div><div class="exrow"><button class="exbtn pri" id="exDVal" type="button">✅ Validar Seleção</button></div>';
+      }
+      if(activeTaskIdx < ex.tasks.length-1){
+        wHtml+='<div class="exrow" style="justify-content:flex-end"><button class="exbtn blue" id="exDNext" type="button">Próxima tarefa →</button></div>';
+      }
+      work.innerHTML=wHtml;
+
+      function renderTerm(){
+        var el=document.getElementById("exDTerm");
+        el.innerHTML=logs[tKey].map(l=>'<div class="ln '+l.c+'">'+l.t+'</div>').join("");
+        el.scrollTop=el.scrollHeight;
+      }
+      renderTerm();
+
+      document.getElementById("exDAudit").onclick=function(){
+        logs[tKey].push({c:"", t:'<span class="pr">'+esc(task.prompt)+'</span><span class="cc">'+esc(task.auditCmd)+'</span>'});
+        task.auditOut.split("\n").forEach(ln=>logs[tKey].push({c:"bad", t:esc(ln)}));
+        logs[tKey].push({c:"warn", t:"⚠  Diagnóstico concluído: digite manualmente a solução no campo abaixo."});
+        renderTerm();
+      };
+      document.getElementById("exDHintBtn").onclick=function(){
+        var hb=document.getElementById("exDHintBox");
+        hb.innerHTML="💡 <b>Dica:</b> "+esc(task.hint); hb.classList.add("show");
+      };
+      var exBtn=document.getElementById("exDExBtn");
+      if(exBtn){
+        exBtn.onclick=function(){
+          var hb=document.getElementById("exDHintBox");
+          hb.innerHTML="🛠️ <b>Referência (digite manualmente):</b> <code>"+esc(task.example)+"</code>"; hb.classList.add("show");
+        };
+      }
+      var nextBtn=document.getElementById("exDNext");
+      if(nextBtn){ nextBtn.onclick=function(){ activeTaskIdx++; renderArena(); }; }
+
+      function markDone(ans){
+        if(!state[ex.id]) state[ex.id]={};
+        state[ex.id][task.id]=ans||true;
+        save();
+        task.safeOut.split("\n").forEach(ln=>logs[tKey].push({c:"good", t:esc(ln)}));
+        logs[tKey].push({c:"good", t:"✅  Tarefa "+task.code+" validada e ativa em produção!"});
+        renderTerm(); renderGrid();
+        var pills=document.querySelectorAll("#exDTList .extitem");
+        if(pills[activeTaskIdx]){
+          pills[activeTaskIdx].classList.add("done");
+          pills[activeTaskIdx].querySelector(".etop span:last-child").textContent="✅ OK";
+        }
+      }
+
+      document.getElementById("exDVal").onclick=function(){
+        if(task.mode==="cmd"){
+          var inp=document.getElementById("exDInp");
+          var val=(inp.value||"").trim();
+          if(!val){ logs[tKey].push({c:"warn", t:"⚠  Digite manualmente a configuração/regra antes de validar."}); renderTerm(); return; }
+          logs[tKey].push({c:"", t:'<span class="pr">'+esc(task.prompt)+'</span><span class="cc">'+esc(val)+'</span>'});
+          var low=val.toLowerCase();
+          var hits=task.keys.filter(k=>low.indexOf(k.toLowerCase())>=0).length;
+          if(hits >= (task.minHits||1)){
+            markDone(val);
+          } else {
+            logs[tKey].push({c:"bad", t:"❌  Ainda faltam elementos essenciais ("+hits+"/"+(task.minHits||1)+" detectados). Consulte a dica e revise os campos obrigatórios."});
+            renderTerm();
+          }
+        } else {
+          var checked=Array.from(document.querySelectorAll("#exDOpts input:checked")).map(x=>x.value);
+          var right=task.options.filter(o=>o.ok).map(o=>o.id);
+          var wrong=checked.filter(id=>right.indexOf(id)<0);
+          var missed=right.filter(id=>checked.indexOf(id)<0);
+          if(wrong.length===0 && missed.length===0){
+            logs[tKey].push({c:"", t:'<span class="pr">'+esc(task.prompt)+'</span><span class="cc">validate-blue-controls --check</span>'});
+            markDone("Controles validados ("+right.length+" itens)");
+          } else {
+            logs[tKey].push({c:"bad", t:"❌  Revise sua seleção: "+(wrong.length?"há "+wrong.length+" opção(ões) perigosa(s) marcada(s). ":"")+(missed.length?"faltou marcar "+missed.length+" item(ns) obrigatório(s).":"")});
+            renderTerm();
+          }
+        }
+      };
+      var inpEl=document.getElementById("exDInp");
+      if(inpEl){ inpEl.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); document.getElementById("exDVal").click(); } }); }
     }
 
     renderGrid(); renderArena();
