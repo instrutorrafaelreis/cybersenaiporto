@@ -231,13 +231,43 @@
   .tlab{font-size:12px;color:var(--mut);letter-spacing:.03em}
   .thint{font-size:12.5px;color:var(--mut2)}
   .thint a{cursor:pointer;color:var(--acc2);text-decoration:underline}
+
+  /* ===== navegação por provas ===== */
+  .provanav{background:linear-gradient(180deg,#0c1422,#0b0f17);border-bottom:1px solid var(--line);padding:12px 0}
+  .provanav .wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .provanav .lbl{font-size:11px;color:var(--mut2);letter-spacing:.12em;text-transform:uppercase;margin-right:6px}
+  .pbtn{border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:11px;
+    padding:9px 18px;font-weight:700;font-size:14px;cursor:pointer;text-align:center;line-height:1.1}
+  .pbtn:hover{color:var(--txt);border-color:var(--acc2)}
+  .pbtn.active{background:var(--acc);color:#07241a;border-color:var(--acc)}
+  .pbtn .st{display:block;font-size:9px;font-weight:600;letter-spacing:.06em;opacity:.75;margin-top:2px}
+  .prova-content{display:none}
+  .prova-content.active{display:block}
+  .provaempty{max-width:620px;margin:70px auto;text-align:center;padding:0 20px}
+  .provaempty .big{font-size:52px;line-height:1}
+  .provaempty h2{margin:16px 0 8px;font-size:26px}
+  .provaempty p{color:var(--mut);font-size:15px}
+  .provaempty .tag{display:inline-block;margin-top:18px;font-size:12.5px;color:var(--mut2);border:1px dashed var(--line);border-radius:999px;padding:6px 16px}
 </style>
 </head>
 <body>
 
+<nav class="provanav">
+  <div class="wrap">
+    <span class="lbl">Provas</span>
+    <button class="pbtn" data-prova="provaA" type="button">Prova A <span class="st">em breve</span></button>
+    <button class="pbtn active" data-prova="provaB" type="button">Prova B <span class="st">Security Assessment</span></button>
+    <button class="pbtn" data-prova="provaC" type="button">Prova C <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">em breve</span></button>
+  </div>
+</nav>
+
+<div class="prova-content active" id="provaB">
 <header>
   <div class="wrap">
-    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · Instrutor Rafael Reis · Security Assessment</div>
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · Instrutor Rafael Reis · Prova B — Security Assessment</div>
     <h1>Vulnerabilidades de SO: <span class="g">o que é, como achar e como resolver</span></h1>
     <p class="sub">Guia de campo para enumeração e correção de vulnerabilidades de sistema operacional. Comece pelo <b>Linux</b> (abaixo). As abas de <b>Windows</b> e <b>Web</b> já estão reservadas para evoluirmos o material.</p>
 
@@ -1519,6 +1549,23 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 </div>
 
 </div>
+</div><!-- /#provaB -->
+
+<div class="prova-content" id="provaA">
+  <div class="provaempty"><div class="big">🅰️</div><h2>Prova A</h2><p>Conteúdo em construção. Esta prova ainda não foi montada — podemos criá-la no mesmo formato da Prova B (abas, comandos, treino).</p><span class="tag">em breve</span></div>
+</div>
+<div class="prova-content" id="provaC">
+  <div class="provaempty"><div class="big">🅲</div><h2>Prova C</h2><p>Conteúdo em construção. Me diga o tema desta prova que eu monto as abas e os comandos.</p><span class="tag">em breve</span></div>
+</div>
+<div class="prova-content" id="provaD">
+  <div class="provaempty"><div class="big">🅳</div><h2>Prova D</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
+</div>
+<div class="prova-content" id="provaE">
+  <div class="provaempty"><div class="big">🅴</div><h2>Prova E</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
+</div>
+<div class="prova-content" id="provaF">
+  <div class="provaempty"><div class="big">🅵</div><h2>Prova F</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
+</div>
 
 <div class="cmodal" id="cModal">
   <div class="cmbox">
@@ -1700,6 +1747,19 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
     });
     recompute();
   })();
+</script>
+<script>
+/* ===== navegação entre provas ===== */
+document.querySelectorAll('.provanav .pbtn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.provanav .pbtn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.prova-content').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    var el=document.getElementById(b.dataset.prova);
+    if(el) el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
 </script>
 <script>
 /* ===== Laboratório "Treinar" (simulação didática) ===== */
