@@ -76,6 +76,18 @@
   pre .c{color:var(--mut2)} pre .k{color:var(--acc)} pre .s{color:var(--warn)} pre .r{color:var(--crit)}
   code.inl{font-family:var(--mono);font-size:.9em;background:var(--card2);border:1px solid var(--line);padding:1px 6px;border-radius:6px}
   .fixbox{background:#0e1f1a;border:1px solid #1f5e44;border-radius:10px;padding:10px 13px;margin-top:8px}
+  .interp{margin-top:11px;border-top:1px dashed var(--line);padding-top:11px}
+  .interp .when{font-size:13.5px;color:var(--mut);margin-bottom:9px}
+  .interp .when b{color:var(--acc2)}
+  .rr{display:grid;grid-template-columns:1fr;gap:8px}
+  .rr .r{border-radius:10px;padding:9px 12px;font-size:13px;border:1px solid;line-height:1.5}
+  .rr .safe{background:#0e1f1a;border-color:#1f5e44}
+  .rr .vuln{background:#2a1115;border-color:#5e2a2a}
+  .rr .r .lab{font-weight:700;font-size:11px;letter-spacing:.03em;display:block;margin-bottom:4px}
+  .rr .safe .lab{color:var(--acc)}
+  .rr .vuln .lab{color:var(--crit)}
+  .rr .r code{font-family:var(--mono);font-size:12px;background:#0b1220;border:1px solid var(--line);padding:0 4px;border-radius:5px}
+  @media(min-width:640px){.rr{grid-template-columns:1fr 1fr}}
   .cve{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--crit);border:1px solid #5e2a2a;background:#2a1115;border-radius:6px;padding:1px 7px;margin:0 4px 4px 0}
   .tagok{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;background:#0e2a20;color:var(--acc);border:1px solid #1f5e44;margin-left:8px;vertical-align:middle}
 
@@ -466,6 +478,7 @@
 <pre><span class="k">ls</span> -l /etc/shadow /etc/passwd /etc/gshadow   <span class="c"># conferir permissões</span>
 <span class="k">cat</span> /etc/shadow                              <span class="c"># se um user comum lê = falha</span>
 <span class="c"># Seguro: shadow = 0000 ou 0640 root:shadow | Falho: -rw-r--r-- (644)</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Logo no início, para checar se arquivos de credencial têm permissão errada.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>-rw-r-----</code> (640) ou <code>----------</code> (000), dono <code>root</code>; o <code>cat</code> retorna <b>Permission denied</b>.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>-rw-r--r--</code> (644) e o <code>cat</code> exibe os hashes <code>$6$...</code> — qualquer usuário lê.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><pre><span class="k">chmod</span> 0000 /etc/shadow        <span class="c"># dono root sempre lê</span>
 <span class="k">chown</span> root:root /etc/shadow
@@ -491,6 +504,7 @@
 <span class="c">#   (ALL) /usr/bin/vim             -> sudo vim -c ':!/bin/sh'</span>
 <span class="c">#   env_keep += LD_PRELOAD          -> carregar .so malicioso</span>
 <span class="c"># Cruze cada binário em https://gtfobins.github.io</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Sempre — é a primeira verificação de privilégio após obter um shell.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>user may not run sudo</code>, ou apenas comandos específicos e inofensivos exigindo senha.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>(ALL) NOPASSWD: ALL</code>, um binário do GTFOBins (find, vim, less, python) ou <code>env_keep += LD_PRELOAD</code>.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Aplicar privilégio mínimo no <code class="inl">/etc/sudoers</code> (via <code class="inl">visudo</code>): conceder apenas o comando exato necessário, evitar <code class="inl">NOPASSWD</code> e binários do GTFOBins, remover <code class="inl">env_keep</code> desnecessário e nunca usar wildcards em caminhos.</p></div></div>
     </div>
@@ -513,6 +527,7 @@
 <pre><span class="k">sudo</span> --version | <span class="k">head</span> -1     <span class="c"># comparar com versões corrigidas</span>
 <span class="k">rpm</span> -q sudo                    <span class="c"># RHEL/Rocky</span>
 <span class="k">dpkg</span> -l sudo                   <span class="c"># Debian/Ubuntu</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao suspeitar de sistema antigo ou sem atualizações.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>sudo ≥ 1.9.17p1 (correções de 2025 aplicadas).</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>sudo &lt; 1.9.5p2 (Baron Samedit) ou &lt; 1.9.17p1 (CVE-2025-32462/63).</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><pre><span class="k">sudo</span> dnf update sudo     <span class="c"># Rocky/RHEL — ir para 1.9.17p1+</span>
 <span class="k">sudo</span> apt update &amp;&amp; sudo apt install --only-upgrade sudo</pre></div></div>
@@ -544,6 +559,7 @@
 <pre><span class="k">find</span> / -perm -4000 -type f 2&gt;/dev/null   <span class="c"># SUID</span>
 <span class="k">find</span> / -perm -2000 -type f 2&gt;/dev/null   <span class="c"># SGID</span>
 <span class="c"># Compare cada resultado com https://gtfobins.github.io</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Em toda avaliação de privilégio local.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Apenas a lista padrão do sistema (passwd, sudo, mount, su, pkexec, chsh...).</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Um binário fora do padrão com bit <code>s</code>: <code>find, vim, bash, cp, python, nmap, less, tar</code>.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><pre><span class="k">chmod</span> u-s /caminho/do/binario   <span class="c"># remover o SUID indevido</span>
 <span class="c"># manter SUID só nos binários padrão do sistema</span></pre></div></div>
@@ -565,6 +581,7 @@
 <pre><span class="k">getcap</span> -r / 2&gt;/dev/null
 <span class="c"># Perigoso, ex.: /usr/bin/python3.9 = cap_setuid+ep</span>
 <span class="c"># Exploração: python3 -c 'import os;os.setuid(0);os.system("/bin/sh")'</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Junto da checagem de SUID.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Vazio, ou só capabilities de binários de sistema esperados.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>cap_setuid</code>, <code>cap_dac_read_search</code> ou <code>cap_sys_admin</code> em python/perl/outro interpretador.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><pre><span class="k">setcap</span> -r /caminho/do/binario   <span class="c"># remover a capability</span></pre></div></div>
     </div>
@@ -596,6 +613,7 @@
 <span class="k">systemctl</span> list-timers --all
 <span class="k">ls</span> -la /caminho/do/script        <span class="c"># o script é gravável por você?</span>
 <span class="k">grep</span> -r <span class="s">"PATH"</span> /etc/crontab      <span class="c"># PATH relativo?</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Para achar execução periódica rodando como root.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Scripts de cron com dono <code>root</code> e permissão 700/644 (não graváveis por você).</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Script chamado pelo cron é gravável por todos, usa PATH relativo ou wildcard.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Scripts de cron devem pertencer ao root e não ser graváveis por outros (<code class="inl">chmod 700</code>, <code class="inl">chown root:root</code>). Usar caminhos absolutos, PATH fixo e evitar wildcards; preferir listar arquivos explicitamente.</p></div></div>
     </div>
@@ -615,6 +633,7 @@
       <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
 <pre><span class="k">echo</span> $PATH                               <span class="c"># há "." ou pasta gravável?</span>
 <span class="k">find</span> $(echo $PATH | tr ':' ' ') -writable -type d 2&gt;/dev/null</pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Quando um programa privilegiado chama comandos sem caminho absoluto.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>$PATH</code> só com diretórios de sistema (<code>/usr/bin:/bin...</code>), sem <code>.</code> nem pasta gravável.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>.</code> no PATH, ou uma pasta gravável por você listada antes dos diretórios do sistema.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Remover <code class="inl">.</code> e pastas graváveis do <code class="inl">PATH</code>; em scripts/serviços, sempre chamar comandos com caminho absoluto e definir um PATH seguro.</p></div></div>
     </div>
@@ -639,6 +658,7 @@
 <span class="k">ls</span> -l /usr/bin/pkexec    <span class="c"># existe e é SUID? (PwnKit)</span>
 <span class="k">rpm</span> -q polkit           <span class="c"># versão do polkit</span>
 <span class="c"># referência: cruzar versão com searchsploit / NVD</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Depois de obter shell, para achar exploit de kernel/componente.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Kernel atualizado (ex.: ≥ 5.16.11/5.15.25/5.10.102 p/ Dirty Pipe) e polkit corrigido.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Kernel 5.8–5.16.x sem patch (Dirty Pipe) ou <code>pkexec</code> SUID vulnerável (PwnKit).</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><pre><span class="k">sudo</span> dnf update            <span class="c"># aplicar patches (kernel, polkit)</span>
 <span class="c"># mitigação temporária PwnKit, se sem patch:</span>
@@ -661,6 +681,7 @@
 <pre><span class="k">find</span> / -perm -o+w -type f 2&gt;/dev/null | <span class="k">grep</span> -vE <span class="s">"^/proc|^/sys"</span>
 <span class="k">ls</span> -l /etc/passwd /etc/sudoers /etc/sudoers.d/*
 <span class="k">find</span> /etc/systemd -writable 2&gt;/dev/null</pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Para achar arquivos críticos graváveis por usuários comuns.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Nada sensível gravável; <code>/etc/passwd</code> 644, <code>sudoers</code> 440, unit files 644 root.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>/etc/passwd</code> gravável, ou unit file do systemd / <code>sudoers.d</code> gravável por você.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Restaurar donos e permissões corretas: <code class="inl">/etc/passwd</code> → 644 root:root, <code class="inl">/etc/sudoers</code> → 440, unit files → 644 root:root. Revisar tudo que aparecer como gravável por "outros".</p></div></div>
     </div>
@@ -680,6 +701,7 @@
       <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
 <pre><span class="k">sudo</span> sshd -T | <span class="k">grep</span> -iE <span class="s">"rootlogin|passwordauthentication"</span>
 <span class="c"># Falho: permitrootlogin yes / passwordauthentication yes</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao avaliar a exposição do acesso remoto (SSH).</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>permitrootlogin no</code> ou <code>prohibit-password</code>; idealmente <code>passwordauthentication no</code>.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>permitrootlogin yes</code> e/ou <code>passwordauthentication yes</code> (força bruta direta no root).</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><pre><span class="c"># em /etc/ssh/sshd_config:</span>
 PermitRootLogin no
@@ -705,6 +727,7 @@ PasswordAuthentication no   <span class="c"># preferir chaves</span>
 <span class="k">grep</span> -rniE <span class="s">"password|senha|secret|api[_-]?key|token"</span> /etc /opt /var/www 2&gt;/dev/null
 <span class="k">env</span> ; <span class="k">cat</span> /home/*/.*_history 2&gt;/dev/null
 <span class="k">find</span> / -name <span class="s">"*.bak"</span> -o -name <span class="s">"*.old"</span> 2&gt;/dev/null</pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Em toda fase de coleta — procurar segredos no sistema.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Nenhuma senha/token em texto claro; histórico de shell limpo.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Senha de banco em config, token em <code>.env</code>, senha no <code>.bash_history</code>.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Remover segredos de arquivos e histórico; usar cofres (Vault, secrets do systemd), permissões restritas, e rotacionar toda credencial exposta.</p></div></div>
     </div>
@@ -725,6 +748,7 @@ PasswordAuthentication no   <span class="c"># preferir chaves</span>
 <pre><span class="k">id</span> ; <span class="k">groups</span>                 <span class="c"># estou em docker/lxd/disk/adm?</span>
 <span class="c"># docker: docker run -v /:/mnt -it alpine chroot /mnt sh</span>
 <span class="c"># lxd:    montar / do host em um container (grupo lxd)</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Logo após o <code>id</code>, para ver grupos perigosos.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Usuário apenas no próprio grupo (ou grupos sem poder especial).</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Pertence a <code>docker</code>, <code>lxd</code>, <code>disk</code> ou <code>adm</code> = equivalente a root.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Remover usuários desses grupos quando não for estritamente necessário; tratar membros de <code class="inl">docker</code>/<code class="inl">lxd</code> como administradores. Manter LXD/Docker atualizados (correções de LPE no grupo lxd).</p></div></div>
     </div>
@@ -745,6 +769,7 @@ PasswordAuthentication no   <span class="c"># preferir chaves</span>
 <pre><span class="k">cat</span> /etc/exports
 <span class="k">showmount</span> -e &lt;ip&gt;        <span class="c"># exports visíveis</span>
 <span class="c"># procurar a flag: (rw,no_root_squash)</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Quando existem compartilhamentos NFS no ambiente.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Exports com <code>root_squash</code> (padrão) e <code>nosuid</code>.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Linha com <code>(rw,no_root_squash)</code> — permite plantar um SUID como root.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Usar <code class="inl">root_squash</code> (padrão) no <code class="inl">/etc/exports</code>, montar com <code class="inl">nosuid</code>, limitar os hosts permitidos e recarregar com <code class="inl">exportfs -ra</code>.</p></div></div>
     </div>
@@ -766,6 +791,7 @@ PasswordAuthentication no   <span class="c"># preferir chaves</span>
 <span class="k">systemctl</span> is-active firewalld      <span class="c"># firewall de host</span>
 <span class="k">sudo</span> dnf check-update              <span class="c"># pacotes com update</span>
 <span class="k">sudo</span> ss -tulpn                      <span class="c"># o que está exposto</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Para avaliar a postura geral de endurecimento.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>SELinux <code>enforcing</code>, firewall <code>active</code>, pacotes atualizados.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>SELinux <code>disabled/permissive</code>, firewall <code>inactive</code>, updates pendentes.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Manter SELinux em <code class="inl">enforcing</code>, firewall ativo liberando só o necessário, atualizações em dia e política de senha forte (pwquality). Aplicar um baseline CIS.</p></div></div>
     </div>
@@ -791,6 +817,7 @@ curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
 ./LinEnum.sh                          <span class="c"># enumeração clássica</span>
 ./lse.sh -l2                          <span class="c"># Linux Smart Enumeration (verboso)</span>
 ./linux-exploit-suggester.sh          <span class="c"># sugere exploits de kernel</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Logo no começo, para varrer todos os vetores automaticamente.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Saída sem itens destacados; nenhuma linha em vermelho/amarelo de alta probabilidade.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Itens em <b>vermelho/amarelo</b> (ex.: '99% probability') apontando SUID, sudo, cron ou kernel exploráveis.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Observação</div>
         <div class="fixbox"><p>Do lado da <b>defesa</b>, a execução desses scripts (muitos comandos de enumeração em sequência) é detectável — EDR/auditd podem alertar. Rodar como o próprio usuário de serviço reproduz a visão de um atacante com foothold.</p></div></div>
     </div>
@@ -814,6 +841,7 @@ curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
 <span class="k">./pspy64</span>                            <span class="c"># monitora cron/processos ao vivo</span>
 <span class="k">ls</span> -la /etc/systemd/system/          <span class="c"># unit files graváveis?</span>
 <span class="k">systemctl</span> list-units --type=service --state=running</pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Para mapear serviços internos e jobs em tempo real.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Serviços rodando com usuários dedicados; nada sensível exposto sem proteção.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Banco/painel rodando como root, serviço interno vulnerável, ou pspy mostra cron root chamando script gravável.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Rodar serviços com usuário dedicado (não root), expor só o necessário, manter softwares internos atualizados e proteger sockets/unit files com permissões corretas.</p></div></div>
     </div>
@@ -834,6 +862,7 @@ curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
 <pre><span class="k">mount</span>; <span class="k">cat</span> /etc/fstab            <span class="c"># montagens + credenciais em claro</span>
 <span class="k">lsblk</span>; <span class="k">cat</span> /proc/mounts         <span class="c"># discos e opções (nosuid?)</span>
 <span class="k">lsblk</span> -o NAME,FSTYPE,SIZE,MOUNTPOINT  <span class="c"># discos não montados</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao procurar dados e credenciais em discos e montagens.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>fstab</code> sem credenciais; dados montados com <code>nosuid,nodev</code>.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Senha de share no <code>/etc/fstab</code>, ou disco não montado com backup sensível.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Tirar credenciais do <code class="inl">/etc/fstab</code> (usar arquivo de credenciais protegido), montar sistemas de arquivos de dados com <code class="inl">nosuid,nodev</code> e restringir acesso a backups.</p></div></div>
     </div>
@@ -856,6 +885,7 @@ curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
 <span class="c"># exemplo de abuso (tar) numa pasta gravável:</span>
 echo <span class="s">'cp /bin/bash /tmp/b; chmod +s /tmp/b'</span> &gt; shell.sh
 touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoint-action=exec=sh shell.sh"</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Quando um script privilegiado usa <code>*</code> numa pasta onde você pode criar arquivos.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Comandos com caminho absoluto / sem glob, em pasta não gravável por usuários.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>tar ... *</code> ou <code>chown ... *</code> em pasta gravável — permite injetar <code>--checkpoint-action</code>.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Nunca usar <code class="inl">*</code> em comandos privilegiados; usar caminhos absolutos e <code class="inl">./</code> antes de globs (<code class="inl">tar ... -- ./*</code>), ou listar arquivos explicitamente. Garantir que a pasta de trabalho não seja gravável por usuários.</p></div></div>
     </div>
@@ -877,6 +907,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <span class="k">find</span> / -type f -readable -newermt <span class="s">"2 days ago"</span> 2&gt;/dev/null | grep -vE <span class="s">"/proc|/sys"</span>
 <span class="k">find</span> / -user $(whoami) -type f 2&gt;/dev/null | grep -vE <span class="s">"/proc|/sys|/home/$(whoami)"</span>
 <span class="k">getfacl</span> -R /caminho 2&gt;/dev/null       <span class="c"># ACLs além do rwx tradicional</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Na coleta de credenciais e arquivos sensíveis.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Chaves privadas <code>600</code> do próprio dono; nada legível fora do seu perfil.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>id_rsa</code> de outro usuário/root legível, ou backup/credencial acessível a você.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Chaves privadas com permissão <code class="inl">600</code> e dono correto; remover segredos de configs legíveis; revisar ACLs; não deixar backups/arquivos sensíveis acessíveis a usuários comuns.</p></div></div>
     </div>
@@ -926,6 +957,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">wmic</span> service get name,pathname,startmode | <span class="k">findstr</span> /i /v <span class="s">"C:\Windows"</span> | <span class="k">findstr</span> /i /v <span class="s">'"'</span>
 <span class="c"># ou PowerUp:</span>
 <span class="k">Get-UnquotedService</span>            <span class="c"># (PowerUp / PowerShell)</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao enumerar serviços no Windows.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>binPath</code> entre aspas: <code>"C:\...\service.exe"</code>.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>binPath</code> com espaço e <b>sem aspas</b> + pasta intermediária gravável.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Colocar o <code class="inl">binPath</code> do serviço entre <b>aspas</b> (<code class="inl">"C:\Program Files\My App\service.exe"</code>) e remover permissões de escrita de usuários comuns nas pastas de programas.</p></div></div>
     </div>
@@ -946,6 +978,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">accesschk.exe</span> -uwcqv <span class="s">"Users"</span> *        <span class="c"># serviços graváveis (Sysinternals)</span>
 <span class="k">sc</span> qc &lt;servico&gt;                         <span class="c"># ver binPath e conta</span>
 <span class="c"># PowerUp: Get-ModifiableService / Invoke-AllChecks</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Depois de listar os serviços.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Só Administradores podem alterar o serviço e o executável.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>accesschk</code> mostra <code>RW</code> para <code>Users/Everyone</code> no serviço ou no .exe.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Corrigir as ACLs do serviço e do executável para que só Administradores possam alterá-los; aplicar privilégio mínimo à conta do serviço.</p></div></div>
     </div>
@@ -966,6 +999,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">reg</span> query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
 <span class="k">reg</span> query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
 <span class="c"># ambos = 0x1  -> vulnerável</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Checagem rápida de duas chaves de registro.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Chave ausente ou <code>0x0</code> em HKLM e/ou HKCU.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>0x1</code> em HKLM <b>e</b> HKCU — qualquer MSI instala como SYSTEM.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Desabilitar a política (valor 0) em HKLM e HKCU via GPO. Nunca habilitar AlwaysInstallElevated em ambiente de produção.</p></div></div>
     </div>
@@ -986,6 +1020,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">whoami</span> /priv       <span class="c"># procurar SeImpersonate / SeAssignPrimaryToken = Enabled</span>
 <span class="k">whoami</span> /groups     <span class="c"># integridade e grupos</span>
 <span class="c"># exploração: PrintSpoofer.exe -i -c cmd  /  GodPotato</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Em shell de conta de serviço (IIS, MSSQL).</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>whoami /priv</code> sem SeImpersonate/SeAssignPrimaryToken habilitados.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>SeImpersonatePrivilege ... Enabled</code> → PrintSpoofer/GodPotato → SYSTEM.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Conceder esses privilégios só a contas que realmente precisam; isolar contas de serviço, usar gMSA, e manter o sistema atualizado (muitas técnicas Potato dependem de componentes exploráveis).</p></div></div>
     </div>
@@ -1006,6 +1041,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">echo</span> %PATH%                               <span class="c"># há pasta gravável?</span>
 <span class="k">icacls</span> <span class="s">"C:\pasta\no\path"</span>                  <span class="c"># checar (M)/(W) para Users</span>
 <span class="c"># ProcMon para ver DLLs "NAME NOT FOUND"; winPEAS aponta pastas graváveis</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Quando um processo privilegiado carrega DLL pelo nome.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>PATH sem pastas graváveis; DLLs carregadas por caminho absoluto.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Pasta gravável no PATH, ou ProcMon mostra DLL <code>NAME NOT FOUND</code> em local gravável.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Remover pastas graváveis do <code class="inl">PATH</code>, corrigir ACLs, e fazer os aplicativos carregarem DLLs por caminho absoluto / com assinatura.</p></div></div>
     </div>
@@ -1027,6 +1063,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <span class="k">reg</span> query <span class="s">"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"</span> <span class="c"># AutoLogon</span>
 <span class="k">findstr</span> /si password *.xml *.ini *.txt      <span class="c"># segredos em arquivos</span>
 <span class="c"># GPP: procurar cpassword em \\dominio\SYSVOL\...\Groups.xml</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Na coleta de credenciais no Windows.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span><code>cmdkey</code> vazio; sem unattend/GPP com senha.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>cmdkey /list</code> mostra credenciais; <code>cpassword</code> em Groups.xml; senha em <code>unattend.xml</code>.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Remover credenciais de arquivos/registro, aplicar o patch MS14-025 (GPP cpassword), usar LAPS para senhas de admin local e cofres de segredos. Rotacionar tudo que vazou.</p></div></div>
     </div>
@@ -1050,6 +1087,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <span class="k">wmic</span> qfe get HotFixID            <span class="c"># KBs aplicados</span>
 <span class="k">sc</span> query Spooler                 <span class="c"># Print Spooler está rodando?</span>
 <span class="c"># winPEAS traz o Watson embutido (sugere CVEs faltando patch)</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao verificar o nível de patches do Windows.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Atualizações de agosto/2021+ aplicadas; Spooler desabilitado onde não é necessário.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Sem patch e com Print Spooler ativo (CVE-2021-34527); KBs de segurança faltando.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Aplicar as atualizações do Windows; para PrintNightmare, desabilitar o Print Spooler onde não for necessário e restringir instalação de drivers a administradores.</p></div></div>
     </div>
@@ -1070,6 +1108,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">schtasks</span> /query /fo LIST /v        <span class="c"># tarefas, conta e ação</span>
 <span class="k">icacls</span> <span class="s">"C:\caminho\do\script"</span>       <span class="c"># gravável por Users?</span>
 <span class="c"># Sysinternals Autoruns / winPEAS listam autoruns graváveis</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao enumerar execução agendada e persistência.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Scripts/binários de tarefas pertencem a Admin e não são graváveis.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Tarefa como SYSTEM executa um script gravável por <code>Users</code>.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Garantir que scripts e binários de tarefas/autoruns pertençam a Administradores e não sejam graváveis por usuários comuns.</p></div></div>
     </div>
@@ -1090,6 +1129,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">icacls</span> %windir%\System32\config\SAM     <span class="c"># legível por usuários? (SeriousSAM)</span>
 <span class="k">whoami</span> /priv | <span class="k">findstr</span> /i SeBackup     <span class="c"># SeBackup permite ler as hives</span>
 <span class="c"># dump: reg save HKLM\SAM sam.hive  (depois secretsdump/mimikatz offline)</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Na coleta de hashes/credenciais locais.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Hives SAM protegidas; LSASS com RunAsPPL/Credential Guard.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Backup de SAM legível (SeriousSAM), <code>SeBackup</code> habilitado, ou LSASS dumpável.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Aplicar patches (SeriousSAM), restringir ACLs das hives, habilitar Credential Guard e proteção do LSASS (RunAsPPL), e limitar privilégios de backup.</p></div></div>
     </div>
@@ -1139,6 +1179,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <span class="k">grep</span> -rniE <span class="s">"select|insert|query|mysqli_query|->query"</span> /var/www/html/
 <span class="c"># testes manuais nos campos: </span>  ' OR '1'='1    admin'-- -    1' UNION SELECT NULL--
 <span class="c"># automatizado:</span>  sqlmap -u <span class="s">"http://alvo/item.php?id=1"</span> --batch --dbs</pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Em campos de login/busca e parâmetros que tocam o banco.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Erro tratado / login falha normalmente; código usa prepared statements.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>' OR '1'='1</code> loga sem senha; erro SQL vaza; sqlmap confirma a injeção.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Usar <b>consultas parametrizadas</b> (prepared statements) com PDO/MySQLi; nunca concatenar entrada; validar tipos e aplicar privilégio mínimo ao usuário do banco.</p></div></div>
     </div>
@@ -1158,6 +1199,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="c"># no código:</span>  grep -rni <span class="s">"move_uploaded_file"</span> /var/www/html/
 <span class="c"># teste: subir shell.php (&lt;?php system($_GET['c']); ?&gt;) e acessar</span>
 <span class="k">curl</span> <span class="s">"http://alvo/uploads/shell.php?c=id"</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Quando há formulário de upload de arquivos.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Só extensões permitidas; arquivo salvo fora do webroot ou sem execução.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Aceita <code>.php</code> e <code>/uploads/shell.php?c=id</code> executa comandos (RCE).</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Validar extensão/MIME por <b>lista de permissões</b>, renomear o arquivo, armazenar <b>fora do webroot</b> e desabilitar execução de scripts na pasta de upload.</p></div></div>
     </div>
@@ -1176,6 +1218,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
       <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
 <pre><span class="c"># no código:</span>  grep -rniE <span class="s">"include|require|fopen|readfile|file_get_contents"</span> /var/www/html/
 <span class="c"># teste:</span>  curl <span class="s">"http://alvo/download.php?file=../../../../etc/passwd"</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Em parâmetros que referenciam arquivos (<code>file=</code>, <code>page=</code>).</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Erro / só abre arquivos permitidos; <code>realpath()</code> valida o caminho.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>?file=../../../../etc/passwd</code> retorna o conteúdo do arquivo do sistema.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Nunca usar entrada como caminho; usar lista de permissões, <code class="inl">basename()</code> e validar com <code class="inl">realpath()</code> garantindo que fique dentro da pasta esperada. Desativar <code class="inl">allow_url_include</code>.</p></div></div>
     </div>
@@ -1194,6 +1237,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
       <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
 <pre><span class="c"># teste em campos/parâmetros:</span>  &lt;script&gt;alert(1)&lt;/script&gt;   "&gt;&lt;img src=x onerror=alert(1)&gt;
 <span class="c"># no código: saída sem escaping</span>  grep -rniE <span class="s">"echo|print"</span> /var/www/html/ | grep -i <span class="s">"\$_"</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Em campos refletidos na página ou armazenados no banco.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>O payload aparece escapado como texto (<code>&amp;lt;script&amp;gt;</code>).</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>&lt;script&gt;alert(1)&lt;/script&gt;</code> executa (popup) — script injetado roda.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Escapar a saída conforme o contexto (<code class="inl">htmlspecialchars()</code>), validar entrada, usar <b>Content-Security-Policy</b> e cookies <code class="inl">HttpOnly</code>.</p></div></div>
     </div>
@@ -1212,6 +1256,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
       <div class="blk"><div class="h find"><span class="d"></span>Como achar</div>
 <pre><span class="c"># no código:</span>  grep -rniE <span class="s">"system|exec|shell_exec|passthru|popen|proc_open"</span> /var/www/html/
 <span class="c"># teste em campos:</span>  127.0.0.1; id      |  | whoami</pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Em campos que viram comando do SO (ping, nslookup, conversores).</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Entrada tratada; nenhum comando extra é executado.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span><code>127.0.0.1; id</code> retorna <code>uid=...</code> — um comando extra foi executado.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Evitar chamar o shell; usar APIs nativas. Se inevitável, validar por lista de permissões e usar <code class="inl">escapeshellarg()</code>/<code class="inl">escapeshellcmd()</code>.</p></div></div>
     </div>
@@ -1231,6 +1276,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="c"># trocar IDs/parâmetros e ver se acessa dados alheios</span>
 <span class="k">curl</span> <span class="s">"http://alvo/perfil.php?id=124"</span>     <span class="c"># sem ser o dono</span>
 <span class="c"># acessar /admin diretamente sem login; comparar respostas</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao testar autorização entre usuários e áreas restritas.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Acesso negado (403 / redirect) ao recurso de outro usuário.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Trocar <code>?id=124</code> mostra dados de outro; <code>/admin</code> abre sem login.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Verificar autorização no servidor em cada requisição (o objeto pertence ao usuário?); negar por padrão; usar identificadores não previsíveis quando fizer sentido.</p></div></div>
     </div>
@@ -1250,6 +1296,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="c"># armazenamento de senha no código:</span>  grep -rniE <span class="s">"md5|sha1|password"</span> /var/www/html/
 <span class="c"># testar força bruta/credenciais padrão:</span>  hydra -l admin -P wordlist http-post-form ...
 <span class="c"># inspecionar cookies: flags HttpOnly/Secure presentes?</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao avaliar o login e os cookies de sessão.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Bloqueio após tentativas, hash bcrypt/argon2, cookies <code>HttpOnly/Secure</code>.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Sem bloqueio (brute force), senha em MD5/texto, cookie sem <code>HttpOnly</code> ou previsível.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Hash forte com sal (bcrypt/argon2), bloqueio após tentativas e MFA, cookies <code class="inl">HttpOnly/Secure/SameSite</code>, e expiração/rotação de sessão.</p></div></div>
     </div>
@@ -1269,6 +1316,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">grep</span> -rniE <span class="s">"password|db_pass|secret|api[_-]?key|token"</span> /var/www/html/
 <span class="k">cat</span> /var/www/html/config.php          <span class="c"># credenciais do banco em claro?</span>
 <span class="c"># tentar acessar .env / .git pela web:</span>  curl http://alvo/.env</pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Ao ler o código-fonte e tentar acessar arquivos expostos.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Segredos em variáveis de ambiente/cofre; <code>.env</code>/<code>.git</code> bloqueados no servidor.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Senha do banco em <code>config.php</code>; <code>curl /.env</code> retorna chaves/credenciais.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Tirar segredos do código (variáveis de ambiente/cofre), bloquear arquivos sensíveis no servidor web, remover <code class="inl">.git</code>/<code class="inl">.env</code> do webroot e rotacionar o que vazou.</p></div></div>
     </div>
@@ -1288,6 +1336,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 <pre><span class="k">nikto</span> -h http://alvo              <span class="c"># scanner de misconfig</span>
 <span class="k">curl</span> -I http://alvo              <span class="c"># conferir headers de segurança</span>
 <span class="k">ffuf</span> -w wordlist -u http://alvo/FUZZ   <span class="c"># achar pastas/arquivos expostos</span></pre></div>
+      <div class="interp"><div class="when"><b>Quando usar:</b> Na varredura de configuração do servidor web.</div><div class="rr"><div class="r safe"><span class="lab">&#x1F7E2; Resultado seguro</span>Sem directory listing, erros genéricos, headers de segurança presentes.</div><div class="r vuln"><span class="lab">&#x1F534; Resultado com vulnerabilidade</span>Directory listing ligado, erro detalhado (stack trace), headers ausentes ou credenciais padrão.</div></div></div>
       <div class="blk"><div class="h fix"><span class="d"></span>Como resolver</div>
         <div class="fixbox"><p>Desabilitar directory listing e erros detalhados, remover contas/arquivos padrão, aplicar headers de segurança e limitar métodos HTTP. Seguir um baseline (CIS/OWASP ASVS).</p></div></div>
     </div>
