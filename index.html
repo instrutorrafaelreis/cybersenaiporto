@@ -202,6 +202,35 @@
   .band .lv{font-weight:700} .band .rg{color:var(--mut2);font-size:10.5px}
   .disc{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 15px;color:var(--mut);font-size:13px;margin:20px 0}
   footer{padding:30px 0 60px;color:var(--mut2);font-size:12.5px;border-top:1px solid var(--line)}
+
+  /* ===== lab treinar ===== */
+  .trainbtn{margin-top:14px;display:inline-flex;align-items:center;gap:7px;background:#0e2336;color:var(--acc2);
+    border:1px solid var(--acc2);border-radius:10px;padding:9px 15px;font-size:13.5px;font-weight:600;cursor:pointer}
+  .trainbtn:hover{background:#14304a}
+  .tmodal{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,13,.8);backdrop-filter:blur(5px)}
+  .tmodal.show{display:flex}
+  .tbox{background:var(--card);border:1px solid var(--acc2);border-radius:16px;max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column}
+  .tbox .th{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .tbox .th h3{margin:0;flex:1;font-size:16px}
+  .tbox .th .step{font-size:11px;color:var(--mut2);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+  .tbox .th .cmx{cursor:pointer;color:var(--mut);font-size:22px;border:none;background:none}
+  .tbox .th .cmx:hover{color:var(--crit)}
+  .term{overflow-y:auto;background:#0a0f17;margin:14px 18px 0;border:1px solid var(--line);border-radius:10px;
+    padding:14px;font-family:var(--mono);font-size:12.5px;line-height:1.65;min-height:150px;max-height:38vh}
+  .term .ln{white-space:pre-wrap;word-break:break-word}
+  .term .pr{color:var(--acc)} .term .cc{color:#e8eef9} .term .out{color:var(--mut)}
+  .term .bad{color:var(--crit)} .term .good{color:var(--acc)} .term .sys{color:var(--info)}
+  .tctrl{padding:14px 18px 18px;display:flex;flex-direction:column;gap:10px}
+  .tbtn{border:none;border-radius:9px;padding:11px 14px;font-weight:700;cursor:pointer;font-size:14px;color:#07241a}
+  .tbtn.run{background:var(--warn);color:#2a1e00} .tbtn.test{background:var(--acc)} .tbtn.rst{background:var(--card2);color:var(--mut);border:1px solid var(--line)}
+  .tbtn:disabled{opacity:.4;cursor:default}
+  .tfix{display:flex;gap:8px;flex-wrap:wrap}
+  .tfix input{flex:1;min-width:180px;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--txt);font-family:var(--mono);font-size:13px}
+  .tfix input:focus{outline:none;border-color:var(--acc2)}
+  .tfix .apply{background:var(--acc2);color:#042535;border:none;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer}
+  .tlab{font-size:12px;color:var(--mut);letter-spacing:.03em}
+  .thint{font-size:12.5px;color:var(--mut2)}
+  .thint a{cursor:pointer;color:var(--acc2);text-decoration:underline}
 </style>
 </head>
 <body>
@@ -1498,6 +1527,14 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
   </div>
 </div>
 
+<div class="tmodal" id="tModal">
+  <div class="tbox">
+    <div class="th"><h3 id="tTitle">🎮 Laboratório</h3><span class="step" id="tStep">Passo 1/3</span><button class="cmx" id="tClose" type="button">✕</button></div>
+    <div class="term" id="tTerm"></div>
+    <div class="tctrl" id="tCtrl"></div>
+  </div>
+</div>
+
 <footer>
   <div class="wrap">
     Cyber SENAI Porto · Instrutor Rafael Reis · Guia de campo de Security Assessment · atualizado em 24/11/2026.<br>
@@ -1663,6 +1700,147 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
     });
     recompute();
   })();
+</script>
+<script>
+/* ===== Laboratório "Treinar" (simulação didática) ===== */
+(function(){
+  // 37 cenários na mesma ordem dos cards (Linux 19, Windows 9, Web 9)
+  // cmd: comando de detecção | vuln: saída vulnerável | fix: correção sugerida
+  // safe: saída após corrigir | key: palavra(s) aceitas no campo de correção
+  const T = [
+    {cmd:"ls -l /etc/shadow", vuln:"-rw-r--r-- 1 root root 996 /etc/shadow", fix:"chmod 0000 /etc/shadow", safe:"-rw------- 1 root root 996 /etc/shadow   →  cat: Permission denied", key:["chmod"]},
+    {cmd:"sudo -l", vuln:"(ALL) NOPASSWD: ALL", fix:"visudo  → remover NOPASSWD / dar só o comando necessário", safe:"User aluno may not run sudo (ou só comando específico com senha)", key:["visudo","sudoers"]},
+    {cmd:"sudo --version", vuln:"Sudo version 1.8.31  (vulnerável — CVE-2021-3156)", fix:"sudo dnf update sudo", safe:"Sudo version 1.9.17p1", key:["update","upgrade"]},
+    {cmd:"find / -perm -4000 -type f 2>/dev/null", vuln:"/usr/bin/find        ← SUID indevido", fix:"chmod u-s /usr/bin/find", safe:"só binários padrão: /usr/bin/passwd /usr/bin/sudo /usr/bin/mount ...", key:["chmod","u-s"]},
+    {cmd:"getcap -r / 2>/dev/null", vuln:"/usr/bin/python3.9 = cap_setuid+ep", fix:"setcap -r /usr/bin/python3.9", safe:"(vazio — sem capabilities perigosas)", key:["setcap"]},
+    {cmd:"ls -la /opt/backup.sh", vuln:"-rwxrwxrwx 1 root root /opt/backup.sh   (gravável por todos)", fix:"chmod 700 /opt/backup.sh; chown root:root /opt/backup.sh", safe:"-rwx------ 1 root root /opt/backup.sh", key:["chmod"]},
+    {cmd:"echo $PATH", vuln:"/tmp:/usr/bin:/bin   (pasta gravável antes do sistema)", fix:"export PATH=/usr/sbin:/usr/bin:/sbin:/bin", safe:"/usr/sbin:/usr/bin:/sbin:/bin", key:["path","export"]},
+    {cmd:"uname -r", vuln:"5.10.0   (vulnerável — Dirty Pipe CVE-2022-0847)", fix:"sudo dnf update  (aplicar patch do kernel)", safe:"5.14.0-503.31.1  (corrigido)", key:["update","upgrade","patch"]},
+    {cmd:"ls -l /etc/passwd", vuln:"-rw-rw-rw- 1 root root /etc/passwd   (gravável)", fix:"chmod 644 /etc/passwd; chown root:root /etc/passwd", safe:"-rw-r--r-- 1 root root /etc/passwd", key:["chmod"]},
+    {cmd:"sudo sshd -T | grep -i rootlogin", vuln:"permitrootlogin yes", fix:"sshd_config: PermitRootLogin no  →  systemctl reload sshd", safe:"permitrootlogin no", key:["permitrootlogin no","no"]},
+    {cmd:"grep -ri password /var/www/html/", vuln:"config.php:  $db_pass = 'SenhaForte123';", fix:"mover o segredo para variável de ambiente / cofre e remover do código", safe:"(sem senhas em texto claro)", key:["env","cofre","vault","variável","variavel"]},
+    {cmd:"id", vuln:"uid=1000(aluno) groups=1000(aluno),999(docker)", fix:"gpasswd -d aluno docker", safe:"uid=1000(aluno) groups=1000(aluno)", key:["gpasswd","docker"]},
+    {cmd:"cat /etc/exports", vuln:"/srv  *(rw,no_root_squash)", fix:"trocar para (rw,root_squash) e rodar: exportfs -ra", safe:"/srv  *(rw,root_squash)", key:["root_squash"]},
+    {cmd:"getenforce; systemctl is-active firewalld", vuln:"Disabled\\ninactive", fix:"setenforce 1; systemctl enable --now firewalld", safe:"Enforcing\\nactive", key:["setenforce","firewalld"]},
+    {cmd:"./linpeas.sh | grep 95%", vuln:"[95%] SUID em /usr/bin/find · [99%] sudo NOPASSWD", fix:"corrigir cada achado destacado (ver os cards específicos)", safe:"(nenhum destaque de alta probabilidade)", key:["corrig","fix"]},
+    {cmd:"ps aux | grep mysql", vuln:"root  3321  /usr/sbin/mysqld   (banco rodando como root)", fix:"rodar o serviço com usuário dedicado (user=mysql)", safe:"mysql 3321 /usr/sbin/mysqld", key:["mysql","user","usuário","usuario"]},
+    {cmd:"cat /etc/fstab", vuln:"//srv/share /mnt cifs username=admin,password=Senha123", fix:"usar credentials=/root/.smbcred (arquivo protegido) em vez de senha em claro", safe:"//srv/share /mnt cifs credentials=/root/.smbcred", key:["credentials"]},
+    {cmd:"cat /etc/cron.d/backup", vuln:"* * * * * root cd /dados && tar -czf bk.tar.gz *", fix:"usar caminho absoluto / tar ... -- ./*  ou listar os arquivos", safe:"... tar -czf bk.tar.gz /dados/a.txt /dados/b.txt", key:["./","--","absolut"]},
+    {cmd:"ls -l /home/user/.ssh/id_rsa", vuln:"-rw-r--r-- 1 user user id_rsa   (legível por todos)", fix:"chmod 600 /home/user/.ssh/id_rsa", safe:"-rw------- 1 user user id_rsa", key:["chmod"]},
+    // Windows
+    {cmd:"wmic service get name,pathname", vuln:"MyService  C:\\Program Files\\My App\\service.exe   (sem aspas)", fix:'sc config MyService binPath= "\\"C:\\Program Files\\My App\\service.exe\\""', safe:'MyService  "C:\\Program Files\\My App\\service.exe"', key:["binpath","aspas","sc config"]},
+    {cmd:"accesschk.exe -uwcqv Users *", vuln:"RW Everyone   SERVICE_ALL_ACCESS", fix:"corrigir a ACL do serviço: só Administradores podem alterar", safe:"(sem RW para Users/Everyone)", key:["acl","admin"]},
+    {cmd:"reg query HKLM\\...\\Installer /v AlwaysInstallElevated", vuln:"AlwaysInstallElevated    0x1", fix:"reg add ... /v AlwaysInstallElevated /t REG_DWORD /d 0", safe:"AlwaysInstallElevated    0x0", key:["0x0","reg add","/d 0","disable"]},
+    {cmd:"whoami /priv", vuln:"SeImpersonatePrivilege    Enabled", fix:"remover o privilégio da conta de serviço (privilégio mínimo / gMSA)", safe:"(sem SeImpersonatePrivilege)", key:["privilég","gmsa","remov"]},
+    {cmd:"icacls C:\\pasta_no_path", vuln:"BUILTIN\\Users:(F)   (pasta gravável no PATH)", fix:"remover a pasta do PATH / corrigir a ACL (icacls)", safe:"Users sem escrita; PATH sem pastas graváveis", key:["acl","icacls","path"]},
+    {cmd:"cmdkey /list", vuln:"Target: Domain:admin   (credencial salva)", fix:"cmdkey /delete + remover GPP/unattend; usar LAPS", safe:"(sem credenciais salvas)", key:["delete","laps"]},
+    {cmd:"sc query Spooler", vuln:"STATE: 4 RUNNING   (sem patch — CVE-2021-34527)", fix:"Windows Update + Stop-Service Spooler (onde não é necessário)", safe:"STATE: 1 STOPPED / patch aplicado", key:["update","spooler","stop"]},
+    {cmd:"schtasks /query /fo LIST /v", vuln:"Run As: SYSTEM   Task To Run: C:\\scripts\\job.bat (gravável)", fix:"corrigir permissões: só Admin grava o script (icacls)", safe:"script pertence a Admin, não gravável por Users", key:["icacls","permiss","admin"]},
+    {cmd:"icacls C:\\Windows\\System32\\config\\SAM", vuln:"BUILTIN\\Users:(RX)   (SeriousSAM)", fix:"aplicar patch + corrigir ACL (só SYSTEM/Admin)", safe:"só NT AUTHORITY\\SYSTEM e Administrators", key:["patch","acl","icacls"]},
+    // Web
+    {cmd:"login →  usuário: admin'-- -", vuln:"Bem-vindo, admin!   (login sem senha)", fix:"usar consultas parametrizadas (prepared statements) no código", safe:"Usuário ou senha inválidos", key:["prepared","pdo","parametriz","mysqli"]},
+    {cmd:"subir shell.php  →  GET /uploads/shell.php?c=id", vuln:"uid=33(www-data) gid=33(www-data)   (RCE)", fix:"validar extensão por lista de permissões + pasta sem execução", safe:"Tipo de arquivo não permitido", key:["extens","whitelist","lista","valid"]},
+    {cmd:"GET /download.php?file=../../../../etc/passwd", vuln:"root:x:0:0:root:/root:/bin/bash ...", fix:"validar com realpath()/basename() + lista de permissões", safe:"Arquivo não permitido", key:["realpath","basename","valid"]},
+    {cmd:"campo de busca:  <scr"+"ipt>alert(1)<\/scr"+"ipt>", vuln:"⚠ popup executado — o script rodou no navegador", fix:"escapar a saída com htmlspecialchars() + aplicar CSP", safe:"<script>alert(1)<\/script> exibido como texto (escapado)", key:["htmlspecialchars","escap","encode","csp"]},
+    {cmd:"campo host:  127.0.0.1; id", vuln:"uid=33(www-data) gid=33   (comando extra executado)", fix:"usar escapeshellarg() ou API nativa (sem shell)", safe:"entrada tratada — nenhum comando extra", key:["escapeshell","api","valid"]},
+    {cmd:"GET /perfil.php?id=124   (não sou o dono)", vuln:"Exibindo dados do usuário 124 ...", fix:"verificar no servidor se o recurso pertence ao usuário logado", safe:"403 Forbidden — acesso negado", key:["autoriz","403","dono","server"]},
+    {cmd:"100 tentativas de senha no login", vuln:"sem bloqueio — força bruta em andamento", fix:"bloqueio após N tentativas + hash bcrypt + cookies HttpOnly", safe:"Conta bloqueada após 5 tentativas", key:["bloqueio","bloquear","bcrypt","mfa","lock"]},
+    {cmd:"curl http://alvo/.env", vuln:"DB_PASS=SenhaDoBanco123", fix:"bloquear .env no servidor + mover segredos para cofre", safe:"403 Forbidden", key:["env","cofre","bloquear","block","deny"]},
+    {cmd:"curl -I http://alvo", vuln:"sem CSP/HSTS + Index of /uploads (listing on)", fix:"desabilitar directory listing + adicionar headers de segurança", safe:"headers presentes; directory listing desabilitado", key:["header","listing","csp","hsts"]}
+  ];
+
+  const modal=document.getElementById("tModal"),
+        term=document.getElementById("tTerm"),
+        ctrl=document.getElementById("tCtrl"),
+        titleEl=document.getElementById("tTitle"),
+        stepEl=document.getElementById("tStep");
+  let cur=null, lines=[];
+
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function nl(txt){ return String(txt).split("\\n"); }
+  function render(){
+    term.innerHTML = lines.map(l=>'<div class="ln '+l.c+'">'+l.t+'</div>').join("");
+    term.scrollTop = term.scrollHeight;
+  }
+  function addPrompt(cmd, win){ lines.push({c:"", t:'<span class="pr">'+(win?"C:\\&gt; ":"$ ")+'</span><span class="cc">'+esc(cmd)+'</span>'}); }
+  function addOut(txt, cls){ nl(txt).forEach(function(t){ lines.push({c:cls||"out", t:esc(t)}); }); }
+
+  function openLab(scn, title, win){
+    cur=scn; cur._win=win; lines=[]; titleEl.textContent="🎮 Laboratório — "+title;
+    stepEl.textContent="Passo 1/3";
+    lines.push({c:"sys", t:"Ambiente de treino (simulação). Execute o comando para ver o estado atual."});
+    render(); step1();
+    modal.classList.add("show");
+  }
+  function step1(){
+    ctrl.innerHTML="";
+    const b=document.createElement("button"); b.className="tbtn run"; b.textContent="▶  Executar comando";
+    b.onclick=function(){
+      addPrompt(cur.cmd, cur._win); addOut(cur.vuln, "bad");
+      lines.push({c:"bad", t:"⚠  Vulnerabilidade encontrada!"});
+      render(); stepEl.textContent="Passo 2/3"; step2();
+    };
+    ctrl.appendChild(b);
+  }
+  function step2(){
+    ctrl.innerHTML="";
+    const lab=document.createElement("div"); lab.className="tlab"; lab.textContent="Agora corrija: digite o comando/ação de correção."; ctrl.appendChild(lab);
+    const row=document.createElement("div"); row.className="tfix";
+    const inp=document.createElement("input"); inp.placeholder="ex.: "+cur.fix.split(" ").slice(0,2).join(" ")+" ..."; inp.autocapitalize="off"; inp.spellcheck=false;
+    const ap=document.createElement("button"); ap.className="apply"; ap.textContent="Aplicar correção";
+    row.appendChild(inp); row.appendChild(ap); ctrl.appendChild(row);
+    const hint=document.createElement("div"); hint.className="thint";
+    hint.innerHTML='<a id="tShow">ver correção sugerida</a>'; ctrl.appendChild(hint);
+    document.getElementById("tShow").onclick=function(){ hint.innerHTML="💡 "+esc(cur.fix); };
+    function applyOk(){
+      addPrompt(inp.value.trim()||cur.fix, cur._win);
+      lines.push({c:"good", t:"✔  Correção aplicada."}); render();
+      stepEl.textContent="Passo 3/3"; step3();
+    }
+    ap.onclick=function(){
+      const v=(inp.value||"").toLowerCase();
+      const ok = cur.key.some(function(k){ return v.indexOf(k.toLowerCase())>=0; });
+      if(ok){ applyOk(); }
+      else {
+        hint.innerHTML='❌ Não parece a correção certa. <a id="tShow2">ver sugestão</a> ou clique em "Aplicar correção sugerida".';
+        document.getElementById("tShow2").onclick=function(){ hint.innerHTML="💡 "+esc(cur.fix); };
+        let sg=document.getElementById("tSug");
+        if(!sg){ sg=document.createElement("button"); sg.id="tSug"; sg.className="tbtn"; sg.style.background="var(--card2)"; sg.style.color="var(--acc2)"; sg.style.border="1px solid var(--acc2)"; sg.textContent="Aplicar correção sugerida"; sg.onclick=function(){ inp.value=cur.fix; applyOk(); }; ctrl.appendChild(sg); }
+      }
+    };
+    inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); ap.click(); } });
+  }
+  function step3(){
+    ctrl.innerHTML="";
+    const b=document.createElement("button"); b.className="tbtn test"; b.textContent="🔄  Testar novamente";
+    b.onclick=function(){
+      addPrompt(cur.cmd, cur._win); addOut(cur.safe, "good");
+      lines.push({c:"good", t:"✅  Corrigido! A vulnerabilidade não aparece mais."}); render();
+      ctrl.innerHTML="";
+      const r=document.createElement("button"); r.className="tbtn rst"; r.textContent="↺ Reiniciar treino";
+      r.onclick=function(){ lines=[{c:"sys",t:"Ambiente reiniciado. Execute o comando novamente."}]; render(); stepEl.textContent="Passo 1/3"; step1(); };
+      ctrl.appendChild(r);
+    };
+    ctrl.appendChild(b);
+  }
+  document.getElementById("tClose").onclick=function(){ modal.classList.remove("show"); };
+  modal.addEventListener("click",function(e){ if(e.target===modal) modal.classList.remove("show"); });
+
+  // injeta o botão "Treinar" em cada card, na ordem (Linux, Windows, Web)
+  const cards=[];
+  ["linux","windows","web"].forEach(function(pid){
+    document.querySelectorAll("#"+pid+" .v").forEach(function(v){ cards.push({v:v, win:(pid==="windows")}); });
+  });
+  cards.forEach(function(c, i){
+    if(!T[i]) return;
+    const body=c.v.querySelector(".body"); if(!body) return;
+    const title=(c.v.querySelector(".ttl h3")||{}).textContent||"Comando";
+    const btn=document.createElement("button"); btn.className="trainbtn"; btn.type="button";
+    btn.innerHTML="🎮 Treinar este comando";
+    btn.onclick=function(e){ e.stopPropagation(); openLab(T[i], title.trim(), c.win); };
+    body.appendChild(btn);
+  });
+})();
 </script>
 </body>
 </html>
