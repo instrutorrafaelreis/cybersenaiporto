@@ -1618,24 +1618,34 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
 
   <!-- ============ TASK 1 ============ -->
   <div class="apanel" id="a-t1">
-    <div class="disc">🔐 <b>Políticas de login, senha, usuários e grupos</b> no WinServer (GPO de domínio) e LinuxServer (política local). 28 pontos.</div>
+    <div class="disc">🔐 <b>Políticas de login, senha, usuários e grupos</b> no WinServer (GPO) e LinuxServer (local). 28 pontos. Aqui o foco é <b>entender o risco que cada política fecha</b> — é isso que o WorldSkills avalia como "melhores práticas".</div>
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Política de senha (expiração/aviso)</h3><div class="cat">trocar a cada 14 dias · 3 de aviso · 1 após expirar</div></div><div class="chev">›</div></div>
+    <!-- expiração -->
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Expiração de senha</h3><div class="cat">trocar a cada 14 dias · 3 de aviso · 1 após expirar</div></div><div class="chev">›</div></div>
       <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+          <p>Define por quanto tempo uma senha é válida. Senhas que <b>nunca expiram</b> aumentam a janela de comprometimento: se uma vaza, o atacante a usa por tempo indefinido. Forçar a troca periódica limita esse prazo; o aviso evita que o usuário seja pego de surpresa.</p></div>
         <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># /etc/login.defs  (novos usuários)
-PASS_MAX_DAYS   14
-PASS_WARN_AGE   3
-# inatividade após expirar (1 dia)
-useradd -D -f 1
-# aplicar a um usuário existente:
+<pre># padrão p/ novos usuários — /etc/login.defs
+PASS_MAX_DAYS 14
+PASS_WARN_AGE 3
+useradd -D -f 1            # inativa 1 dia após expirar
+# usuário existente:
 chage -M 14 -W 3 -I 1 User01</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>chage -l User01</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>chage -l User01</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Maximum number of days: <code>99999</code> — a senha nunca expira.</div>
+          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span>Maximum: <code>14</code> · Warning: <code>3</code> · Inactive: <code>1</code>.</div>
+        </div></div>
+        <button class="trainbtn" data-ta1="0" type="button">🎮 Treinar</button>
       </div>
     </div>
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Complexidade de senha (pwquality)</h3><div class="cat">min 10 · 1 maiúscula/minúscula/dígito · 3 iguais seguidos</div></div><div class="chev">›</div></div>
+    <!-- complexidade -->
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Complexidade de senha (pwquality)</h3><div class="cat">min 10 · maiúscula+minúscula+dígito · 3 iguais seguidos</div></div><div class="chev">›</div></div>
       <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+          <p>Impõe força mínima à senha. Senhas curtas ou simples caem rápido em <b>ataques de dicionário e força bruta</b>. Exigir comprimento e variedade de caracteres aumenta muito o esforço do atacante para adivinhá-las.</p></div>
         <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
 <pre># /etc/security/pwquality.conf
 minlen = 10          # comprimento mínimo
@@ -1643,37 +1653,62 @@ dcredit = -1         # exige >=1 dígito
 ucredit = -1         # exige >=1 maiúscula
 lcredit = -1         # exige >=1 minúscula
 maxclassrepeat = 3   # máx. 3 caracteres consecutivos da mesma classe
-# garantir o módulo (authselect):
-authselect enable-feature with-pwquality 2>/dev/null; authselect apply-changes</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>echo 'senha123' | pwscore   # testa a força; passwd User01 para testar na prática</pre></div>
+authselect enable-feature with-pwquality; authselect apply-changes</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>echo 'abc' | pwscore        # nota baixa / tente: passwd User01 com uma senha fraca</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>A senha <code>abc</code> é aceita — sem política de força.</div>
+          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>BAD PASSWORD: it is too short</code> — senha fraca rejeitada.</div>
+        </div></div>
+        <button class="trainbtn" data-ta1="1" type="button">🎮 Treinar</button>
       </div>
     </div>
 
+    <!-- histórico -->
     <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Histórico de senhas</h3><div class="cat">lembrar das 15 anteriores</div></div><div class="chev">›</div></div>
-      <div class="body"><div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+          <p>Impede reutilizar senhas antigas. Sem isso, o usuário troca a senha e volta para a de sempre, <b>anulando a política de expiração</b> e mantendo viva uma senha que pode já ter vazado.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
 <pre># em /etc/pam.d/system-auth e /etc/pam.d/password-auth,
-# logo após a linha pam_pwquality.so:
-password requisite pam_pwhistory.so use_authtok remember=15</pre></div></div>
+# logo após pam_pwquality.so:
+password requisite pam_pwhistory.so use_authtok remember=15</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>passwd User01  → tente repetir a senha anterior</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>A senha anterior é reaceita sem problema.</div>
+          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>Password has been already used. Choose another.</code></div>
+        </div></div>
+        <button class="trainbtn" data-ta1="2" type="button">🎮 Treinar</button>
+      </div>
     </div>
 
+    <!-- faillock -->
     <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Bloqueio de conta (faillock)</h3><div class="cat">3 tentativas → bloqueia 25 min</div></div><div class="chev">›</div></div>
       <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+          <p>Trava a conta após várias senhas erradas. É a principal defesa contra <b>força bruta online</b> (o atacante testando milhares de senhas no login): com bloqueio, poucas tentativas já travam o ataque.</p></div>
         <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
 <pre># /etc/security/faillock.conf
 deny = 3
-unlock_time = 1500     # 25 min
-# habilitar o módulo:
+unlock_time = 1500          # 25 min
 authselect enable-feature with-faillock; authselect apply-changes</pre></div>
-        <div class="blk"><div class="h ver"><span class="d"></span>Verificar</div><pre>faillock --user User01        # mostra as falhas / faillock --user User01 --reset</pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Como verificar</div><pre>faillock --user User01          # lista falhas · --reset para destravar</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Antes (inseguro)</span>Tentativas ilimitadas — força bruta livre.</div>
+          <div class="r safe"><span class="lab">🟢 Depois (seguro)</span><code>The account is locked due to 3 failed logins</code> (25 min).</div>
+        </div></div>
+        <button class="trainbtn" data-ta1="3" type="button">🎮 Treinar</button>
       </div>
     </div>
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Banner, timeout e usuários/grupos</h3><div class="cat">aviso legal · 20 min inativo · User01-03, developer/technical</div></div><div class="chev">›</div></div>
+    <!-- banner/timeout/cache -->
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">LINUX</span>Banner legal, timeout e grupos/usuários</h3><div class="cat">aviso · 20 min inativo · User01-03, developer/technical</div></div><div class="chev">›</div></div>
       <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+          <p>O <b>banner legal</b> avisa que o acesso é restrito (tem valor jurídico em um incidente). O <b>timeout</b> encerra sessões esquecidas abertas (risco de alguém assumir o terminal). Criar usuários/grupos corretos aplica o <b>menor privilégio</b>.</p></div>
         <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
-<pre># banner de login:
+<pre># banner:
 echo 'Apenas usuários autorizados' > /etc/issue; cp /etc/issue /etc/issue.net
-# timeout de inatividade (20 min) — /etc/profile.d/timeout.sh
+# timeout de inatividade (20 min):
 echo 'TMOUT=1200; readonly TMOUT; export TMOUT' > /etc/profile.d/timeout.sh
 # grupos e usuários:
 groupadd developer; groupadd technical
@@ -1681,26 +1716,24 @@ for u in User01 User02 User03; do useradd -m $u; echo "$u:P@ssw0rd" | chpasswd; 
       </div>
     </div>
 
-    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">WINDOWS</span>GPO: senha, bloqueio, banner, cache</h3><div class="cat">Default Domain Policy + Default Domain Controllers Policy</div></div><div class="chev">›</div></div>
+    <!-- windows GPO -->
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">WINDOWS</span>GPO de domínio (mesmas políticas)</h3><div class="cat">Default Domain Policy</div></div><div class="chev">›</div></div>
       <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+          <p>No Windows de domínio, as mesmas proteções são aplicadas via <b>Política de Grupo (GPO)</b>, que distribui a configuração para todas as máquinas do domínio de forma centralizada — garantindo consistência.</p></div>
         <div class="blk"><div class="h faz"><span class="d"></span>Como fazer (gpmc.msc)</div>
-<pre>Computer Config &gt; Policies &gt; Windows Settings &gt; Security Settings:
-• Account Policies &gt; Password Policy:
-    Minimum password length = 10
-    Enforce password history = 15
-    Maximum password age = 14 dias
-    Password must meet complexity requirements = Enabled
-• Account Policies &gt; Account Lockout Policy:
-    Account lockout threshold = 3 · Lockout duration = 25 min
-• Local Policies &gt; Security Options:
-    "Interactive logon: Message text/title" (banner)
-    "Interactive logon: Number of previous logons to cache" = 0  (sem cache)
-# aplicar: gpupdate /force</pre></div>
+<pre>Computer Config &gt; Windows Settings &gt; Security Settings:
+• Password Policy: Min length=10 · History=15 · Max age=14 · Complexity=Enabled
+• Account Lockout: Threshold=3 · Duration=25 min
+• Security Options: banner (Message text/title)
+• "Number of previous logons to cache" = 0   (sem credenciais em cache)
+gpupdate /force</pre></div>
+        <div class="blk"><div class="h what"><span class="d"></span>Por que "cache = 0"</div>
+          <p>Credenciais em cache permitem login mesmo sem o controlador de domínio — útil para notebooks, mas um risco: se roubadas do disco, podem ser quebradas offline. Zerar o cache fecha esse vetor (como a tarefa pede).</p></div>
       </div>
     </div>
   </div>
 
-  <!-- ============ TASK 2 ============ -->
   <div class="apanel" id="a-t2">
     <div class="disc">📜 <b>ADCS + IIS</b> (certificados no Windows) e <b>vsftpd com FTPS</b> (Linux). 10 pontos.</div>
     <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">WINDOWS</span>ADCS + certificado no IIS</h3><div class="cat">cert de servidor e de cliente, vincular ao site</div></div><div class="chev">›</div></div>
@@ -2289,6 +2322,23 @@ document.querySelectorAll('#provaA .atab').forEach(function(t){
     btn.innerHTML="🎮 Treinar este comando";
     btn.onclick=function(e){ e.stopPropagation(); openLab(T[i], title.trim(), c.win); };
     body.appendChild(btn);
+  });
+  window.csOpenLab = openLab;   // reutilizável por outras provas
+})();
+</script>
+<script>
+/* ===== Treino da Prova A - Task 1 ===== */
+(function(){
+  if(!window.csOpenLab) return;
+  const TA1=[
+    {title:"Expiração de senha", cmd:"chage -l User01", vuln:"Maximum number of days between password change: 99999   (nunca expira)", fix:"chage -M 14 -W 3 -I 1 User01", safe:"Maximum: 14   Warning: 3   Inactive: 1", key:["chage"]},
+    {title:"Complexidade (pwquality)", cmd:"passwd User01   → (digita a senha: abc)", vuln:"senha 'abc' ACEITA — sem política de força", fix:"pwquality.conf: minlen=10 dcredit=-1 ucredit=-1 lcredit=-1", safe:"BAD PASSWORD: it is too short — senha rejeitada", key:["pwquality","minlen","pwscore","pam"]},
+    {title:"Histórico de senhas", cmd:"passwd User01   → (repete a senha anterior)", vuln:"senha anterior reutilizada com sucesso", fix:"pam_pwhistory.so remember=15 (system-auth / password-auth)", safe:"Password has been already used. Choose another.", key:["pwhistory","remember"]},
+    {title:"Bloqueio de conta (faillock)", cmd:"3 tentativas de login com senha errada", vuln:"conta continua aceitando tentativas — força bruta livre", fix:"faillock.conf deny=3 unlock_time=1500 + authselect enable-feature with-faillock", safe:"The account is locked due to 3 failed logins (25 min)", key:["faillock","deny","authselect"]}
+  ];
+  document.querySelectorAll('#a-t1 .trainbtn').forEach(function(b){
+    var i=parseInt(b.dataset.ta1,10); var s=TA1[i]; if(!s) return;
+    b.addEventListener('click',function(e){ e.stopPropagation(); window.csOpenLab(s, s.title, false); });
   });
 })();
 </script>
