@@ -278,6 +278,83 @@
   .chkitem .cd{font-size:13px;color:var(--mut);margin-top:2px}
   .jumpcard{cursor:pointer;transition:.12s}
   .jumpcard:hover{border-color:var(--acc)!important;background:#15203a}
+  /* ===== Arena de Provas Simuladas (Prova A & Prova B) ===== */
+  .exgrid{display:grid;grid-template-columns:1fr;gap:12px;margin:14px 0 22px}
+  @media(min-width:740px){.exgrid{grid-template-columns:repeat(3,1fr)}}
+  .excard{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:16px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;gap:8px}
+  .excard:hover{border-color:var(--acc2);background:#15203a}
+  .excard.active{border-color:var(--acc);background:linear-gradient(160deg,#0e221b,#131c2b);box-shadow:0 0 0 1px rgba(54,211,153,.25)}
+  .excard .exbadges{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+  .excard .exnum{font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#0e2336;color:var(--acc2);border:1px solid #1d4e7a}
+  .excard .extag{font-size:10.5px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+  .excard h3{margin:2px 0 0;font-size:16px;line-height:1.3}
+  .excard p{margin:0;color:var(--mut);font-size:13px;line-height:1.5;flex:1}
+  .excard .exstat{font-size:12px;font-family:var(--mono);color:var(--acc);padding-top:6px;border-top:1px dashed var(--line)}
+
+  .exarena{border:1px solid var(--line);border-radius:16px;background:var(--card2);padding:20px;margin-top:6px}
+  .exhead{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .exhead h2{margin:0 0 6px;font-size:20px}
+  .exhead .exdesc{color:var(--mut);font-size:13.5px;max-width:66ch;margin:0}
+  .extimer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+  .extimer .clk{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--acc2);min-width:74px;text-align:center}
+  .exbtn{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:8px;padding:6px 11px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .exbtn:hover{border-color:var(--acc2);color:var(--acc2)}
+  .exbtn.pri{background:var(--acc);color:#07241a;border-color:var(--acc)}
+  .exbtn.pri:hover{filter:brightness(1.08);color:#07241a}
+  .exbtn.warn{background:#2a220e;color:var(--warn);border-color:#634d1d}
+  .exbtn.blue{background:#0e2336;color:var(--acc2);border-color:var(--acc2)}
+
+  .exbrief{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:16px}
+  @media(min-width:720px){.exbrief{grid-template-columns:2fr 1fr}}
+  .exbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:13.5px}
+  .exbox h4{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc2)}
+
+  /* Prova A Arena: lista de tarefas + console */
+  .exsplit{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:820px){.exsplit{grid-template-columns:270px 1fr}}
+  .extlist{display:flex;flex-direction:column;gap:8px}
+  .extitem{border:1px solid var(--line);background:var(--card);border-radius:11px;padding:10px 12px;cursor:pointer;text-align:left;transition:.12s}
+  .extitem:hover{border-color:var(--acc2)}
+  .extitem.active{border-color:var(--acc2);background:#102236}
+  .extitem.done{border-color:#1f5e44;background:#0e1f1a}
+  .extitem .etop{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--mut)}
+  .extitem .etit{font-size:13.5px;font-weight:600;color:var(--txt);margin-top:4px;line-height:1.35}
+  .exwork{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .exterm{background:#070b12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.6;min-height:145px;max-height:290px;overflow-y:auto}
+  .exterm .ln{white-space:pre-wrap;word-break:break-word}
+  .exterm .pr{color:var(--acc)} .exterm .cc{color:#e8eef9} .exterm .out{color:var(--mut)}
+  .exterm .bad{color:var(--crit)} .exterm .good{color:var(--acc)} .exterm .sys{color:var(--info)} .exterm .warn{color:var(--warn)}
+  .exrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .exrow input[type="text"]{flex:1;min-width:200px;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--txt);font-family:var(--mono);font-size:13px}
+  .exrow input[type="text"]:focus{outline:none;border-color:var(--acc2)}
+  .exhint{font-size:12.5px;color:var(--mut);background:#0c1524;border:1px dashed var(--line);border-radius:9px;padding:9px 12px;display:none}
+  .exhint.show{display:block}
+  .exchips{display:flex;gap:6px;flex-wrap:wrap}
+  .exchip{font-family:var(--mono);font-size:11.5px;background:var(--card2);border:1px solid var(--line);color:var(--mut);border-radius:999px;padding:4px 10px;cursor:pointer}
+  .exchip:hover{color:var(--acc2);border-color:var(--acc2)}
+  .exopts{display:flex;flex-direction:column;gap:7px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  .exopts label{display:flex;align-items:flex-start;gap:9px;font-size:13px;cursor:pointer;color:var(--txt)}
+  .exopts input{margin-top:3px;accent-color:var(--acc)}
+
+  /* Prova B Arena: Sandbox + Relatório */
+  .exsubtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .exstab{border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:9px;padding:7px 13px;font-size:13px;font-weight:600;cursor:pointer}
+  .exstab.active{background:#0e2336;color:var(--acc2);border-color:var(--acc2)}
+  .exevid{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .exevid .ev{font-size:11.5px;font-family:var(--mono);background:#2a1115;color:var(--crit);border:1px solid #5e2a2a;border-radius:999px;padding:3px 10px}
+  .excode{background:#070b12;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.55;overflow-x:auto;color:#e3ebf6;white-space:pre-wrap}
+  .exrep{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .exrep h4{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+  .exrep textarea,.exrep select,.exrep input[type="text"]{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--txt);font-family:var(--sans);font-size:13px}
+  .exrep textarea{min-height:74px;resize:vertical}
+  .exrep textarea:focus,.exrep select:focus,.exrep input[type="text"]:focus{outline:none;border-color:var(--acc2)}
+  .exrtbl{width:100%;border-collapse:collapse;margin-top:10px}
+  .exrtbl th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);padding:7px 6px;border-bottom:1px solid var(--line)}
+  .exrtbl td{padding:7px 5px;vertical-align:top;border-bottom:1px solid #1a2436}
+  .exfb{margin-top:14px;border-radius:11px;padding:13px 15px;font-size:13.5px;border:1px solid var(--line);background:#0c1524;display:none}
+  .exfb.show{display:block}
+  .exfb .fbi{padding:6px 0;border-bottom:1px dashed var(--line)}
+  .exfb .fbi:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -308,6 +385,7 @@
       <div class="ptab" data-panel="web"><span class="ic">🌐</span> Web</div>
       <div class="ptab" data-panel="cvss"><span class="ic">🧮</span> CVSS</div>
       <div class="ptab" data-panel="tools"><span class="ic">🧰</span> Ferramentas</div>
+      <div class="ptab" data-panel="b-provas"><span class="ic">📝</span> Provas</div>
     </div>
   </div>
 </header>
@@ -1578,6 +1656,13 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
   <div class="disc">💡 Comece pelo <b>VulnHub</b> ou <b>TryHackMe</b> para praticar o fluxo completo; use <b>LinPEAS</b> para acelerar a enumeração e <b>GTFOBins</b> para confirmar cada caminho de root. Sempre em ambiente autorizado.</div>
 </div>
 
+<!-- ===================== B · PROVAS SIMULADAS ===================== -->
+<div class="panel" id="b-provas">
+  <div class="disc" style="margin-top:4px;border-color:var(--acc2)">📝 <b>Arena de Provas Simuladas — Security Assessment:</b> escolha uma das <b>3 provas práticas</b> abaixo para treinar 100% dentro da plataforma. Investigue o servidor no terminal simulado e no inspetor web/código, encontre as <b>4 vulnerabilidades mais críticas (2 de SO + 2 Web)</b>, redija o <b>Sumário Executivo</b> + <b>Tabela Técnica</b> e receba correção imediata!</div>
+  <div class="exgrid" id="exBGrid"></div>
+  <div class="exarena" id="exBArena"></div>
+</div>
+
 </div>
 </div><!-- /#provaB -->
 
@@ -1601,6 +1686,7 @@ touch <span class="s">"--checkpoint=1"</span>; touch <span class="s">"--checkpoi
       <div class="atab" data-ap="a-net"><span class="ic">🛡️</span> Rede &amp; VPN</div>
       <div class="atab" data-ap="a-logs"><span class="ic">📋</span> Logs &amp; Tempo</div>
       <div class="atab" data-ap="a-tools"><span class="ic">🧰</span> Ferramentas</div>
+      <div class="atab" data-ap="a-provas"><span class="ic">📝</span> Provas</div>
     </div>
   </div>
 </header>
@@ -2946,6 +3032,13 @@ local stratum 10                  <span class="c"># fallback local se perder int
   </div>
 </div>
 
+<!-- ===================== A · PROVAS SIMULADAS ===================== -->
+<div class="apanel" id="a-provas">
+  <div class="disc" style="margin-top:4px;border-color:var(--acc)">📝 <b>Arena de Provas Simuladas — Enterprise Security &amp; Hardening:</b> escolha uma das <b>3 provas completas</b> abaixo para treinar dentro da plataforma sem precisar de VMs externas. Audite cada servidor no console simulado, aplique as políticas de hardening (comandos ou painel de configuração), valide o resultado e exporte seu relatório de execução!</div>
+  <div class="exgrid" id="exAGrid"></div>
+  <div class="exarena" id="exAArena"></div>
+</div>
+
 </div><!-- /.wrap -->
 </div><!-- /#provaA -->
 
@@ -3582,6 +3675,922 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
     });
   });
   refreshChk();
+})();
+</script>
+<script>
+/* ===== Arena de Provas Simuladas (3 Provas A + 3 Provas B) ===== */
+(function(){
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function fmtTime(sec){
+    var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+    return [h,m,s].map(x=>String(x).padStart(2,"0")).join(":");
+  }
+  function dlText(filename, text){
+    var blob=new Blob([text],{type:"text/plain;charset=utf-8"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename;
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+  }
+
+  /* ===================== PROVA A — 3 PROVAS DE HARDENING ===================== */
+  const EXAMS_A = [
+    {
+      id:"a1", num:"Prova A1", tag:"Clássico WorldSkills · 3h", duration:10800,
+      title:"Infraestrutura HQ + Filial (Híbrida)",
+      summary:"Cenário completo com LinuxServer (RHEL/CentOS 9), WinServer (AD/CA/IIS), LogServer e firewalls pfSense (HQ + Filial + Usuário Remoto).",
+      brief:"Você assumiu uma infraestrutura corporativa recém-implantada onde os serviços já estão no ar, mas sem políticas de segurança. Aplique hardening em todas as camadas (identidade, serviços públicos, TLS, SSH, SELinux, logs/NTP e VPN) mantendo todos os serviços acessíveis.",
+      hosts:"WinServer (AD/CA/IIS) · LinuxServer (Apache/vsftpd/SSH) · LogServer (rsyslog/chrony) · FW1 & FW2 (pfSense) · RemoteUser",
+      tasks:[
+        {
+          id:"t1", code:"T1", host:"LinuxServer + WinServer", mode:"cmd", prompt:"root@linuxserver:~# ",
+          title:"Políticas de Senha, Bloqueio e Cache = 0",
+          req:"Aplicar expiração de senha (14 dias, 3 de aviso, 1 inativo), complexidade mínima de 10 caracteres (maiúscula/minúscula/dígito), histórico de 15 senhas e bloqueio após 3 falhas (25 min) + zerar credenciais em cache na GPO do domínio.",
+          auditCmd:"chage -l User01; grep -E 'minlen|deny' /etc/security/pwquality.conf /etc/security/faillock.conf",
+          auditOut:"Maximum number of days between password change: 99999\nPassword inactive: never\npwquality.conf: # minlen = 8\nfaillock.conf: # deny = 3 (desativado)\nWinServer GPO: CachedLogonsCount = 10",
+          placeholder:"ex.: chage -M 14 -W 3 -I 1 User01 + pwquality/faillock + GPO cache=0",
+          hint:"Use chage (-M 14 -W 3 -I 1) / login.defs para expiração, /etc/security/pwquality.conf (minlen=10) + faillock.conf (deny=3, unlock_time=1500) + pam_pwhistory (remember=15) e GPO CachedLogonsCount=0.",
+          example:"chage -M 14 -W 3 -I 1 User01; pwquality minlen=10; faillock deny=3 unlock_time=1500; pwhistory remember=15; GPO cache=0",
+          keys:["chage","pwquality","faillock","pwhistory","minlen","deny","login.defs","gpo"],
+          minHits:2,
+          safeOut:"User01: Maximum=14 · Warning=3 · Inactive=1\npwquality: minlen=10 dcredit=-1 ucredit=-1 lcredit=-1\nfaillock: deny=3 unlock_time=1500 · pwhistory: remember=15\nWinServer Default Domain Policy: CachedLogonsCount = 0"
+        },
+        {
+          id:"t2", code:"T2", host:"WinServer + LinuxServer", mode:"cmd", prompt:"root@linuxserver:~# ",
+          title:"Autoridade Certificadora (ADCS/IIS) e FTPS sem anônimo",
+          req:"No LinuxServer, proteger o vsftpd exigindo SSL/TLS no login e dados e bloqueando login anônimo. No WinServer, emitir certificado de servidor/cliente via ADCS e vincular HTTPS no IIS.",
+          auditCmd:"grep -E 'anonymous_enable|ssl_enable|force_local' /etc/vsftpd/vsftpd.conf",
+          auditOut:"anonymous_enable=YES\nssl_enable=NO\nIIS Default Web Site: apenas binding http (:80)",
+          placeholder:"ex.: anonymous_enable=NO ssl_enable=YES force_local_logins_ssl=YES + ADCS/IIS https",
+          hint:"Em /etc/vsftpd/vsftpd.conf defina anonymous_enable=NO, ssl_enable=YES, force_local_logins_ssl=YES e force_local_data_ssl=YES, reinicie vsftpd e vincule o cert da CA no IIS (443).",
+          example:"anonymous_enable=NO; ssl_enable=YES; force_local_logins_ssl=YES; force_local_data_ssl=YES; systemctl restart vsftpd",
+          keys:["anonymous_enable","ssl_enable","force_local","vsftpd","ftps","adcs","https"],
+          minHits:2,
+          safeOut:"anonymous_enable=NO · ssl_enable=YES · force_local_logins_ssl=YES\nFTP claro recusado (530) · STARTTLS OK\nIIS Default Web Site: binding https :443 com cert da Enterprise CA"
+        },
+        {
+          id:"t3", code:"T3", host:"LinuxServer (Apache)", mode:"cmd", prompt:"root@linuxserver:~# ",
+          title:"Criptografia Web: RSA 4096, Redirect HTTPS, HSTS, Não-Root e .bak 403",
+          req:"Configurar Apache com certificado RSA 4096 + SNI, redirecionar HTTP→HTTPS, ativar HSTS, desabilitar directory listing (-Indexes), rodar como usuário não-root e retornar 403 para arquivos .bak (permitindo .bak em query string).",
+          auditCmd:"curl -I http://site.wsc.local; curl -I http://site.wsc.local/backup.bak",
+          auditOut:"HTTP/1.1 200 OK (texto claro, sem redirect!)\nGET /backup.bak → HTTP/1.1 200 OK (backup exposto!)\nStrict-Transport-Security: (ausente) · Options +Indexes",
+          placeholder:"ex.: openssl rsa:4096 + Redirect permanent + HSTS + Options -Indexes + FilesMatch .bak",
+          hint:"Use Redirect permanent / https://..., Header always set Strict-Transport-Security, Options -Indexes, User apache e <FilesMatch \"\\.bak$\"> Require all denied </FilesMatch>.",
+          example:"Redirect permanent / https://site.wsc.local/; Header Strict-Transport-Security; Options -Indexes; User apache; FilesMatch \\.bak$ Require all denied",
+          keys:["redirect","hsts","strict-transport","-indexes","filesmatch","require all denied","4096","apache"],
+          minHits:2,
+          safeOut:"HTTP/1.1 301 Moved Permanently → https://site.wsc.local/\nStrict-Transport-Security: max-age=31536000; includeSubDomains\nGET /backup.bak → 403 Forbidden · ?q=a.bak → 200 OK · worker: apache"
+        },
+        {
+          id:"t4", code:"T4", host:"LinuxServer (SSH)", mode:"cmd", prompt:"root@linuxserver:~# ",
+          title:"Hardening do Serviço SSH (Porta 22222, Só Chave, Sem Root/Túnel)",
+          req:"Mover SSH para porta 22222 (com SELinux e firewalld), exigir apenas chave (sem senha e sem root), ativar Banner, LogLevel VERBOSE, idle timeout 20 min e desabilitar X11/TcpForwarding/Tunnel.",
+          auditCmd:"sshd -T | grep -Ei 'port|rootlogin|passwordauth|x11|forwarding|loglevel'",
+          auditOut:"port 22\npermitrootlogin yes\npasswordauthentication yes\nx11forwarding yes\nallowtcpforwarding yes\nloglevel INFO",
+          placeholder:"ex.: Port 22222 + PermitRootLogin no + PasswordAuthentication no + semanage/firewall-cmd",
+          hint:"No sshd_config ajuste Port 22222, PermitRootLogin no, PasswordAuthentication no, PubkeyAuthentication yes, X11Forwarding no, AllowTcpForwarding no, LogLevel VERBOSE + semanage port -a -t ssh_port_t -p tcp 22222 + firewall-cmd.",
+          example:"Port 22222; PermitRootLogin no; PasswordAuthentication no; X11Forwarding no; AllowTcpForwarding no; LogLevel VERBOSE; semanage port -a -t ssh_port_t -p tcp 22222",
+          keys:["22222","permitrootlogin","passwordauthentication","x11forwarding","semanage","firewall-cmd","verbose","pubkey"],
+          minHits:2,
+          safeOut:"sshd ativo na porta 22222 (ssh_port_t · firewalld OK)\npermitrootlogin no · passwordauthentication no · pubkeyauthentication yes\nx11forwarding no · allowtcpforwarding no · loglevel VERBOSE"
+        },
+        {
+          id:"t5", code:"T5", host:"LinuxServer (SELinux)", mode:"cmd", prompt:"root@linuxserver:~# ",
+          title:"IAM / SELinux Enforcing para FTP",
+          req:"Ativar SELinux em modo Enforcing, definir o contexto correto (public_content_rw_t) no diretório de upload FTP e ajustar booleans/auditoria AVC sem desabilitar o SELinux.",
+          auditCmd:"getenforce; ls -Zd /var/ftp/upload",
+          auditOut:"Permissive\nunconfined_u:object_r:var_t:s0 /var/ftp/upload",
+          placeholder:"ex.: setenforce 1 + semanage fcontext public_content_rw_t + restorecon + setsebool",
+          hint:"Use setenforce 1 (e SELINUX=enforcing em /etc/selinux/config), semanage fcontext -a -t public_content_rw_t, restorecon -Rv e setsebool -P ftpd_full_access/ftp_home_dir on.",
+          example:"setenforce 1; semanage fcontext -a -t public_content_rw_t '/var/ftp/upload(/.*)?'; restorecon -Rv /var/ftp/upload; setsebool -P ftp_home_dir on",
+          keys:["setenforce","enforcing","semanage","fcontext","restorecon","setsebool","public_content_rw_t"],
+          minHits:2,
+          safeOut:"Current mode: enforcing (/etc/selinux/config OK)\n/var/ftp/upload → public_content_rw_t · booleans persistentes (-P) ativos\nUpload/login FTP validados sem bloqueios AVC indevidos"
+        },
+        {
+          id:"t6", code:"T6", host:"LogServer + LinuxServer", mode:"cmd", prompt:"root@logserver:~# ",
+          title:"Logs Centralizados (rsyslog), Rotação, Prioridades e NTP (chrony)",
+          req:"Configurar retenção de 7 dias no journald, logrotate diário comprimido com data, prioridades de processo (nice +/-10), rsyslog remoto (porta 514 + firewall) e chrony sincronizando NTP para a sub-rede interna.",
+          auditCmd:"ss -tulpn | grep 514; chronyc tracking",
+          auditOut:"(porta 514 fechada — sem recepção remota)\nchronyc: 506 Cannot talk to daemon\njournald.conf: #MaxRetentionSec=",
+          placeholder:"ex.: imtcp 514 + firewall-cmd + MaxRetentionSec=7day + logrotate + chrony pool/allow",
+          hint:"Ative imtcp/imudp porta 514 no rsyslog.conf + firewall-cmd, MaxRetentionSec=7day no journald.conf, /etc/logrotate.d/ com daily/compress/dateext e chrony.conf com pool iburst + allow sub-rede.",
+          example:"rsyslog imtcp 514 + firewall-cmd 514/tcp; journald MaxRetentionSec=7day; logrotate daily compress dateext; chrony pool iburst allow 10.8.8.0/24",
+          keys:["rsyslog","imtcp","514","logrotate","maxretentionsec","chrony","ntp","nice","limits"],
+          minHits:2,
+          safeOut:"rsyslogd escutando 514/TCP (logs do WebServer e pfSense recebidos)\njournald: MaxRetentionSec=7day · logrotate: OK (compress + dateext)\nchronyd ativo: Leap status Normal · servindo apenas 10.8.8.0/24"
+        },
+        {
+          id:"t7", code:"T7", host:"FW1 & FW2 (pfSense)", mode:"policy", prompt:"pfSense (FW1) > ",
+          title:"Comunicação Segura: VPN Site-to-Site IPsec (IKEv2) e OpenVPN",
+          req:"Marque TODAS as etapas obrigatórias corretas para fechar o túnel Site-to-Site IPsec IKEv2 autenticado por certificado da CA e o acesso remoto OpenVPN com certificado de usuário.",
+          auditCmd:"Status > IPsec; Status > OpenVPN",
+          auditOut:"IPsec Tunnels: 0 configured (HQ ↔ Branch sem criptografia)\nOpenVPN Servers: 0 configured (RemoteUser sem acesso seguro)",
+          options:[
+            {id:"o1", text:"Importar a Root CA do WinServer e os certificados de cada firewall em System > Cert Manager", ok:true},
+            {id:"o2", text:"Configurar IPsec Fase 1 com IKEv2 + Mutual Certificate e Fase 2 (ESP) com as sub-redes HQ ↔ Filial + regras na aba IPsec", ok:true},
+            {id:"o3", text:"Usar IKEv1 com chave pré-compartilhada simples '123456' para agilizar o túnel", ok:false},
+            {id:"o4", text:"Configurar OpenVPN Remote Access (SSL/TLS + TLS Auth) com certificado individual de usuário, liberar UDP 1194 na WAN e exportar o perfil", ok:true},
+            {id:"o5", text:"Expor diretamente as portas 22 e 3389 dos servidores internos na WAN para o RemoteUser acessar sem VPN", ok:false}
+          ],
+          hint:"Lembre dos requisitos: autenticação por certificado da CA (nunca PSK fraca), IKEv2 + ESP + regras IPsec, e OpenVPN SSL/TLS sem expor portas internas na WAN.",
+          safeOut:"IPsec Site-to-Site (FW1 ↔ FW2): ESTABLISHED (IKEv2 / Mutual Cert)\nOpenVPN Remote Access: usuário conectado via certificado acessando LinuxServer"
+        }
+      ]
+    },
+    {
+      id:"a2", num:"Prova A2", tag:"DMZ, Web & Banco · 2h30", duration:9000,
+      title:"Fintech / E-Commerce: Perímetro DMZ, Web, DB e Kernel",
+      summary:"Cenário focado em serviços expostos à internet: isolar DMZ da LAN, blindar servidor Web/TLS e MariaDB, endurecer kernel Linux e ativar IDS/auditd.",
+      brief:"Uma fintech sofreu tentativas de intrusão no seu servidor web público. Sua missão é isolar a DMZ no perímetro, endurecer o servidor web e o banco de dados, ativar firewall de host + sysctl, auditar arquivos críticos com auditd e ligar o IDS no perímetro.",
+      hosts:"FW-Edge (pfSense/Suricata) · Web-DMZ (Linux/Apache) · DB-Int (MariaDB)",
+      tasks:[
+        {
+          id:"a2t1", code:"T1", host:"FW-Edge (pfSense)", mode:"policy", prompt:"pfSense (FW-Edge) > ",
+          title:"Isolamento de DMZ, Default-Deny e NAT Seguro",
+          req:"Selecione as ações corretas para isolar a DMZ da LAN corporativa e publicar apenas o portal HTTPS na WAN.",
+          auditCmd:"Firewall > Rules > DMZ & WAN; NAT > Port Forward",
+          auditOut:"DMZ: Allow Any → Any (servidor público acessa toda a LAN!)\nWAN: Port Forward 22, 3306, 443 abertos para a internet",
+          options:[
+            {id:"o1", text:"Bloquear tráfego originado na DMZ com destino à rede LAN interna e ativar log na regra", ok:true},
+            {id:"o2", text:"Manter Port Forward na WAN apenas para TCP 443 (HTTPS) apontando para o Web-DMZ, removendo 22 e 3306 da WAN", ok:true},
+            {id:"o3", text:"Deixar a interface administrativa web do pfSense acessível pela WAN para manutenção rápida", ok:false},
+            {id:"o4", text:"Ativar 'Block bogon networks' na WAN e restringir a GUI do firewall à rede de gerência via HTTPS", ok:true},
+            {id:"o5", text:"Permitir conexão direta da internet (WAN) para a porta 3306 do banco na LAN", ok:false}
+          ],
+          hint:"Princípio de segmentação: DMZ nunca inicia conexão livre para a LAN, banco de dados nunca fica na WAN e painel do firewall só na gerência.",
+          safeOut:"DMZ isolada da LAN (BLOCK registrado) · WAN expõe apenas 443/TCP · GUI restrita à gerência"
+        },
+        {
+          id:"a2t2", code:"T2", host:"Web-DMZ (Apache)", mode:"cmd", prompt:"root@web-dmz:~# ",
+          title:"TLS 1.2/1.3, Headers de Segurança e Ocultação de Assinatura",
+          req:"Desabilitar TLS 1.0/1.1, ocultar versão do servidor (ServerTokens Prod / ServerSignature Off), desativar directory listing e aplicar headers HSTS, X-Frame-Options e X-Content-Type-Options.",
+          auditCmd:"curl -Ik https://portal.fintech.local | grep -iE 'server:|strict|x-frame|x-content'",
+          auditOut:"Server: Apache/2.4.57 (Rocky Linux) OpenSSL/3.0\nTLSv1.0 & TLSv1.1: ACCEPTED\nHSTS / X-Frame-Options / X-Content-Type-Options: AUSENTES",
+          placeholder:"ex.: SSLProtocol -all +TLSv1.2 +TLSv1.3; ServerTokens Prod; Header Strict-Transport-Security; Options -Indexes",
+          hint:"Use SSLProtocol -all +TLSv1.2 +TLSv1.3, ServerTokens Prod, ServerSignature Off, Options -Indexes e Header always set (Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options).",
+          example:"SSLProtocol -all +TLSv1.2 +TLSv1.3; ServerTokens Prod; ServerSignature Off; Options -Indexes; Header Strict-Transport-Security; X-Frame-Options DENY",
+          keys:["sslprotocol","tlsv1.2","servertokens","strict-transport","hsts","x-frame","-indexes"],
+          minHits:2,
+          safeOut:"TLSv1.2 / TLSv1.3 apenas · Server: Apache\nStrict-Transport-Security + X-Frame-Options: DENY + nosniff ativos · -Indexes OK"
+        },
+        {
+          id:"a2t3", code:"T3", host:"DB-Int (MariaDB)", mode:"cmd", prompt:"root@db-int:~# ",
+          title:"Hardening de Banco de Dados (Bind Local + Menor Privilégio)",
+          req:"Restringir escuta do MariaDB (bind-address), executar mysql_secure_installation (remover root remoto e anônimos) e criar usuário dedicado para a aplicação apenas com privilégios mínimos.",
+          auditCmd:"ss -tulpn | grep 3306; mysql -e \"SELECT user,host FROM mysql.user;\"",
+          auditOut:"LISTEN 0.0.0.0:3306 (exposto em todas interfaces!)\nroot@% · ''@localhost (anônimo) · app usando root",
+          placeholder:"ex.: mysql_secure_installation + bind-address = 127.0.0.1 + GRANT SELECT,INSERT ON app_db.*",
+          hint:"Configure bind-address = 127.0.0.1 (ou IP privado), local_infile = 0, rode mysql_secure_installation e crie usuário com GRANT restrito ao schema da aplicação.",
+          example:"mysql_secure_installation; bind-address = 127.0.0.1; local_infile = 0; GRANT SELECT,INSERT,UPDATE ON app_db.* TO 'app_user'@'localhost'",
+          keys:["mysql_secure_installation","bind-address","127.0.0.1","grant","local_infile"],
+          minHits:2,
+          safeOut:"LISTEN 127.0.0.1:3306 · root remoto e anônimos removidos\napp_user autenticado com privilégio mínimo apenas em app_db.*"
+        },
+        {
+          id:"a2t4", code:"T4", host:"Web-DMZ (Linux)", mode:"cmd", prompt:"root@web-dmz:~# ",
+          title:"Firewall de Host + Hardening de Kernel (sysctl)",
+          req:"Ativar firewalld em modo default-deny liberando apenas HTTPS, e endurecer parâmetros de kernel em /etc/sysctl.d/ (tcp_syncookies=1, rp_filter=1, accept_redirects=0, kptr_restrict=2).",
+          auditCmd:"systemctl is-active firewalld; sysctl net.ipv4.conf.all.accept_redirects kernel.kptr_restrict",
+          auditOut:"firewalld: inactive\nnet.ipv4.conf.all.accept_redirects = 1\nkernel.kptr_restrict = 0",
+          placeholder:"ex.: systemctl enable --now firewalld + sysctl accept_redirects=0 rp_filter=1 tcp_syncookies=1",
+          hint:"Ligue o firewalld (--add-service=https --permanent), crie /etc/sysctl.d/99-hardening.conf com syncookies/rp_filter/accept_redirects=0/kptr_restrict=2 e aplique com sysctl --system.",
+          example:"systemctl enable --now firewalld; firewall-cmd --permanent --add-service=https; sysctl -w net.ipv4.tcp_syncookies=1 net.ipv4.conf.all.rp_filter=1 net.ipv4.conf.all.accept_redirects=0 kernel.kptr_restrict=2",
+          keys:["firewalld","firewall-cmd","sysctl","syncookies","rp_filter","accept_redirects","kptr_restrict"],
+          minHits:2,
+          safeOut:"firewalld: active (apenas https liberado)\nsysctl --system: tcp_syncookies=1 · rp_filter=1 · accept_redirects=0 · kptr_restrict=2"
+        },
+        {
+          id:"a2t5", code:"T5", host:"Web-DMZ (auditd)", mode:"cmd", prompt:"root@web-dmz:~# ",
+          title:"Auditoria de Arquivos Críticos no Kernel (auditd)",
+          req:"Configurar regras persistentes no auditd monitorando escrita/atributos (-p wa) em /etc/passwd, /etc/shadow e /etc/sudoers e carregar com augenrules.",
+          auditCmd:"auditctl -l",
+          auditOut:"No rules (nenhuma auditoria ativa no kernel)",
+          placeholder:"ex.: -w /etc/shadow -p wa -k identity_changes + augenrules --load",
+          hint:"Adicione regras -w /etc/passwd -p wa -k ..., -w /etc/shadow -p wa -k ..., -w /etc/sudoers -p wa -k ... em /etc/audit/rules.d/hardening.rules e execute augenrules --load.",
+          example:"-w /etc/passwd -p wa -k identity; -w /etc/shadow -p wa -k identity; -w /etc/sudoers -p wa -k sudoers; augenrules --load",
+          keys:["auditctl","augenrules","-w","/etc/shadow","/etc/passwd","auditd"],
+          minHits:2,
+          safeOut:"auditd: active · 3 regras carregadas (/etc/passwd, /etc/shadow, /etc/sudoers)\nEventos rastreáveis em tempo real via ausearch -k"
+        },
+        {
+          id:"a2t6", code:"T6", host:"FW-Edge (Suricata)", mode:"policy", prompt:"pfSense (Suricata) > ",
+          title:"IDS / IPS no Perímetro + Integração com Syslog",
+          req:"Selecione as configurações corretas para ativar o Suricata detectando scans e ataques web com envio de alertas ao LogServer.",
+          auditCmd:"Services > Suricata > Interfaces & Alerts",
+          auditOut:"Suricata instalado, porém sem regras baixadas e nenhuma interface monitorada.",
+          options:[
+            {id:"o1", text:"Habilitar o pacote Emerging Threats Open (ET Open) e atualizar a base de regras", ok:true},
+            {id:"o2", text:"Ativar o monitoramento nas interfaces DMZ/LAN para enxergar os IPs reais dos hosts", ok:true},
+            {id:"o3", text:"Habilitar 'Send Alerts to System Log' para encaminhar alertas automaticamente ao rsyslog central", ok:true},
+            {id:"o4", text:"Desativar todos os logs de alerta para economizar CPU do firewall", ok:false}
+          ],
+          hint:"Um IDS útil precisa de regras atualizadas (ET Open), interface certa (enxergando IPs reais) e envio de alertas ao servidor central de logs.",
+          safeOut:"Suricata ativo (DMZ/LAN) com ET Open · [ALERT] ET SCAN detectado e enviado ao LogServer"
+        }
+      ]
+    },
+    {
+      id:"a3", num:"Prova A3", tag:"Windows AD & Zero Trust · 2h30", duration:9000,
+      title:"Domínio Active Directory Corporativo & Acesso Remoto Zero Trust",
+      summary:"Cenário focado em blindar um domínio Windows Server (GPO, SMB Signing, sem SMBv1/LLMNR, RDP NLA, Protected Users, Firewall/Auditoria) + PKI OpenSSL + OpenVPN.",
+      brief:"Uma auditoria apontou que a rede Windows AD permite captura de hashes na LAN (LLMNR/NTLMv1), movimento lateral sem SMB Signing e acesso remoto inseguro. Endureça o domínio, a auditoria, a CA interna e o acesso remoto via OpenVPN.",
+      hosts:"DC01 (Windows Server AD) · AppWin (Windows Server) · PKI-Linux (OpenSSL CA) · FW-Corp (OpenVPN)",
+      tasks:[
+        {
+          id:"a3t1", code:"T1", host:"DC01 (AD GPO)", mode:"cmd", prompt:"PS C:\\DC01> ",
+          title:"GPO de Domínio: Senhas, Lockout, Banner e Cache = 0",
+          req:"Aplicar na Default Domain Policy: senha >= 12 caracteres, histórico 15, bloqueio após 3 falhas (25 min), banner legal e CachedLogonsCount = 0, forçando atualização.",
+          auditCmd:"net accounts; (Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon').CachedLogonsCount",
+          auditOut:"Minimum password length: 7 · Lockout threshold: Never\nCachedLogonsCount: 10 (hashes salvos localmente)",
+          placeholder:"ex.: gpmc.msc Default Domain Policy (MinLen=12, Lockout=3, Cache=0) + gpupdate /force",
+          hint:"Configure Password Policy, Account Lockout Policy e Security Options (CachedLogonsCount=0 + Interactive logon banner) no gpmc.msc e rode gpupdate /force.",
+          example:"gpmc.msc Default Domain Policy: MinLen=12 History=15 Lockout=3 CachedLogonsCount=0; gpupdate /force",
+          keys:["gpmc","gpo","gpupdate","cache","lockout","12"],
+          minHits:2,
+          safeOut:"Default Domain Policy aplicada (gpupdate /force OK)\nMinLen=12 · History=15 · Lockout=3 (25 min) · CachedLogonsCount=0"
+        },
+        {
+          id:"a3t2", code:"T2", host:"DC01 + AppWin", mode:"cmd", prompt:"PS C:\\DC01> ",
+          title:"Eliminar Protocolos Legados: SMBv1, SMB Signing, NTLMv1 e LLMNR",
+          req:"Desabilitar SMBv1, exigir SMB Signing obrigatório, restringir autenticação para NTLMv2 apenas (LmCompatibilityLevel=5) e desligar LLMNR.",
+          auditCmd:"Get-SmbServerConfiguration | select EnableSMB1Protocol,RequireSecuritySignature",
+          auditOut:"EnableSMB1Protocol: True\nRequireSecuritySignature: False\nLmCompatibilityLevel: 2 · LLMNR: Enabled",
+          placeholder:"ex.: Set-SmbServerConfiguration -EnableSMB1Protocol $false -RequireSecuritySignature $true + NTLMv2 + LLMNR off",
+          hint:"Use Set-SmbServerConfiguration (-EnableSMB1Protocol $false -RequireSecuritySignature $true -Force) + GPO para SMB Signing, NTLMv2 only e Turn off multicast name resolution (LLMNR).",
+          example:"Set-SmbServerConfiguration -EnableSMB1Protocol $false -RequireSecuritySignature $true -Force; GPO NTLMv2 only; Turn off LLMNR",
+          keys:["set-smbserverconfiguration","enablesmb1protocol","requiresecuritysignature","signing","ntlmv2","llmnr"],
+          minHits:2,
+          safeOut:"EnableSMB1Protocol: False · RequireSecuritySignature: True\nLmCompatibilityLevel: 5 (NTLMv2 only) · LLMNR desativado"
+        },
+        {
+          id:"a3t3", code:"T3", host:"DC01 + AppWin", mode:"cmd", prompt:"PS C:\\DC01> ",
+          title:"RDP com NLA + Protected Users / LAPS / Menor Privilégio",
+          req:"Habilitar NLA no RDP (UserAuthentication=1), restringir porta 3389 à rede de gerência, remover contas indevidas de Domain Admins e adicionar admins ao grupo Protected Users.",
+          auditCmd:"Get-ADGroupMember 'Domain Admins'; (Get-ItemProperty '...\\RDP-Tcp').UserAuthentication",
+          auditOut:"UserAuthentication: 0 (sem NLA!)\nDomain Admins: Administrator, suporte_estagio, svc_app\nProtected Users: (vazio)",
+          placeholder:"ex.: UserAuthentication=1 + Remove-ADGroupMember 'Domain Admins' + Add-ADGroupMember 'Protected Users'",
+          hint:"Ajuste UserAuthentication = 1 no RDP-Tcp, restrinja Firewall do RDP, limpe Domain Admins com Remove-ADGroupMember e adicione admins ao grupo Protected Users (+ LAPS/gMSA).",
+          example:"Set-ItemProperty ... UserAuthentication 1; Remove-ADGroupMember 'Domain Admins' suporte_estagio; Add-ADGroupMember 'Protected Users' admin_tier0",
+          keys:["userauthentication","nla","protected users","remove-adgroupmember","add-adgroupmember","laps"],
+          minHits:2,
+          safeOut:"RDP UserAuthentication: 1 (NLA obrigatório) · acesso restrito à gerência\nDomain Admins enxuto · admins protegidos em Protected Users + LAPS"
+        },
+        {
+          id:"a3t4", code:"T4", host:"DC01 (Firewall & Logs)", mode:"cmd", prompt:"PS C:\\DC01> ",
+          title:"Windows Firewall, Desativar Print Spooler e Auditoria Avançada",
+          req:"Ativar os 3 perfis do Windows Firewall (Block na entrada), parar/desabilitar o serviço Spooler no DC e habilitar auditoria de Logon, Process Creation (4688) e PowerShell Script Block Logging (4104).",
+          auditCmd:"Get-NetFirewallProfile | select Name,Enabled; Get-Service Spooler; auditpol /get /subcategory:'Process Creation'",
+          auditOut:"Firewall: Domain=False, Private=False, Public=False\nSpooler: Running (Automatic)\nProcess Creation: No Auditing",
+          placeholder:"ex.: Set-NetFirewallProfile -Enabled True; Stop-Service Spooler; auditpol /set Process Creation",
+          hint:"Combine Set-NetFirewallProfile (-Enabled True -DefaultInboundAction Block), Stop-Service/Set-Service Spooler Disabled e auditpol /set para Logon + Process Creation + GPO Script Block Logging.",
+          example:"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True -DefaultInboundAction Block; Stop-Service Spooler; Set-Service Spooler -StartupType Disabled; auditpol /set /subcategory:'Process Creation' /success:enable",
+          keys:["set-netfirewallprofile","spooler","stop-service","auditpol","script block","4688"],
+          minHits:2,
+          safeOut:"Firewall Domain/Private/Public: True (DefaultInbound: Block)\nSpooler: Stopped/Disabled · Audit Logon + Process Creation + PowerShell 4104 ativos"
+        },
+        {
+          id:"a3t5", code:"T5", host:"PKI-Linux (OpenSSL)", mode:"cmd", prompt:"root@pki-linux:~# ",
+          title:"Root CA Interna RSA 4096 + Certificado Servidor com SAN",
+          req:"Criar Root CA interna com chave protegida (RSA 4096, chmod 400) e assinar o CSR do portal interno incluindo subjectAltName (SAN) e SHA-256.",
+          auditCmd:"openssl verify -CAfile rootCA.crt portal.crt",
+          auditOut:"error 18: self-signed certificate · chave 1024 bits · sem extensão subjectAltName (SAN)",
+          placeholder:"ex.: openssl genrsa 4096 + openssl x509 -req -CA rootCA.crt -sha256 -extfile subjectAltName",
+          hint:"Gere chave 4096 bits com permissão restrita (chmod 400/600) e assine com openssl x509 -req -in ... -CA rootCA.crt -CAkey rootCA.key -sha256 incluindo subjectAltName=DNS:...",
+          example:"openssl genrsa -out rootCA.key 4096 && chmod 400 rootCA.key; openssl x509 -req -in portal.csr -CA rootCA.crt -CAkey rootCA.key -sha256 -extfile subjectAltName",
+          keys:["openssl","4096","x509","subjectaltname","san","sha256","chmod"],
+          minHits:2,
+          safeOut:"portal.crt: OK (assinado pela Root CA interna)\nRSA 4096 · SHA-256 · SAN=DNS:portal.corp.local · chave privada chmod 600"
+        },
+        {
+          id:"a3t6", code:"T6", host:"FW-Corp (OpenVPN)", mode:"policy", prompt:"pfSense (FW-Corp) > ",
+          title:"VPN Remote Access Zero Trust (OpenVPN SSL/TLS)",
+          req:"Marque todas as práticas corretas para o acesso remoto corporativo Zero Trust.",
+          auditCmd:"VPN > OpenVPN > Servers; Firewall > Rules > OpenVPN",
+          auditOut:"Colaboradores remotos sem VPN · acesso direto exposto ou credencial compartilhada",
+          options:[
+            {id:"o1", text:"Emitir certificado individual por colaborador (revogável via CRL em caso de perda/desligamento)", ok:true},
+            {id:"o2", text:"Usar OpenVPN em modo Remote Access (SSL/TLS + User Auth) com TLS Encryption/Authentication ativo", ok:true},
+            {id:"o3", text:"Na aba Firewall > Rules > OpenVPN, liberar acesso apenas às sub-redes/portas que o colaborador realmente precisa", ok:true},
+            {id:"o4", text:"Compartilhar o mesmo arquivo .ovpn e a mesma chave privada entre todos os funcionários da empresa", ok:false}
+          ],
+          hint:"Zero Trust exige identidade individual (certificado revogável por pessoa) e menor privilégio nas regras da interface OpenVPN.",
+          safeOut:"OpenVPN SSL/TLS + MFA/User Auth ativo · certificados individuais · regras mínimas validadas"
+        }
+      ]
+    }
+  ];
+
+  /* ===================== PROVA B — 3 PROVAS DE SECURITY ASSESSMENT ===================== */
+  const EXAMS_B = [
+    {
+      id:"b1", num:"Prova B1", tag:"Estilo PDF Oficial · 2h", duration:7200,
+      title:"Servidor Linux + App de Cadastro & Consulta de Usuários",
+      summary:"Consultoria completa em servidor Linux exposto à internet hospedando aplicação web + banco de dados. Encontre as 4 falhas críticas (2 SO + 2 Web) e entregue o relatório técnico.",
+      brief:"Você foi contratado como especialista em segurança para realizar um Security Assessment em um servidor Linux de produção (usuário de auditoria: admin). Sua missão é investigar o SO e a aplicação web, identificar as 4 vulnerabilidades mais críticas (2 do SO + 2 da aplicação web) e preencher o Sumário Executivo + Tabela Técnica de Vulnerabilidades.",
+      prompt:"admin@srv-prod:~$ ",
+      quickCmds:["help","ls -l /etc/shadow /etc/passwd","sudo -l","find / -perm -4000 -type f","sshd -T | grep rootlogin","curl -I http://localhost","curl http://localhost/.env"],
+      commands:{
+        "help":"Comandos de auditoria disponíveis neste sandbox:\n  ls -l /etc/shadow /etc/passwd   · checar permissões de arquivos críticos\n  sudo -l                         · checar privilégios sudo do usuário\n  find / -perm -4000 -type f      · checar binários SUID\n  sshd -T | grep rootlogin        · checar política SSH\n  curl -I http://localhost        · checar cabeçalhos HTTP e diretórios\n  curl http://localhost/.env      · testar exposição de arquivo de ambiente\n  (Dica: use também a aba '🌐 Inspetor Web & Código' acima!)",
+        "ls -l /etc/shadow /etc/passwd":{
+          out:"-rw-r--r-- 1 root root 1142 /etc/shadow   <-- LEGÍVEL POR TODOS (644)!\n-rw-r--r-- 1 root root 1890 /etc/passwd   (permissão padrão)",
+          ev:"SO #1: /etc/shadow legível por todos (644)", cls:"bad"
+        },
+        "sudo -l":{
+          out:"User admin may run the following commands on srv-prod:\n    (ALL) NOPASSWD: /usr/bin/find   <-- BINÁRIO INTERATIVO COM NOPASSWD!",
+          ev:"SO #2: sudo NOPASSWD em binário perigoso (/usr/bin/find)", cls:"bad"
+        },
+        "find / -perm -4000 -type f":{
+          out:"/usr/bin/passwd\n/usr/bin/sudo\n/usr/bin/su\n(Apenas binários SUID padrão do sistema — estado normal)", cls:"good"
+        },
+        "sshd -T | grep rootlogin":{
+          out:"permitrootlogin no\npasswordauthentication no\n(SSH endurecido corretamente — estado normal)", cls:"good"
+        },
+        "curl -I http://localhost":{
+          out:"HTTP/1.1 200 OK\nServer: Apache/2.4\nX-Frame-Options: DENY\nGET /uploads/ → 200 OK (Index of /uploads - directory listing ativo!)",
+          ev:"Web (pista): directory listing ativo em /uploads", cls:"warn"
+        },
+        "curl http://localhost/.env":{
+          out:"HTTP/1.1 200 OK\nDB_HOST=127.0.0.1\nDB_USER=app_prod\nDB_PASS=Prod@DB_9981!\nAPP_SECRET=jwt_secret_key_prod",
+          ev:"Web #2: Arquivo .env exposto publicamente (credenciais em claro)", cls:"bad"
+        }
+      },
+      webFiles:[
+        {
+          name:"consulta_usuario.php (Trecho do código-fonte)",
+          code:"// Consulta de usuário no banco de dados:\n$busca = $_GET['nome'];\n$sql = \"SELECT id, nome, email FROM usuarios WHERE nome = '\" . $busca . \"'\";\n$res = mysqli_query($conn, $sql);   // <-- concatenação direta sem consulta parametrizada!",
+          ev:"Web #1: SQL Injection (consulta concatenada sem prepared statements)"
+        },
+        {
+          name:"apache_vhost.conf (Configuração pública)",
+          code:"<Directory /var/www/html>\n    Options +Indexes\n    AllowOverride None\n</Directory>\n# Nenhuma diretiva bloqueando acesso HTTP a arquivos .env ou .bak",
+          ev:"Web #2: Exposição de .env e directory listing (+Indexes)"
+        }
+      ],
+      vulnChoices:[
+        "Permissões frouxas em /etc/shadow (leitura pública de hashes)",
+        "Sudo mal configurado (NOPASSWD em binário perigoso)",
+        "SQL Injection (consulta concatenada sem prepared statements)",
+        "Exposição de arquivo sensível (.env) e Directory Listing",
+        "Binário SUID indevido no sistema",
+        "SSH com login de root habilitado",
+        "Cross-Site Scripting (XSS) refletido",
+        "Upload irrestrito de arquivos executáveis"
+      ],
+      expected:[
+        {name:"Permissões frouxas em /etc/shadow (leitura pública de hashes)", layer:"SO", risks:["Alto","Crítico"], fixKeys:["chmod","000","640","shadow","permiss","trocar"]},
+        {name:"Sudo mal configurado (NOPASSWD em binário perigoso)", layer:"SO", risks:["Alto","Crítico"], fixKeys:["visudo","sudoers","nopasswd","privil","remov"]},
+        {name:"SQL Injection (consulta concatenada sem prepared statements)", layer:"Web", risks:["Alto","Crítico"], fixKeys:["prepared","parametriz","pdo","bind","mysqli"]},
+        {name:"Exposição de arquivo sensível (.env) e Directory Listing", layer:"Web", risks:["Alto","Crítico","Médio"], fixKeys:["env","403","bloquear","cofre","-indexes","listing","rotacion","vari"]}
+      ]
+    },
+    {
+      id:"b2", num:"Prova B2", tag:"Linux + Uploads/IDOR · 2h", duration:7200,
+      title:"Servidor Linux + Portal Interno de Uploads & Perfis",
+      summary:"Avaliação de segurança em servidor de aplicação interno com agendamentos automáticos e portal de envio de documentos. Identifique 2 falhas de SO e 2 falhas Web.",
+      brief:"Uma empresa solicitou uma avaliação técnica do seu portal interno de envio de documentos (usuário de auditoria: auditor). Investigue tarefas agendadas, capabilities/permissões do SO e o código da aplicação web para encontrar as 4 falhas críticas e elaborar o relatório técnico.",
+      prompt:"auditor@portal-srv:~$ ",
+      quickCmds:["help","cat /etc/crontab","ls -la /opt/limpeza.sh","getcap -r /","ls -l /etc/shadow","sudo -l"],
+      commands:{
+        "help":"Comandos de auditoria disponíveis neste sandbox:\n  cat /etc/crontab          · listar tarefas agendadas\n  ls -la /opt/limpeza.sh    · verificar permissões do script do cron\n  getcap -r /               · listar capabilities em binários Linux\n  ls -l /etc/shadow         · verificar permissões de /etc/shadow\n  sudo -l                   · verificar regras de sudo\n  (Dica: inspecione também '🌐 Inspetor Web & Código'!)",
+        "cat /etc/crontab":{
+          out:"*/5 * * * * root /opt/limpeza.sh   <-- executa como ROOT a cada 5 min!",
+          ev:"SO (pista): tarefa cron executa /opt/limpeza.sh como root", cls:"warn"
+        },
+        "ls -la /opt/limpeza.sh":{
+          out:"-rwxrwxrwx 1 root root 412 /opt/limpeza.sh   <-- GRAVÁVEL POR QUALQUER USUÁRIO (777)!",
+          ev:"SO #1: Script de cron executado como root com permissão 777", cls:"bad"
+        },
+        "getcap -r /":{
+          out:"/usr/bin/python3.11 = cap_setuid+ep   <-- CAPABILITY PERIGOSA (permite elevar UID para root)!",
+          ev:"SO #2: Capability cap_setuid+ep indevida em /usr/bin/python3.11", cls:"bad"
+        },
+        "ls -l /etc/shadow":{
+          out:"---------- 1 root root 1088 /etc/shadow   (permissão segura 0000)", cls:"good"
+        },
+        "sudo -l":{
+          out:"User auditor may not run sudo on portal-srv.   (sem privilégio sudo — estado normal)", cls:"good"
+        }
+      },
+      webFiles:[
+        {
+          name:"upload.php (Recebimento de documentos)",
+          code:"// Salva o arquivo enviado direto em pasta pública executável:\n$dest = '/var/www/html/uploads/' . $_FILES['doc']['name'];\nmove_uploaded_file($_FILES['doc']['tmp_name'], $dest);\n// <-- Sem validação de extensão/tipo por allowlist e pasta permite execução de scripts!",
+          ev:"Web #1: Upload irrestrito de arquivos perigosos em pasta executável"
+        },
+        {
+          name:"perfil.php (Consulta de dados do cliente)",
+          code:"// Usuário logado em $_SESSION['user_id'], mas consulta usa direto $_GET['id']:\n$id = intval($_GET['id']);\n$stmt = $pdo->prepare('SELECT nome, cpf, salario FROM clientes WHERE id = ?');\n$stmt->execute([$id]);\n// <-- Não verifica se $id === $_SESSION['user_id'] (IDOR / Broken Access Control)!",
+          ev:"Web #2: Quebra de controle de acesso (IDOR) em perfil.php"
+        }
+      ],
+      vulnChoices:[
+        "Script de Cron executado como root gravável por todos (777)",
+        "Capability Linux perigosa (cap_setuid+ep) em binário interpretador",
+        "Upload irrestrito de arquivos perigosos em pasta executável",
+        "Broken Access Control / IDOR (consulta dados de terceiros sem validar dono)",
+        "Permissões frouxas em /etc/shadow",
+        "SQL Injection na consulta de perfil",
+        "NFS configurado com no_root_squash",
+        "Falta de bloqueio contra força bruta no login"
+      ],
+      expected:[
+        {name:"Script de Cron executado como root gravável por todos (777)", layer:"SO", risks:["Alto","Crítico"], fixKeys:["chmod","700","750","chown","root","permiss"]},
+        {name:"Capability Linux perigosa (cap_setuid+ep) em binário interpretador", layer:"SO", risks:["Alto","Crítico"], fixKeys:["setcap","-r","remov","capabilit"]},
+        {name:"Upload irrestrito de arquivos perigosos em pasta executável", layer:"Web", risks:["Crítico","Alto"], fixKeys:["allowlist","whitelist","extens","lista","execu","renome","fora"]},
+        {name:"Broken Access Control / IDOR (consulta dados de terceiros sem validar dono)", layer:"Web", risks:["Alto","Crítico","Médio"], fixKeys:["autoriz","session","dono","servidor","403","compar","permiss"]}
+      ]
+    },
+    {
+      id:"b3", num:"Prova B3", tag:"Windows + Portal Web · 2h", duration:7200,
+      title:"Servidor Windows Corporativo + Portal de Atendimento",
+      summary:"Security Assessment em servidor Windows Server que hospeda um portal web corporativo. Descubra 2 falhas críticas de SO Windows e 2 falhas da aplicação Web.",
+      brief:"Você foi chamado para auditar um servidor Windows Server interno (usuário de auditoria: auditor_win) que também hospeda um portal web de atendimento. Analise serviços, registro, privilégios do Windows e os trechos da aplicação web para documentar as 4 vulnerabilidades prioritárias.",
+      prompt:"C:\\Auditoria> ",
+      quickCmds:["help","wmic service get name,pathname","icacls \"C:\\Program Files\\PortalSvc\"","reg query HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Installer /v AlwaysInstallElevated","whoami /priv","sc query Spooler"],
+      commands:{
+        "help":"Comandos de auditoria Windows disponíveis neste sandbox:\n  wmic service get name,pathname             · listar caminhos de serviços\n  icacls \"C:\\Program Files\\PortalSvc\"       · checar permissões da pasta do serviço\n  reg query ... AlwaysInstallElevated        · checar política de instaladores MSI\n  whoami /priv                               · checar privilégios do token atual\n  sc query Spooler                           · checar status do Print Spooler\n  (Dica: inspecione também '🌐 Inspetor Web & Código'!)",
+        "wmic service get name,pathname":{
+          out:"Name       PathName\nPortalSvc  C:\\Program Files\\Portal Svc\\agent.exe   <-- CAMINHO COM ESPAÇO SEM ASPAS!",
+          ev:"SO #1: Unquoted Service Path em PortalSvc (caminho com espaço sem aspas)", cls:"bad"
+        },
+        "icacls \"C:\\Program Files\\PortalSvc\"":{
+          out:"C:\\Program Files\\Portal Svc BUILTIN\\Users:(F)   <-- USERS TEM CONTROLE TOTAL NA PASTA!",
+          ev:"SO #1 (reforço): ACL permissiva (Users:F) na pasta do serviço PortalSvc", cls:"bad"
+        },
+        "reg query HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Installer /v AlwaysInstallElevated":{
+          out:"AlwaysInstallElevated    REG_DWORD    0x1   <-- HABILITADO (qualquer .msi roda como SYSTEM)!",
+          ev:"SO #2: AlwaysInstallElevated habilitado (0x1)", cls:"bad"
+        },
+        "whoami /priv":{
+          out:"SeChangeNotifyPrivilege    Enabled   (privilégio padrão de usuário comum — estado normal)", cls:"good"
+        },
+        "sc query Spooler":{
+          out:"SERVICE_NAME: Spooler  STATE: 1  STOPPED   (desativado corretamente — estado normal)", cls:"good"
+        }
+      },
+      webFiles:[
+        {
+          name:"busca.php + Resposta HTTP (Portal de Atendimento)",
+          code:"// Código exibe o parâmetro de busca diretamente no HTML sem escape:\necho \"<h3>Resultados para: \" . $_GET['termo'] . \"</h3>\";\n\n// Headers HTTP observados:\nContent-Security-Policy: (ausente)\nStrict-Transport-Security: (ausente)",
+          ev:"Web #1: Cross-Site Scripting (XSS) sem escape de saída + ausência de CSP/HSTS"
+        },
+        {
+          name:"login.php (Autenticação do Portal)",
+          code:"// Sem limite de tentativas de login e cookie de sessão sem flags de segurança:\nif (md5($pass) === $row['pass_hash']) {\n    setcookie('SESSID', $token, time()+86400, '/'); // <-- sem HttpOnly/Secure + hash MD5 + sem lockout!\n}",
+          ev:"Web #2: Autenticação fraca (sem bloqueio força bruta, MD5 e cookie sem HttpOnly/Secure)"
+        }
+      ],
+      vulnChoices:[
+        "Unquoted Service Path e ACL fraca em serviço Windows (PortalSvc)",
+        "AlwaysInstallElevated habilitado (0x1) no Registro do Windows",
+        "Cross-Site Scripting (XSS) por saída sem escape + ausência de CSP/HSTS",
+        "Falha de Autenticação (sem bloqueio contra força bruta, MD5 e cookie sem HttpOnly/Secure)",
+        "SeImpersonatePrivilege habilitado para usuário comum",
+        "Print Spooler ativo e vulnerável no servidor",
+        "Path Traversal no download de arquivos",
+        "OS Command Injection em formulário de diagnóstico"
+      ],
+      expected:[
+        {name:"Unquoted Service Path e ACL fraca em serviço Windows (PortalSvc)", layer:"SO", risks:["Alto","Crítico"], fixKeys:["aspas","binpath","sc config","icacls","acl","permiss"]},
+        {name:"AlwaysInstallElevated habilitado (0x1) no Registro do Windows", layer:"SO", risks:["Crítico","Alto"], fixKeys:["0x0","desabilit","gpo","reg","0","desativ"]},
+        {name:"Cross-Site Scripting (XSS) por saída sem escape + ausência de CSP/HSTS", layer:"Web", risks:["Médio","Alto","Crítico"], fixKeys:["htmlspecialchars","escap","encode","csp","header","hsts"]},
+        {name:"Falha de Autenticação (sem bloqueio contra força bruta, MD5 e cookie sem HttpOnly/Secure)", layer:"Web", risks:["Alto","Crítico","Médio"], fixKeys:["bloqueio","lockout","bcrypt","argon","httponly","secure","mfa","limite"]}
+      ]
+    }
+  ];
+
+  /* ===================== RENDERIZADOR PROVA A ===================== */
+  (function initProvaAExams(){
+    var grid=document.getElementById("exAGrid"), arena=document.getElementById("exAArena");
+    if(!grid || !arena) return;
+    var STORE="cs_exams_A_v1";
+    var state={}; try{ state=JSON.parse(localStorage.getItem(STORE)||"{}"); }catch(e){ state={}; }
+    function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+    var activeExam=EXAMS_A[0], activeTaskIdx=0, timerInt=null, remSec=activeExam.duration, running=false;
+    var logs={}; // examId:taskId -> array of lines
+
+    function doneCount(ex){
+      var st=state[ex.id]||{};
+      return ex.tasks.filter(t=>!!st[t.id]).length;
+    }
+
+    function renderGrid(){
+      grid.innerHTML="";
+      EXAMS_A.forEach(function(ex){
+        var dc=doneCount(ex), tot=ex.tasks.length;
+        var card=document.createElement("div");
+        card.className="excard"+(ex.id===activeExam.id?" active":"");
+        card.innerHTML='<div class="exbadges"><span class="exnum">'+esc(ex.num)+'</span><span class="extag">'+esc(ex.tag)+'</span></div>'
+          +'<h3>'+esc(ex.title)+'</h3><p>'+esc(ex.summary)+'</p>'
+          +'<div class="exstat">'+(dc===tot?'✅ Concluída ('+dc+'/'+tot+')':'🎯 Progresso: '+dc+' / '+tot+' tarefas')+'</div>';
+        card.onclick=function(){
+          stopTimer(); activeExam=ex; activeTaskIdx=0; remSec=ex.duration;
+          renderGrid(); renderArena();
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function stopTimer(){ if(timerInt){ clearInterval(timerInt); timerInt=null; } running=false; }
+    function updateClk(){ var el=document.getElementById("exAClk"); if(el) el.textContent=fmtTime(remSec); }
+
+    function renderArena(){
+      var ex=activeExam, task=ex.tasks[activeTaskIdx], st=state[ex.id]||{};
+      var dc=doneCount(ex), tot=ex.tasks.length;
+      var tKey=ex.id+":"+task.id;
+      if(!logs[tKey]) logs[tKey]=[{c:"sys", t:"Host conectado: "+task.host+". Clique em '🔍 Auditar estado atual' para iniciar o diagnóstico."}];
+
+      var html='<div class="exhead"><div><h2>'+esc(ex.num)+' — '+esc(ex.title)+'</h2><p class="exdesc">'+esc(ex.brief)+'</p></div>'
+        +'<div class="extimer"><span class="clk" id="exAClk">'+fmtTime(remSec)+'</span>'
+        +'<button class="exbtn blue" id="exATog" type="button">'+(running?'⏸ Pausar':'▶ Iniciar')+'</button>'
+        +'<button class="exbtn" id="exARstT" type="button">↺</button>'
+        +'<button class="exbtn pri" id="exAExp" type="button">📄 Exportar</button></div></div>'
+        +'<div class="exbrief">'
+        +'<div class="exbox"><h4>🌐 Topologia / Escopo do Ambiente</h4>'+esc(ex.hosts)+'</div>'
+        +'<div class="exbox"><h4>📊 Status da Prova</h4><b>'+dc+' de '+tot+'</b> tarefas validadas ('+Math.round((dc/tot)*100)+'%). '
+        +'<button class="exbtn" id="exAClear" type="button" style="margin-left:8px;padding:3px 8px;font-size:11.5px">Reiniciar prova</button></div></div>'
+        +'<div class="exsplit"><div class="extlist" id="exATList"></div><div class="exwork" id="exAWork"></div></div>';
+      arena.innerHTML=html;
+
+      // timer handlers
+      document.getElementById("exATog").onclick=function(){
+        if(running){ stopTimer(); } else {
+          running=true;
+          timerInt=setInterval(function(){ if(remSec>0){ remSec--; updateClk(); } else { stopTimer(); } },1000);
+        }
+        this.textContent=running?'⏸ Pausar':'▶ Iniciar';
+      };
+      document.getElementById("exARstT").onclick=function(){ stopTimer(); remSec=ex.duration; updateClk(); document.getElementById("exATog").textContent='▶ Iniciar'; };
+      document.getElementById("exAClear").onclick=function(){ state[ex.id]={}; save(); logs={}; renderGrid(); renderArena(); };
+      document.getElementById("exAExp").onclick=function(){
+        var lines=["RELATORIO DE TREINO - "+ex.num+" ("+ex.title+")","Data: "+new Date().toLocaleString(),"Status: "+doneCount(ex)+"/"+ex.tasks.length+" tarefas concluidas",""];
+        ex.tasks.forEach(function(t){
+          var ok=!!(state[ex.id]&&state[ex.id][t.id]);
+          lines.push("["+(ok?"OK":"PENDENTE")+"] "+t.code+" - "+t.title+" ("+t.host+")");
+          if(ok && typeof state[ex.id][t.id]==="string") lines.push("   Resposta aplicada: "+state[ex.id][t.id]);
+        });
+        dlText("RELATORIO_"+ex.id.toUpperCase()+".txt", lines.join("\n"));
+      };
+
+      // task list
+      var tlist=document.getElementById("exATList");
+      ex.tasks.forEach(function(t, idx){
+        var isDone=!!st[t.id];
+        var item=document.createElement("button"); item.type="button";
+        item.className="extitem"+(idx===activeTaskIdx?" active":"")+(isDone?" done":"");
+        item.innerHTML='<div class="etop"><span>'+esc(t.code)+' · '+esc(t.host)+'</span><span>'+(isDone?'✅ OK':'⏳')+'</span></div>'
+          +'<div class="etit">'+esc(t.title)+'</div>';
+        item.onclick=function(){ activeTaskIdx=idx; renderArena(); };
+        tlist.appendChild(item);
+      });
+
+      // workspace
+      var work=document.getElementById("exAWork");
+      var wHtml='<div><div style="font-size:11.5px;font-family:var(--mono);color:var(--acc2)">'+esc(task.code)+' · '+esc(task.host)+'</div>'
+        +'<h3 style="margin:4px 0 6px;font-size:17px">'+esc(task.title)+'</h3>'
+        +'<p style="margin:0;color:var(--mut);font-size:13.5px">'+esc(task.req)+'</p></div>'
+        +'<div class="exrow"><button class="exbtn warn" id="exAAudit" type="button">🔍 Auditar estado atual</button>'
+        +'<button class="exbtn" id="exAHintBtn" type="button">💡 Dica conceitual</button>'
+        +(task.example?'<button class="exbtn" id="exAExBtn" type="button">👁 Ver exemplo de solução</button>':'')
+        +'</div>'
+        +'<div class="exhint" id="exAHintBox"></div>'
+        +'<div class="exterm" id="exATerm"></div>';
+
+      if(task.mode==="cmd"){
+        wHtml+='<div class="exrow"><input type="text" id="exAInp" placeholder="'+esc(task.placeholder||"Digite os comandos ou diretivas de hardening...")+'" autocapitalize="off" spellcheck="false">'
+          +'<button class="exbtn pri" id="exAVal" type="button">✅ Aplicar e Validar</button></div>';
+      } else {
+        wHtml+='<div class="exopts" id="exAOpts"><div style="font-size:12px;color:var(--mut);margin-bottom:2px">Marque TODAS as configurações corretas para este ambiente:</div>';
+        task.options.forEach(function(o){
+          wHtml+='<label><input type="checkbox" value="'+esc(o.id)+'"><span>'+esc(o.text)+'</span></label>';
+        });
+        wHtml+='</div><div class="exrow"><button class="exbtn pri" id="exAVal" type="button">✅ Aplicar Política e Validar</button></div>';
+      }
+      if(activeTaskIdx < ex.tasks.length-1){
+        wHtml+='<div class="exrow" style="justify-content:flex-end"><button class="exbtn blue" id="exANext" type="button">Próxima tarefa →</button></div>';
+      }
+      work.innerHTML=wHtml;
+
+      function renderTerm(){
+        var el=document.getElementById("exATerm");
+        el.innerHTML=logs[tKey].map(l=>'<div class="ln '+l.c+'">'+l.t+'</div>').join("");
+        el.scrollTop=el.scrollHeight;
+      }
+      renderTerm();
+
+      document.getElementById("exAAudit").onclick=function(){
+        logs[tKey].push({c:"", t:'<span class="pr">'+esc(task.prompt)+'</span><span class="cc">'+esc(task.auditCmd)+'</span>'});
+        task.auditOut.split("\n").forEach(ln=>logs[tKey].push({c:"bad", t:esc(ln)}));
+        logs[tKey].push({c:"warn", t:"⚠  Auditoria concluída: aplique os controles solicitados no enunciado."});
+        renderTerm();
+      };
+      document.getElementById("exAHintBtn").onclick=function(){
+        var hb=document.getElementById("exAHintBox");
+        hb.innerHTML="💡 <b>Dica:</b> "+esc(task.hint); hb.classList.add("show");
+      };
+      var exBtn=document.getElementById("exAExBtn");
+      if(exBtn){
+        exBtn.onclick=function(){
+          var hb=document.getElementById("exAHintBox");
+          hb.innerHTML="🛠️ <b>Exemplo de referência:</b> <code>"+esc(task.example)+"</code>"; hb.classList.add("show");
+        };
+      }
+      var nextBtn=document.getElementById("exANext");
+      if(nextBtn){ nextBtn.onclick=function(){ activeTaskIdx++; renderArena(); }; }
+
+      function markDone(ans){
+        if(!state[ex.id]) state[ex.id]={};
+        state[ex.id][task.id]=ans||true;
+        save();
+        task.safeOut.split("\n").forEach(ln=>logs[tKey].push({c:"good", t:esc(ln)}));
+        logs[tKey].push({c:"good", t:"✅  Tarefa "+task.code+" validada com sucesso! Serviços seguem operacionais."});
+        renderTerm(); renderGrid();
+        // update task pill without wiping terminal
+        var pills=document.querySelectorAll("#exATList .extitem");
+        if(pills[activeTaskIdx]){
+          pills[activeTaskIdx].classList.add("done");
+          pills[activeTaskIdx].querySelector(".etop span:last-child").textContent="✅ OK";
+        }
+      }
+
+      document.getElementById("exAVal").onclick=function(){
+        if(task.mode==="cmd"){
+          var inp=document.getElementById("exAInp");
+          var val=(inp.value||"").trim();
+          if(!val){ logs[tKey].push({c:"warn", t:"⚠  Digite o comando ou diretiva de hardening antes de validar."}); renderTerm(); return; }
+          logs[tKey].push({c:"", t:'<span class="pr">'+esc(task.prompt)+'</span><span class="cc">'+esc(val)+'</span>'});
+          var low=val.toLowerCase();
+          var hits=task.keys.filter(k=>low.indexOf(k.toLowerCase())>=0).length;
+          if(hits >= (task.minHits||1)){
+            markDone(val);
+          } else {
+            logs[tKey].push({c:"bad", t:"❌  Configuração incompleta ou incorreta para os requisitos da tarefa ("+hits+"/"+(task.minHits||1)+" controles-chave detectados). Consulte a dica se precisar."});
+            renderTerm();
+          }
+        } else {
+          var checked=Array.from(document.querySelectorAll("#exAOpts input:checked")).map(x=>x.value);
+          var right=task.options.filter(o=>o.ok).map(o=>o.id);
+          var wrong=checked.filter(id=>right.indexOf(id)<0);
+          var missed=right.filter(id=>checked.indexOf(id)<0);
+          if(wrong.length===0 && missed.length===0){
+            logs[tKey].push({c:"", t:'<span class="pr">'+esc(task.prompt)+'</span><span class="cc">apply-policy --verify</span>'});
+            markDone("Política aplicada ("+right.length+" controles corretos)");
+          } else {
+            logs[tKey].push({c:"bad", t:"❌  Revise sua seleção: "+(wrong.length?"há "+wrong.length+" opção(ões) insegura(s) marcada(s). ":"")+(missed.length?"faltou marcar "+missed.length+" controle(s) obrigatório(s).":"")});
+            renderTerm();
+          }
+        }
+      };
+      var inpEl=document.getElementById("exAInp");
+      if(inpEl){ inpEl.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); document.getElementById("exAVal").click(); } }); }
+    }
+
+    renderGrid(); renderArena();
+  })();
+
+  /* ===================== RENDERIZADOR PROVA B ===================== */
+  (function initProvaBExams(){
+    var grid=document.getElementById("exBGrid"), arena=document.getElementById("exBArena");
+    if(!grid || !arena) return;
+    var STORE="cs_exams_B_v1";
+    var state={}; try{ state=JSON.parse(localStorage.getItem(STORE)||"{}"); }catch(e){ state={}; }
+    function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+    var activeExam=EXAMS_B[0], subTab="term", timerInt=null, remSec=activeExam.duration, running=false;
+    var termLogs={}, foundEv={};
+
+    function renderGrid(){
+      grid.innerHTML="";
+      EXAMS_B.forEach(function(ex){
+        var st=state[ex.id]||{};
+        var badge=st.passed?'✅ Relatório aprovado ('+(st.score||4)+'/4)':(st.score?'📝 Última avaliação: '+st.score+'/4':'🎯 4 vulnerabilidades (2 SO + 2 Web)');
+        var card=document.createElement("div");
+        card.className="excard"+(ex.id===activeExam.id?" active":"");
+        card.innerHTML='<div class="exbadges"><span class="exnum">'+esc(ex.num)+'</span><span class="extag">'+esc(ex.tag)+'</span></div>'
+          +'<h3>'+esc(ex.title)+'</h3><p>'+esc(ex.summary)+'</p>'
+          +'<div class="exstat">'+badge+'</div>';
+        card.onclick=function(){
+          stopTimer(); activeExam=ex; subTab="term"; remSec=ex.duration;
+          renderGrid(); renderArena();
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function stopTimer(){ if(timerInt){ clearInterval(timerInt); timerInt=null; } running=false; }
+    function updateClk(){ var el=document.getElementById("exBClk"); if(el) el.textContent=fmtTime(remSec); }
+
+    function addEvidence(exId, txt){
+      if(!txt) return;
+      if(!foundEv[exId]) foundEv[exId]=[];
+      if(foundEv[exId].indexOf(txt)<0) foundEv[exId].push(txt);
+    }
+
+    function renderArena(){
+      var ex=activeExam;
+      if(!termLogs[ex.id]) termLogs[ex.id]=[{c:"sys", t:"Sessão de auditoria iniciada. Digite 'help' ou clique nos comandos rápidos abaixo para investigar o servidor."}];
+      if(!foundEv[ex.id]) foundEv[ex.id]=[];
+      var saved=state[ex.id]||{};
+      var rows=saved.rows || [{v:"",l:"SO",r:"Alto",i:"",f:""},{v:"",l:"SO",r:"Alto",i:"",f:""},{v:"",l:"Web",r:"Alto",i:"",f:""},{v:"",l:"Web",r:"Alto",i:"",f:""}];
+
+      var html='<div class="exhead"><div><h2>'+esc(ex.num)+' — '+esc(ex.title)+'</h2><p class="exdesc">'+esc(ex.brief)+'</p></div>'
+        +'<div class="extimer"><span class="clk" id="exBClk">'+fmtTime(remSec)+'</span>'
+        +'<button class="exbtn blue" id="exBTog" type="button">'+(running?'⏸ Pausar':'▶ Iniciar')+'</button>'
+        +'<button class="exbtn" id="exBRstT" type="button">↺</button>'
+        +'<button class="exbtn pri" id="exBExp" type="button">📄 Exportar Relatório</button></div></div>';
+
+      // Sandbox area
+      html+='<div class="exbox" style="margin-bottom:14px">'
+        +'<div class="exsubtabs">'
+        +'<button class="exstab'+(subTab==="term"?" active":"")+'" id="exBTabT" type="button">💻 Terminal de Auditoria (SO)</button>'
+        +'<button class="exstab'+(subTab==="web"?" active":"")+'" id="exBTabW" type="button">🌐 Inspetor Web &amp; Código</button>'
+        +'</div>'
+        +'<div id="exBSandbox"></div>'
+        +'<div style="margin-top:10px;font-size:12px;color:var(--mut)">🔍 <b>Pistas/Evidências coletadas nesta sessão:</b><div class="exevid" id="exBEvid"></div></div>'
+        +'</div>';
+
+      // Report area (mirrors PDF page 5)
+      html+='<div class="exrep"><h4>📋 Relatório de Consultoria (Sumário Executivo + Tabela Técnica)</h4>'
+        +'<label style="display:block;font-size:12.5px;color:var(--mut);margin-bottom:5px"><b>Sumário Executivo</b> (explique para a diretoria o cenário geral, os riscos críticos encontrados e a prioridade de ação):</label>'
+        +'<textarea id="exBSum" placeholder="Ex.: Durante a avaliação técnica no servidor de produção foram identificadas 4 falhas críticas (2 no SO e 2 na aplicação web) que permitem escalonamento de privilégio e vazamento de dados...">'+esc(saved.summary||"")+'</textarea>'
+        +'<div style="overflow-x:auto;margin-top:12px"><table class="exrtbl"><thead><tr>'
+        +'<th style="min-width:220px">Vulnerabilidade Identificada</th><th style="width:78px">Camada</th><th style="width:96px">Risco</th><th style="min-width:150px">Impacto Real</th><th style="min-width:190px">Recomendação Técnica (Correção)</th>'
+        +'</tr></thead><tbody id="exBRows"></tbody></table></div>'
+        +'<div class="exrow" style="margin-top:14px">'
+        +'<button class="exbtn pri" id="exBEval" type="button">🔎 Avaliar Relatório</button>'
+        +'<button class="exbtn" id="exBClear" type="button">↺ Limpar respostas</button>'
+        +'</div>'
+        +'<div class="exfb" id="exBFb"></div></div>';
+
+      arena.innerHTML=html;
+
+      // Timer
+      document.getElementById("exBTog").onclick=function(){
+        if(running){ stopTimer(); } else {
+          running=true;
+          timerInt=setInterval(function(){ if(remSec>0){ remSec--; updateClk(); } else { stopTimer(); } },1000);
+        }
+        this.textContent=running?'⏸ Pausar':'▶ Iniciar';
+      };
+      document.getElementById("exBRstT").onclick=function(){ stopTimer(); remSec=ex.duration; updateClk(); document.getElementById("exBTog").textContent='▶ Iniciar'; };
+
+      // Sandbox switcher
+      document.getElementById("exBTabT").onclick=function(){ subTab="term"; renderSandbox(); this.classList.add("active"); document.getElementById("exBTabW").classList.remove("active"); };
+      document.getElementById("exBTabW").onclick=function(){ subTab="web"; renderSandbox(); this.classList.add("active"); document.getElementById("exBTabT").classList.remove("active"); };
+
+      function renderEvid(){
+        var el=document.getElementById("exBEvid");
+        var arr=foundEv[ex.id]||[];
+        el.innerHTML = arr.length ? arr.map(x=>'<span class="ev">⚠ '+esc(x)+'</span>').join("") : '<span style="color:var(--mut2)">Nenhuma evidência coletada ainda — execute comandos de auditoria ou abra os arquivos web.</span>';
+      }
+
+      function runBCmd(raw){
+        var cmd=(raw||"").trim(); if(!cmd) return;
+        termLogs[ex.id].push({c:"", t:'<span class="pr">'+esc(ex.prompt)+'</span><span class="cc">'+esc(cmd)+'</span>'});
+        var key=Object.keys(ex.commands).find(k=>k.toLowerCase()===cmd.toLowerCase()) ||
+                Object.keys(ex.commands).find(k=>cmd.toLowerCase().indexOf(k.toLowerCase().split(" ")[0])===0 && k.toLowerCase().indexOf(cmd.toLowerCase().split(" ")[1]||"")>=0);
+        if(!key){
+          termLogs[ex.id].push({c:"out", t:"Comando não simulado neste sandbox. Digite 'help' ou use os botões de comandos rápidos."});
+        } else {
+          var res=ex.commands[key];
+          if(typeof res==="string"){
+            res.split("\n").forEach(ln=>termLogs[ex.id].push({c:"sys", t:esc(ln)}));
+          } else {
+            res.out.split("\n").forEach(ln=>termLogs[ex.id].push({c:res.cls||"out", t:esc(ln)}));
+            if(res.ev) addEvidence(ex.id, res.ev);
+          }
+        }
+        renderSandbox(); renderEvid();
+      }
+
+      function renderSandbox(){
+        var box=document.getElementById("exBSandbox");
+        if(subTab==="term"){
+          box.innerHTML='<div class="exchips" id="exBChips" style="margin-bottom:8px"></div>'
+            +'<div class="exterm" id="exBTerm"></div>'
+            +'<div class="exrow" style="margin-top:8px"><input type="text" id="exBCmdInp" placeholder="Digite um comando de auditoria (ex.: sudo -l, ls -l /etc/shadow, help)..." autocapitalize="off" spellcheck="false">'
+            +'<button class="exbtn blue" id="exBRun" type="button">▶ Executar</button></div>';
+          var ch=document.getElementById("exBChips");
+          ex.quickCmds.forEach(function(c){
+            var b=document.createElement("button"); b.type="button"; b.className="exchip"; b.textContent=c;
+            b.onclick=function(){ runBCmd(c); };
+            ch.appendChild(b);
+          });
+          var tEl=document.getElementById("exBTerm");
+          tEl.innerHTML=termLogs[ex.id].map(l=>'<div class="ln '+l.c+'">'+l.t+'</div>').join("");
+          tEl.scrollTop=tEl.scrollHeight;
+          var inp=document.getElementById("exBCmdInp");
+          document.getElementById("exBRun").onclick=function(){ runBCmd(inp.value); };
+          inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); runBCmd(inp.value); } });
+        } else {
+          var wHtml='';
+          ex.webFiles.forEach(function(f, idx){
+            wHtml+='<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+              +'<b style="font-size:13px;color:var(--acc2)">📄 '+esc(f.name)+'</b>'
+              +'<button class="exbtn warn" data-wev="'+idx+'" type="button" style="padding:3px 9px;font-size:11.5px">📌 Registrar achado</button></div>'
+              +'<div class="excode">'+esc(f.code)+'</div></div>';
+          });
+          box.innerHTML=wHtml;
+          box.querySelectorAll("button[data-wev]").forEach(function(btn){
+            btn.onclick=function(){
+              var f=ex.webFiles[parseInt(btn.dataset.wev,10)];
+              if(f && f.ev){ addEvidence(ex.id, f.ev); renderEvid(); btn.textContent="✅ Registrado"; }
+            };
+          });
+        }
+      }
+      renderSandbox(); renderEvid();
+
+      // Populate report table rows
+      var tbody=document.getElementById("exBRows");
+      rows.forEach(function(r, idx){
+        var tr=document.createElement("tr");
+        var opts='<option value="">-- selecione a vulnerabilidade ('+(idx<2?'SO':'Web')+') --</option>';
+        ex.vulnChoices.forEach(function(c){ opts+='<option value="'+esc(c)+'"'+(r.v===c?' selected':'')+'>'+esc(c)+'</option>'; });
+        tr.innerHTML='<td><select data-f="v">'+opts+'</select></td>'
+          +'<td><select data-f="l"><option value="SO"'+(r.l==="SO"?' selected':'')+'>SO</option><option value="Web"'+(r.l==="Web"?' selected':'')+'>Web</option></select></td>'
+          +'<td><select data-f="r"><option'+(r.r==="Baixo"?' selected':'')+'>Baixo</option><option'+(r.r==="Médio"?' selected':'')+'>Médio</option><option'+(r.r==="Alto"?' selected':'')+'>Alto</option><option'+(r.r==="Crítico"?' selected':'')+'>Crítico</option></select></td>'
+          +'<td><input type="text" data-f="i" value="'+esc(r.i||"")+'" placeholder="Ex.: acesso root / vazamento de dados"></td>'
+          +'<td><input type="text" data-f="f" value="'+esc(r.f||"")+'" placeholder="Ex.: prepared statements / chmod / visudo"></td>';
+        tbody.appendChild(tr);
+      });
+
+      function collectReport(){
+        var sum=(document.getElementById("exBSum").value||"").trim();
+        var list=Array.from(tbody.querySelectorAll("tr")).map(function(tr){
+          return {
+            v:tr.querySelector('[data-f="v"]').value,
+            l:tr.querySelector('[data-f="l"]').value,
+            r:tr.querySelector('[data-f="r"]').value,
+            i:(tr.querySelector('[data-f="i"]').value||"").trim(),
+            f:(tr.querySelector('[data-f="f"]').value||"").trim()
+          };
+        });
+        return {summary:sum, rows:list};
+      }
+
+      document.getElementById("exBClear").onclick=function(){
+        state[ex.id]={}; save(); renderGrid(); renderArena();
+      };
+
+      document.getElementById("exBExp").onclick=function(){
+        var rep=collectReport();
+        var out=["RESPOSTAS MODULO B - "+ex.num+" ("+ex.title+")","Data: "+new Date().toLocaleString(),"",
+          "=== SUMARIO EXECUTIVO ===", rep.summary || "(não preenchido)", "",
+          "=== DOCUMENTACAO TECNICA (TABELA DE VULNERABILIDADES) ==="];
+        rep.rows.forEach(function(r, i){
+          out.push((i+1)+". ["+r.l+" | Risco: "+r.r+"] "+(r.v||"(não selecionada)"));
+          out.push("   Impacto: "+(r.i||"-"));
+          out.push("   Remediacao: "+(r.f||"-"));
+        });
+        dlText("RESPOSTAS_MODB_"+ex.id.toUpperCase()+".txt", out.join("\n"));
+      };
+
+      document.getElementById("exBEval").onclick=function(){
+        var rep=collectReport();
+        var fb=document.getElementById("exBFb");
+        var matched=0, details=[], usedNames={};
+        rep.rows.forEach(function(r, idx){
+          var n=idx+1;
+          if(!r.v){ details.push('<div class="fbi">❌ <b>Linha '+n+':</b> nenhuma vulnerabilidade selecionada.</div>'); return; }
+          if(usedNames[r.v]){ details.push('<div class="fbi">⚠ <b>Linha '+n+':</b> vulnerabilidade duplicada no relatório.</div>'); return; }
+          usedNames[r.v]=true;
+          var exp=ex.expected.find(e=>e.name===r.v);
+          if(!exp){
+            details.push('<div class="fbi">❌ <b>Linha '+n+' ('+esc(r.v)+'):</b> falso positivo — esse item não está vulnerável neste cenário. Revise as evidências no terminal/código.</div>');
+            return;
+          }
+          var layerOk=(r.l===exp.layer);
+          var riskOk=(exp.risks.indexOf(r.r)>=0);
+          var fixLow=r.f.toLowerCase();
+          var fixOk=exp.fixKeys.some(k=>fixLow.indexOf(k)>=0);
+          if(layerOk && riskOk && fixOk){
+            matched++;
+            details.push('<div class="fbi" style="color:var(--acc)">✅ <b>Linha '+n+' ('+esc(exp.layer)+'):</b> achado real, risco coerente e recomendação técnica sólida!</div>');
+          } else {
+            var notes=[];
+            if(!layerOk) notes.push("camada correta é "+exp.layer);
+            if(!riskOk) notes.push("risco esperado: "+exp.risks.join(" ou "));
+            if(!fixOk) notes.push("melhore a recomendação técnica (cite termos como: "+exp.fixKeys.slice(0,3).join(", ")+")");
+            details.push('<div class="fbi" style="color:var(--warn)">🟡 <b>Linha '+n+' ('+esc(r.v)+'):</b> vulnerabilidade correta, mas ajuste: '+esc(notes.join("; "))+'.</div>');
+          }
+        });
+        var sumOk = rep.summary.length >= 30;
+        if(!sumOk) details.push('<div class="fbi" style="color:var(--warn)">📝 <b>Sumário Executivo:</b> escreva um resumo executivo (pelo menos 1–2 frases) explicando o risco geral para gestores.</div>');
+        else details.push('<div class="fbi" style="color:var(--acc)">✅ <b>Sumário Executivo:</b> preenchido adequadamente.</div>');
+
+        var passed = (matched===4 && sumOk);
+        state[ex.id]={summary:rep.summary, rows:rep.rows, score:matched, passed:passed};
+        save(); renderGrid();
+        fb.innerHTML='<div style="font-weight:700;margin-bottom:8px;color:'+(passed?'var(--acc)':'var(--acc2)')+'">'
+          +(passed?'🏆 Relatório Completo Aprovado (4/4 achados corretos + Sumário Executivo)!':'🔎 Resultado da avaliação: '+matched+' / 4 achados totalmente corretos')
+          +'</div>'+details.join("");
+        fb.classList.add("show");
+      };
+    }
+
+    renderGrid(); renderArena();
+  })();
 })();
 </script>
 </body>
