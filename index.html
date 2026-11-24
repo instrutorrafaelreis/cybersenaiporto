@@ -95,6 +95,14 @@
   .gi .more{float:right;font-size:11px;color:var(--mut2);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
   .gi.click:hover .more{color:var(--acc2);border-color:var(--acc2)}
   .gi .gx{display:none}
+  /* generic clickable popup card */
+  .popc{cursor:pointer;position:relative;transition:.12s}
+  .popc:hover{border-color:var(--acc2)!important}
+  .popc .gx{display:none}
+  .popc .more{float:right;font-size:11px;color:var(--mut2);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:8px}
+  .popc:hover .more{color:var(--acc2);border-color:var(--acc2)}
+  .std.popc:hover{background:#15203a}
+  .owi.popc:hover{background:#15203a}
   /* concept modal */
   .cmodal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;
     background:rgba(5,8,13,.72);backdrop-filter:blur(4px)}
@@ -212,58 +220,75 @@
 
   <div class="mgroup" style="margin-top:24px"><span class="d"></span>1 · Conceitos-chave <span style="font-size:11px;color:var(--mut2);text-transform:none;letter-spacing:0">— clique em cada card para detalhes</span></div>
   <div class="gloss" id="concepts">
-    <div class="gi click" data-t="Vulnerabilidade">
+    <div class="gi click popc" data-t="Vulnerabilidade">
       <b>Vulnerabilidade</b> — uma fraqueza que pode ser explorada. <span class="more">ⓘ detalhes</span>
       <div class="gx">Uma <b>vulnerabilidade</b> é qualquer fraqueza em software, configuração, hardware ou processo que, se explorada, compromete a segurança (confidencialidade, integridade ou disponibilidade). Pode nascer de erro de programação (ex.: falta de validação de entrada), de configuração (ex.: permissão errada no <code class="inl">/etc/shadow</code>) ou de projeto.<br><br><b>Exemplo:</b> um login que concatena a senha direto na query SQL tem uma vulnerabilidade de SQL Injection. <b>Importante:</b> existir a fraqueza não significa que já houve ataque — significa que o ataque é <i>possível</i>.</div>
     </div>
-    <div class="gi click" data-t="Ameaça (Threat)">
+    <div class="gi click popc" data-t="Ameaça (Threat)">
       <b>Ameaça (threat)</b> — quem ou o que pode explorar a falha. <span class="more">ⓘ detalhes</span>
       <div class="gx">Uma <b>ameaça</b> é o agente ou evento capaz de explorar uma vulnerabilidade: um atacante externo, um funcionário mal-intencionado, um malware, ou até um evento acidental. O conjunto de ameaças relevantes é o <b>threat model</b> (modelagem de ameaças).<br><br><b>Relação:</b> vulnerabilidade é a "porta aberta"; a ameaça é "quem tenta entrar". Sem ameaça, a vulnerabilidade continua existindo, mas o risco é menor.</div>
     </div>
-    <div class="gi click" data-t="Risco">
+    <div class="gi click popc" data-t="Risco">
       <b>Risco</b> — probabilidade × impacto. <span class="more">ⓘ detalhes</span>
       <div class="gx">O <b>risco</b> combina a <b>probabilidade</b> de uma ameaça explorar a vulnerabilidade com o <b>impacto</b> caso aconteça. É o que realmente importa para priorizar correções.<br><br><b>Fórmula mental:</b> Risco ≈ Probabilidade × Impacto. Uma falha crítica (impacto alto) em um sistema isolado e sem atacantes (probabilidade baixa) pode ter risco menor que uma falha média num servidor exposto à internet. Ferramentas como EPSS (probabilidade) e KEV (exploração real) ajudam a estimar o risco, não só o CVSS.</div>
     </div>
-    <div class="gi click" data-t="Exploit">
+    <div class="gi click popc" data-t="Exploit">
       <b>Exploit</b> — o código/técnica que usa a falha. <span class="more">ⓘ detalhes</span>
       <div class="gx">Um <b>exploit</b> é o código ou a sequência de passos que tira proveito de uma vulnerabilidade para produzir um efeito (abrir shell, ler arquivo, elevar privilégio). Pode ser um script pronto (ex.: no Exploit-DB/Metasploit) ou uma técnica manual.<br><br><b>Exemplo:</b> para a CWE-89 (SQLi), o exploit pode ser o payload <code class="inl">admin'-- -</code>. Para o PwnKit (CVE-2021-4034), é um programa em C. <b>Diferença:</b> a vulnerabilidade é a fraqueza; o exploit é a ferramenta que a aciona.</div>
     </div>
-    <div class="gi click" data-t="PoC (Prova de Conceito)">
+    <div class="gi click popc" data-t="PoC (Prova de Conceito)">
       <b>PoC</b> — demonstração de que a falha é explorável. <span class="more">ⓘ detalhes</span>
       <div class="gx">Uma <b>Prova de Conceito (Proof of Concept)</b> é uma demonstração mínima de que a vulnerabilidade realmente funciona — sem necessariamente causar dano. Serve para provar o problema ao time/cliente no relatório.<br><br><b>Exemplo:</b> em vez de apagar o banco, a PoC de uma SQLi mostra apenas <code class="inl">' OR '1'='1</code> logando sem senha, ou exibe a versão do banco. Em pentest ético, usa-se a PoC como evidência, evitando impacto real.</div>
     </div>
-    <div class="gi click" data-t="0-day (Zero-day)">
+    <div class="gi click popc" data-t="0-day (Zero-day)">
       <b>0-day</b> — falha sem patch/conhecimento público. <span class="more">ⓘ detalhes</span>
       <div class="gx">Um <b>0-day</b> (zero-day) é uma vulnerabilidade que ainda <b>não tem correção</b> disponível — o fornecedor teve "zero dias" para corrigir. Se um exploit para ela circula, é um <b>0-day exploit</b>, extremamente perigoso porque não há patch para se defender.<br><br><b>Ciclo:</b> 0-day → descoberta/divulgação → patch lançado → vira "n-day" (falha conhecida com correção). A maioria dos ataques reais usa <i>n-days</i> sem patch aplicado, não 0-days.</div>
     </div>
-    <div class="gi click" data-t="Payload">
+    <div class="gi click popc" data-t="Payload">
       <b>Payload</b> — o que roda após a exploração. <span class="more">ⓘ detalhes</span>
       <div class="gx">O <b>payload</b> é a "carga útil" — o que o atacante executa depois que o exploit abre caminho. Pode ser um shell reverso, um comando, um beacon de C2, ou um ransomware.<br><br><b>Exemplo:</b> no upload de webshell, o payload é o arquivo <code class="inl">&lt;?php system($_GET['c']); ?&gt;</code>. O exploit é "conseguir subir o arquivo"; o payload é "o que o arquivo faz".</div>
     </div>
-    <div class="gi click" data-t="Superfície de ataque">
+    <div class="gi click popc" data-t="Superfície de ataque">
       <b>Superfície de ataque</b> — todos os pontos expostos. <span class="more">ⓘ detalhes</span>
       <div class="gx">A <b>superfície de ataque</b> é a soma de todos os pontos por onde um atacante pode tentar entrar ou extrair dados: portas abertas, endpoints web, formulários, parâmetros, APIs, serviços, contas, dependências.<br><br><b>Princípio de defesa:</b> reduzir a superfície (desligar serviços e portas desnecessárias, fechar o firewall, remover software não usado) diminui as oportunidades de ataque. É o oposto de "deixar tudo ligado por via das dúvidas".</div>
     </div>
-    <div class="gi click" data-t="CVE">
+    <div class="gi click popc" data-t="CVE">
       <b>CVE</b> — identificador único de uma falha pública. <span class="more">ⓘ detalhes</span>
       <div class="gx">Uma <b>CVE (Common Vulnerabilities and Exposures)</b> é o identificador único e público de uma vulnerabilidade específica, no formato <code class="inl">CVE-ANO-NÚMERO</code> (ex.: CVE-2021-4034). É catalogada no NVD e permite que todos falem da "mesma" falha.<br><br><b>Analogia:</b> a CVE é como o "RG" de uma vulnerabilidade específica num produto. Já a CWE é a "categoria" do erro. Uma CWE (tipo) pode gerar milhares de CVEs (casos).</div>
     </div>
-    <div class="gi click" data-t="CWE">
+    <div class="gi click popc" data-t="CWE">
       <b>CWE</b> — tipo/categoria de fraqueza. <span class="more">ⓘ detalhes</span>
       <div class="gx">Uma <b>CWE (Common Weakness Enumeration)</b> descreve o <b>tipo</b> de fraqueza — a causa-raiz por trás das CVEs (ex.: CWE-89 = SQL Injection, CWE-22 = Path Traversal). Mantida pela MITRE, é a base do "CWE Top 25".<br><br><b>Como usar:</b> ao achar uma falha, identifique a CWE (o "porquê" aconteceu) para recomendar a correção certa na causa, não só no sintoma. Veja a lista completa na seção 3 desta aba.</div>
     </div>
   </div>
 
   <div class="mgroup" style="margin-top:26px"><span class="d"></span>2 · Padrões e taxonomias (como o mundo cataloga falhas)</div>
+  <p style="color:var(--mut2);font-size:12px;margin:0 0 6px;text-transform:none">clique em cada padrão para aprofundar</p>
   <div class="stdgrid two">
-    <div class="std"><div class="sh"><span class="ab">CVE</span><span class="full">Common Vulnerabilities and Exposures</span></div><p>Identificador único por falha (ex.: CVE-2021-4034). Catalogado no NVD. Responde "qual" vulnerabilidade.</p></div>
-    <div class="std"><div class="sh"><span class="ab">CWE</span><span class="full">Common Weakness Enumeration</span></div><p>Tipo de fraqueza (ex.: CWE-89 SQLi). Responde "que classe de erro" causou a CVE. Mantido pela MITRE.</p></div>
-    <div class="std"><div class="sh"><span class="ab">CVSS</span><span class="full">Common Vulnerability Scoring System</span></div><p>Nota de gravidade 0–10 (mantido pelo FIRST). Responde "quão grave". Veja a aba CVSS.</p></div>
-    <div class="std"><div class="sh"><span class="ab">EPSS</span><span class="full">Exploit Prediction Scoring System</span></div><p>Probabilidade (0–100%) de a CVE ser explorada nos próximos 30 dias. Responde "quão provável".</p></div>
-    <div class="std"><div class="sh"><span class="ab">KEV</span><span class="full">Known Exploited Vulnerabilities (CISA)</span></div><p>Catálogo de CVEs <b>comprovadamente exploradas</b> no mundo real. Prioridade máxima de correção.</p></div>
-    <div class="std"><div class="sh"><span class="ab">OWASP</span><span class="full">Open Worldwide Application Security Project</span></div><p>Comunidade e projetos de segurança de aplicações; famoso pelo Top 10 (abaixo).</p></div>
-    <div class="std"><div class="sh"><span class="ab">ATT&amp;CK</span><span class="full">MITRE Adversarial Tactics &amp; Techniques</span></div><p>Base de conhecimento do comportamento do atacante (táticas/técnicas). Responde "como agem".</p></div>
-    <div class="std"><div class="sh"><span class="ab">CAPEC</span><span class="full">Common Attack Pattern Enumeration</span></div><p>Catálogo de padrões de ataque. Complementa o CWE do lado do ataque.</p></div>
+    <div class="std popc" data-t="CVE — Common Vulnerabilities and Exposures"><div class="sh"><span class="ab">CVE</span><span class="full">Common Vulnerabilities and Exposures</span><span class="more">ⓘ</span></div><p>Identificador único por falha (ex.: CVE-2021-4034). Responde "qual" vulnerabilidade.</p>
+      <div class="gx">O <b>CVE</b> dá um nome único e público a cada vulnerabilidade específica de um produto, no formato <code class="inl">CVE-ANO-NÚMERO</code>. É gerido pela MITRE e publicado no <b>NVD</b> (National Vulnerability Database) do NIST.<br><br><b>Quem cria:</b> organizações chamadas <b>CNA</b> (CVE Numbering Authorities) — fornecedores como Microsoft, Red Hat, e a própria MITRE — recebem autoridade para atribuir CVEs.<br><br><b>Ciclo de vida:</b> descoberta → reserva do ID (status "RESERVED") → divulgação com detalhes → análise no NVD (ganha CVSS e mapeamento CWE).<br><br><b>Na prática:</b> ao citar uma falha no relatório, use o CVE quando existir — todo mundo encontra a mesma informação. Nem toda falha tem CVE (ex.: uma config errada específica do cliente não recebe CVE).</div>
+    </div>
+    <div class="std popc" data-t="CWE — Common Weakness Enumeration"><div class="sh"><span class="ab">CWE</span><span class="full">Common Weakness Enumeration</span><span class="more">ⓘ</span></div><p>Tipo de fraqueza (ex.: CWE-89 SQLi). A causa-raiz por trás das CVEs.</p>
+      <div class="gx">O <b>CWE</b> cataloga os <b>tipos</b> de fraqueza de software/hardware — a causa-raiz. Mantido pela MITRE, tem mais de 900 entradas organizadas em hierarquia (categorias, classes, bases, variantes).<br><br><b>CVE × CWE:</b> o CVE é o <i>caso</i> (uma falha específica num produto); o CWE é a <i>classe</i> do erro. Uma única CWE (ex.: CWE-79 XSS) está por trás de milhares de CVEs.<br><br><b>Por que importa:</b> identificar a CWE aponta para a <b>correção na causa</b> (ex.: CWE-89 → use prepared statements) e não só no sintoma. É a base do "CWE Top 25" (seção 3).<br><br><b>Root Cause Mapping:</b> a prática de ligar cada CVE à sua CWE correta — ajuda organizações a investir onde mais erram.</div>
+    </div>
+    <div class="std popc" data-t="CVSS — Common Vulnerability Scoring System"><div class="sh"><span class="ab">CVSS</span><span class="full">Common Vulnerability Scoring System</span><span class="more">ⓘ</span></div><p>Nota de gravidade 0–10 (FIRST). Responde "quão grave".</p>
+      <div class="gx">O <b>CVSS</b> é o padrão aberto para medir a gravidade técnica de uma falha, com nota de <b>0 a 10</b>. É mantido pelo <b>FIRST.org</b> e usado pelo NVD.<br><br><b>Três grupos de métricas:</b> <b>Base</b> (intrínsecas, fixas), <b>Temporal/Threat</b> (mudam com o tempo: existe exploit? patch?) e <b>Ambiental</b> (ajuste ao seu ambiente).<br><br><b>Faixas:</b> 0.0 Nenhuma · 0.1–3.9 Baixa · 4.0–6.9 Média · 7.0–8.9 Alta · 9.0–10.0 Crítica.<br><br><b>Cuidado:</b> CVSS mede <i>gravidade</i>, não <i>risco</i> — uma falha 9.8 num sistema isolado pode ter risco menor que uma 7.5 exposta e já explorada. Combine com EPSS e KEV. Use a aba <b>🧮 CVSS</b> para calcular.</div>
+    </div>
+    <div class="std popc" data-t="EPSS — Exploit Prediction Scoring System"><div class="sh"><span class="ab">EPSS</span><span class="full">Exploit Prediction Scoring System</span><span class="more">ⓘ</span></div><p>Probabilidade (0–100%) de exploração em 30 dias.</p>
+      <div class="gx">O <b>EPSS</b> (também do FIRST) estima a <b>probabilidade</b> de uma CVE ser explorada nos próximos 30 dias, de 0 a 100%. Usa machine learning sobre dados reais (menções, exploits publicados, atividade observada).<br><br><b>Para que serve:</b> o CVSS diz "quão grave"; o EPSS diz "quão provável". Muitas CVEs "críticas" nunca são exploradas — o EPSS ajuda a priorizar as que realmente têm chance.<br><br><b>Uso combinado:</b> priorize o que é <b>grave (CVSS alto) E provável (EPSS alto)</b>. É atualizado diariamente.</div>
+    </div>
+    <div class="std popc" data-t="KEV — Known Exploited Vulnerabilities (CISA)"><div class="sh"><span class="ab">KEV</span><span class="full">Known Exploited Vulnerabilities (CISA)</span><span class="more">ⓘ</span></div><p>CVEs <b>comprovadamente exploradas</b> no mundo real.</p>
+      <div class="gx">O <b>catálogo KEV</b> da <b>CISA</b> (agência de segurança dos EUA) lista CVEs com <b>exploração ativa confirmada</b> no mundo real — não é teoria, há ataques acontecendo.<br><br><b>Prioridade máxima:</b> se uma CVE está no KEV, corrija imediatamente, independentemente da nota CVSS. Órgãos federais dos EUA são <i>obrigados</i> a corrigir KEV em prazos definidos.<br><br><b>Exemplo real:</b> as falhas de sudo CVE-2025-32462/32463 entraram no KEV meses após o patch sair — mostrando quantos sistemas ficam expostos por não atualizar. É um dos melhores sinais de "corrija isto agora".</div>
+    </div>
+    <div class="std popc" data-t="OWASP — Open Worldwide Application Security Project"><div class="sh"><span class="ab">OWASP</span><span class="full">Open Worldwide Application Security Project</span><span class="more">ⓘ</span></div><p>Comunidade e projetos de segurança de aplicações.</p>
+      <div class="gx">A <b>OWASP</b> é uma fundação sem fins lucrativos (desde 2001) dedicada à segurança de aplicações. Produz padrões, ferramentas e documentação abertos.<br><br><b>Projetos famosos:</b> <b>Top 10</b> (os maiores riscos web — seção 4), <b>WSTG</b> (Web Security Testing Guide, metodologia de teste), <b>ASVS</b> (padrão de verificação de segurança), <b>Cheat Sheets</b>, <b>ZAP</b> (scanner), <b>Juice Shop</b> (app vulnerável para treino).<br><br><b>Para o aluno:</b> OWASP é a referência obrigatória do lado web — o Top 10 para conhecer os riscos e o WSTG para saber como testá-los.</div>
+    </div>
+    <div class="std popc" data-t="MITRE ATT&CK"><div class="sh"><span class="ab">ATT&amp;CK</span><span class="full">Adversarial Tactics &amp; Techniques</span><span class="more">ⓘ</span></div><p>Comportamento do atacante (táticas/técnicas). Responde "como agem".</p>
+      <div class="gx">O <b>MITRE ATT&amp;CK</b> é uma base de conhecimento, baseada em observações reais, do comportamento dos atacantes — organizada em <b>táticas</b> (o "porquê", o objetivo) e <b>técnicas</b> (o "como").<br><br><b>Estrutura:</b> 14 táticas na matriz Enterprise (seção 5), cada uma com dezenas de técnicas e sub-técnicas (ex.: T1574.009 = Unquoted Service Path). Há matrizes para Enterprise, Mobile, Cloud, Containers e ICS.<br><br><b>Usos:</b> mapear detecções (o que eu consigo ver?), emular adversários (red team), comunicar TTPs de forma padronizada e achar lacunas de defesa (gap assessment).</div>
+    </div>
+    <div class="std popc" data-t="CAPEC — Common Attack Pattern Enumeration"><div class="sh"><span class="ab">CAPEC</span><span class="full">Common Attack Pattern Enumeration</span><span class="more">ⓘ</span></div><p>Catálogo de padrões de ataque.</p>
+      <div class="gx">O <b>CAPEC</b> (também da MITRE) cataloga <b>padrões de ataque</b> — descrições de como atacantes exploram fraquezas. É o complemento do CWE pelo lado ofensivo.<br><br><b>CWE × CAPEC:</b> o CWE descreve a <i>fraqueza</i> (o erro no código); o CAPEC descreve o <i>ataque</i> que abusa dela. Eles são ligados entre si.<br><br><b>Exemplo:</b> CWE-89 (SQL Injection, a fraqueza) ↔ CAPEC-66 (SQL Injection, o padrão de ataque). Útil para modelagem de ameaças e para entender o "como" por trás de cada fraqueza.</div>
+    </div>
   </div>
   <div class="disc" style="margin-top:12px">🔗 <b>Como se conectam:</b> uma <b>CWE</b> (tipo de erro) gera uma <b>CVE</b> (falha específica), que recebe uma nota <b>CVSS</b> (gravidade), uma probabilidade <b>EPSS</b> (chance de exploração) e, se já está sendo explorada, entra no <b>KEV</b>. O comportamento do atacante é descrito pelo <b>ATT&amp;CK</b>.</div>
 
@@ -301,36 +326,61 @@
   </table>
 
   <div class="mgroup" style="margin-top:26px"><span class="d"></span>4 · OWASP Top 10 (2021) — riscos de aplicação web</div>
+  <p style="color:var(--mut2);font-size:12px;margin:0 0 6px;text-transform:none">clique em cada risco para aprofundar</p>
   <div class="owl">
-    <div class="owi"><span class="c">A01</span><div class="t"><b>Broken Access Control</b><div class="d">controle de acesso quebrado — o risco nº 1 atual.</div></div></div>
-    <div class="owi"><span class="c">A02</span><div class="t"><b>Cryptographic Failures</b><div class="d">falhas de criptografia (dados sensíveis expostos).</div></div></div>
-    <div class="owi"><span class="c">A03</span><div class="t"><b>Injection</b><div class="d">injeção (SQLi, XSS, comandos).</div></div></div>
-    <div class="owi"><span class="c">A04</span><div class="t"><b>Insecure Design</b><div class="d">design inseguro (falha na concepção) — categoria nova.</div></div></div>
-    <div class="owi"><span class="c">A05</span><div class="t"><b>Security Misconfiguration</b><div class="d">configuração insegura.</div></div></div>
-    <div class="owi"><span class="c">A06</span><div class="t"><b>Vulnerable and Outdated Components</b><div class="d">componentes desatualizados/vulneráveis.</div></div></div>
-    <div class="owi"><span class="c">A07</span><div class="t"><b>Identification and Authentication Failures</b><div class="d">falhas de autenticação/identificação.</div></div></div>
-    <div class="owi"><span class="c">A08</span><div class="t"><b>Software and Data Integrity Failures</b><div class="d">falhas de integridade (supply chain) — categoria nova.</div></div></div>
-    <div class="owi"><span class="c">A09</span><div class="t"><b>Security Logging and Monitoring Failures</b><div class="d">falhas de registro e monitoramento.</div></div></div>
-    <div class="owi"><span class="c">A10</span><div class="t"><b>Server-Side Request Forgery (SSRF)</b><div class="d">SSRF — categoria nova.</div></div></div>
+    <div class="owi popc" data-t="A01:2021 — Broken Access Control"><span class="c">A01</span><div class="t"><b>Broken Access Control</b> <span class="more">ⓘ</span><div class="d">controle de acesso quebrado — o risco nº 1 atual.</div>
+      <div class="gx">Ocorre quando a aplicação não verifica corretamente se o usuário tem permissão para o recurso/ação. Subiu de 5º para <b>1º</b> em 2021.<br><br><b>Exemplos:</b> IDOR (trocar <code class="inl">?id=123</code> e ver dados de outro), acessar <code class="inl">/admin</code> sem ser admin, forçar métodos HTTP, elevação de privilégio.<br><br><b>Correção:</b> negar por padrão; validar autorização no servidor em toda requisição; não confiar em controles só no front-end.</div></div></div>
+    <div class="owi popc" data-t="A02:2021 — Cryptographic Failures"><span class="c">A02</span><div class="t"><b>Cryptographic Failures</b> <span class="more">ⓘ</span><div class="d">falhas de criptografia (dados sensíveis expostos).</div>
+      <div class="gx">Antes chamado "Sensitive Data Exposure". É sobre proteção fraca ou ausente de dados sensíveis (senhas, cartões, dados pessoais).<br><br><b>Exemplos:</b> tráfego sem HTTPS, senhas em MD5/SHA1 ou texto claro, algoritmos fracos, chaves fixas, sem criptografia em repouso.<br><br><b>Correção:</b> TLS em tudo, hashes fortes com sal (bcrypt/argon2), algoritmos atuais (AES-GCM), gestão de chaves adequada, não armazenar o que não precisa.</div></div></div>
+    <div class="owi popc" data-t="A03:2021 — Injection"><span class="c">A03</span><div class="t"><b>Injection</b> <span class="more">ⓘ</span><div class="d">injeção (SQLi, XSS, comandos).</div>
+      <div class="gx">A aplicação envia dados não confiáveis para um interpretador (SQL, SO, LDAP). Era o nº 1 histórico; caiu para 3º. <b>Inclui XSS</b> a partir de 2021.<br><br><b>Exemplos:</b> SQL Injection (CWE-89), OS Command Injection (CWE-78), XSS (CWE-79). Veja a aba <b>🌐 Web</b> para o detalhe de cada uma.<br><br><b>Correção:</b> consultas parametrizadas, validação por lista de permissões, escaping conforme o contexto, APIs seguras em vez de concatenar comandos.</div></div></div>
+    <div class="owi popc" data-t="A04:2021 — Insecure Design"><span class="c">A04</span><div class="t"><b>Insecure Design</b> <span class="more">ⓘ</span><div class="d">design inseguro — categoria nova.</div>
+      <div class="gx">Categoria <b>nova em 2021</b>. Trata de falhas na <b>concepção</b> — o sistema foi mal projetado, não apenas mal implementado. Nenhuma correção de código conserta um design inseguro.<br><br><b>Exemplos:</b> falta de limites de taxa, fluxos de recuperação de senha fracos por projeto, ausência de modelagem de ameaças.<br><br><b>Correção:</b> threat modeling desde o início, padrões seguros de projeto, requisitos de segurança, histórias de abuso ("abuse cases").</div></div></div>
+    <div class="owi popc" data-t="A05:2021 — Security Misconfiguration"><span class="c">A05</span><div class="t"><b>Security Misconfiguration</b> <span class="more">ⓘ</span><div class="d">configuração insegura.</div>
+      <div class="gx">Configurações padrão/inseguras em qualquer camada (servidor, framework, nuvem).<br><br><b>Exemplos:</b> directory listing ligado, erros detalhados expostos, contas/senhas padrão, headers de segurança ausentes, serviços e portas desnecessárias, buckets de nuvem abertos.<br><br><b>Correção:</b> hardening (baseline CIS), remover o que não se usa, headers de segurança, revisar configs de nuvem, processo repetível de configuração.</div></div></div>
+    <div class="owi popc" data-t="A06:2021 — Vulnerable and Outdated Components"><span class="c">A06</span><div class="t"><b>Vulnerable and Outdated Components</b> <span class="more">ⓘ</span><div class="d">componentes desatualizados/vulneráveis.</div>
+      <div class="gx">Uso de bibliotecas, frameworks ou softwares com vulnerabilidades conhecidas (CVEs). Antes "Using Components with Known Vulnerabilities".<br><br><b>Exemplos:</b> uma lib JS antiga com XSS conhecido, um CMS desatualizado, dependências transitivas vulneráveis.<br><br><b>Correção:</b> inventário de dependências (SBOM), análise de composição de software (SCA), atualizar regularmente, remover libs não usadas, acompanhar avisos de segurança.</div></div></div>
+    <div class="owi popc" data-t="A07:2021 — Identification and Authentication Failures"><span class="c">A07</span><div class="t"><b>Identification and Authentication Failures</b> <span class="more">ⓘ</span><div class="d">falhas de autenticação/identificação.</div>
+      <div class="gx">Antes "Broken Authentication". Falhas em confirmar a identidade e gerir a sessão.<br><br><b>Exemplos:</b> senhas fracas permitidas, sem bloqueio contra força bruta, sessão previsível ou sem expiração, credential stuffing, MFA ausente.<br><br><b>Correção:</b> MFA, política de senha forte, bloqueio/limite de tentativas, gestão segura de sessão (IDs aleatórios, expiração, HttpOnly/Secure).</div></div></div>
+    <div class="owi popc" data-t="A08:2021 — Software and Data Integrity Failures"><span class="c">A08</span><div class="t"><b>Software and Data Integrity Failures</b> <span class="more">ⓘ</span><div class="d">falhas de integridade (supply chain) — categoria nova.</div>
+      <div class="gx">Categoria <b>nova em 2021</b>. Confiar em código/dados sem verificar integridade — foco em ataques de cadeia de suprimentos (supply chain).<br><br><b>Exemplos:</b> atualizações sem assinatura, pipelines CI/CD comprometidos, desserialização insegura (CWE-502), dependências de fontes não confiáveis.<br><br><b>Correção:</b> assinaturas digitais, verificar integridade de updates e dependências, proteger o pipeline, não desserializar dados não confiáveis.</div></div></div>
+    <div class="owi popc" data-t="A09:2021 — Security Logging and Monitoring Failures"><span class="c">A09</span><div class="t"><b>Security Logging and Monitoring Failures</b> <span class="more">ⓘ</span><div class="d">falhas de registro e monitoramento.</div>
+      <div class="gx">Sem logs/alertas adequados, ataques passam despercebidos. Subiu do 10º (2017) para o 9º, via pesquisa da comunidade.<br><br><b>Exemplos:</b> logins falhos não registrados, logs sem alerta, logs sem proteção, ausência de resposta a incidentes.<br><br><b>Correção:</b> registrar eventos de segurança relevantes, centralizar e proteger logs, alertar em tempo real, ter plano de resposta a incidentes.</div></div></div>
+    <div class="owi popc" data-t="A10:2021 — Server-Side Request Forgery (SSRF)"><span class="c">A10</span><div class="t"><b>Server-Side Request Forgery (SSRF)</b> <span class="more">ⓘ</span><div class="d">SSRF — categoria nova.</div>
+      <div class="gx">Categoria <b>nova em 2021</b> (CWE-918), adicionada pela pesquisa da comunidade. O servidor é induzido a fazer requisições a destinos que o atacante escolhe.<br><br><b>Exemplo:</b> um campo "URL da imagem" usado para fazer o servidor acessar <code class="inl">http://169.254.169.254/</code> (metadados de nuvem) e vazar credenciais internas.<br><br><b>Correção:</b> validar/normalizar URLs por lista de permissões, bloquear faixas internas, desabilitar redirecionamentos, segmentar a rede.</div></div></div>
   </div>
 
   <div class="mgroup" style="margin-top:26px"><span class="d"></span>5 · MITRE ATT&amp;CK — as 14 táticas (Enterprise)</div>
-  <p style="color:var(--mut);font-size:13.5px;margin:0 0 4px">As táticas respondem ao "porquê" de cada ação do atacante, em sequência lógica de um ataque.</p>
+  <p style="color:var(--mut);font-size:13.5px;margin:0 0 4px">As táticas respondem ao "porquê" de cada ação do atacante, em sequência lógica. <span style="color:var(--mut2);font-size:12px">Clique para aprofundar.</span></p>
   <div class="gloss">
-    <div class="gi"><b>1. Reconnaissance</b> — coletar informação sobre o alvo.</div>
-    <div class="gi"><b>2. Resource Development</b> — preparar infraestrutura/ferramentas.</div>
-    <div class="gi"><b>3. Initial Access</b> — obter o primeiro acesso.</div>
-    <div class="gi"><b>4. Execution</b> — executar código malicioso.</div>
-    <div class="gi"><b>5. Persistence</b> — manter o acesso entre reinícios.</div>
-    <div class="gi"><b>6. Privilege Escalation</b> — ganhar privilégios mais altos.</div>
-    <div class="gi"><b>7. Defense Evasion</b> — evitar detecção.</div>
-    <div class="gi"><b>8. Credential Access</b> — roubar credenciais.</div>
-    <div class="gi"><b>9. Discovery</b> — mapear o ambiente interno.</div>
-    <div class="gi"><b>10. Lateral Movement</b> — mover-se para outros sistemas.</div>
-    <div class="gi"><b>11. Collection</b> — coletar dados de interesse.</div>
-    <div class="gi"><b>12. Command and Control</b> — comunicação com o C2.</div>
-    <div class="gi"><b>13. Exfiltration</b> — extrair os dados.</div>
-    <div class="gi"><b>14. Impact</b> — destruir/alterar/indisponibilizar.</div>
+    <div class="gi popc" data-t="1. Reconnaissance (Reconhecimento)"><b>1. Reconnaissance</b> — coletar informação sobre o alvo. <span class="more">ⓘ</span>
+      <div class="gx">O atacante reúne informações sobre o alvo <b>antes</b> de atacar: domínios, e-mails, funcionários, tecnologias, portas. Pode ser passivo (OSINT, sem tocar no alvo) ou ativo (scan).<br><br><b>Exemplos:</b> coleta de e-mails no LinkedIn, varredura de portas, enumeração de subdomínios, busca em vazamentos.<br><br><b>Defesa:</b> reduzir exposição pública, monitorar scans, limitar informação em metadados e páginas.</div></div>
+    <div class="gi popc" data-t="2. Resource Development (Desenvolvimento de recursos)"><b>2. Resource Development</b> — preparar infraestrutura/ferramentas. <span class="more">ⓘ</span>
+      <div class="gx">O atacante cria ou compra os recursos que vai usar: domínios, servidores de C2, contas falsas, malware, exploits.<br><br><b>Exemplos:</b> registrar domínio parecido com o da vítima (typosquatting), comprar credenciais vazadas, preparar e-mails de phishing.<br><br><b>Defesa:</b> threat intelligence para detectar infraestrutura maliciosa, monitorar domínios semelhantes ao seu.</div></div>
+    <div class="gi popc" data-t="3. Initial Access (Acesso inicial)"><b>3. Initial Access</b> — obter o primeiro acesso. <span class="more">ⓘ</span>
+      <div class="gx">Como o atacante entra pela primeira vez no ambiente.<br><br><b>Exemplos:</b> phishing, exploração de aplicação exposta (ex.: SQLi, upload), credenciais válidas vazadas, drive-by, serviço remoto exposto (RDP/SSH).<br><br><b>Defesa:</b> MFA, patch de sistemas expostos, filtro de e-mail, reduzir superfície de ataque.</div></div>
+    <div class="gi popc" data-t="4. Execution (Execução)"><b>4. Execution</b> — executar código malicioso. <span class="more">ⓘ</span>
+      <div class="gx">Rodar código do atacante no sistema comprometido.<br><br><b>Exemplos:</b> PowerShell, scripts, macros do Office, interpretadores de comando, abuso de ferramentas nativas (living-off-the-land).<br><br><b>Defesa:</b> allowlist de aplicações, restringir PowerShell/macros, EDR, monitorar execução anômala.</div></div>
+    <div class="gi popc" data-t="5. Persistence (Persistência)"><b>5. Persistence</b> — manter o acesso entre reinícios. <span class="more">ⓘ</span>
+      <div class="gx">Garantir que o acesso sobreviva a reboots, logoffs e trocas de senha.<br><br><b>Exemplos:</b> criar usuário, chave SSH <code class="inl">authorized_keys</code>, tarefa agendada/cron, serviço, chave de registro (Run), webshell.<br><br><b>Defesa:</b> monitorar criação de contas/tarefas/serviços, baseline de autoruns, revisar persistência conhecida.</div></div>
+    <div class="gi popc" data-t="6. Privilege Escalation (Escalonamento de privilégio)"><b>6. Privilege Escalation</b> — ganhar privilégios mais altos. <span class="more">ⓘ</span>
+      <div class="gx">Passar de usuário comum para root/SYSTEM/admin. <b>É o foco das abas Linux e Windows deste guia.</b><br><br><b>Exemplos:</b> sudo mal configurado, SUID, kernel exploit, token abuse (SeImpersonate), serviços fracos.<br><br><b>Defesa:</b> privilégio mínimo, patches, hardening, monitorar uso de privilégios sensíveis.</div></div>
+    <div class="gi popc" data-t="7. Defense Evasion (Evasão de defesa)"><b>7. Defense Evasion</b> — evitar detecção. <span class="more">ⓘ</span>
+      <div class="gx">Técnicas para não ser detectado ou bloqueado.<br><br><b>Exemplos:</b> apagar logs, desabilitar antivírus/EDR, ofuscar código, mascarar processos, assinar malware, timestomping.<br><br><b>Defesa:</b> logs centralizados e protegidos (fora do host), alertas para desativação de segurança, EDR resistente a adulteração.</div></div>
+    <div class="gi popc" data-t="8. Credential Access (Acesso a credenciais)"><b>8. Credential Access</b> — roubar credenciais. <span class="more">ⓘ</span>
+      <div class="gx">Obter senhas, hashes e tokens para avançar.<br><br><b>Exemplos:</b> dump de LSASS/SAM, ler <code class="inl">/etc/shadow</code>, keylogging, força bruta, credenciais em arquivos/histórico, Kerberoasting.<br><br><b>Defesa:</b> proteger armazenamentos de credencial (Credential Guard), MFA, não guardar segredos em texto, rotacionar.</div></div>
+    <div class="gi popc" data-t="9. Discovery (Descoberta)"><b>9. Discovery</b> — mapear o ambiente interno. <span class="more">ⓘ</span>
+      <div class="gx">Depois de entrar, o atacante estuda o ambiente por dentro.<br><br><b>Exemplos:</b> listar usuários/grupos, processos, rede, compartilhamentos, políticas de domínio (<code class="inl">whoami</code>, <code class="inl">net</code>, <code class="inl">ip</code>, enumeração AD).<br><br><b>Defesa:</b> detectar enumeração anômala, segmentar rede, limitar visibilidade entre hosts.</div></div>
+    <div class="gi popc" data-t="10. Lateral Movement (Movimento lateral)"><b>10. Lateral Movement</b> — mover-se para outros sistemas. <span class="more">ⓘ</span>
+      <div class="gx">Pular de um host comprometido para outros, em direção ao objetivo.<br><br><b>Exemplos:</b> pass-the-hash, RDP/SSH com credenciais roubadas, PsExec, WMI, abuso de confiança entre sistemas.<br><br><b>Defesa:</b> segmentação de rede, MFA interno, limitar contas de admin, detectar uso lateral de credenciais.</div></div>
+    <div class="gi popc" data-t="11. Collection (Coleta)"><b>11. Collection</b> — coletar dados de interesse. <span class="more">ⓘ</span>
+      <div class="gx">Reunir os dados-alvo antes de exfiltrar.<br><br><b>Exemplos:</b> capturar arquivos, e-mails, banco de dados, screenshots, dados de navegador, áudio/tela.<br><br><b>Defesa:</b> DLP, classificação de dados, monitorar acesso em massa a dados sensíveis.</div></div>
+    <div class="gi popc" data-t="12. Command and Control (C2)"><b>12. Command and Control</b> — comunicação com o C2. <span class="more">ⓘ</span>
+      <div class="gx">Canal entre o atacante e o sistema comprometido para enviar comandos e receber dados.<br><br><b>Exemplos:</b> beacons HTTP/HTTPS, DNS tunneling, uso de serviços legítimos (Slack, GitHub) como C2, tráfego cifrado.<br><br><b>Defesa:</b> inspeção de tráfego de saída, detecção de beaconing, bloqueio de domínios maliciosos, proxy.</div></div>
+    <div class="gi popc" data-t="13. Exfiltration (Exfiltração)"><b>13. Exfiltration</b> — extrair os dados. <span class="more">ⓘ</span>
+      <div class="gx">Tirar os dados coletados do ambiente da vítima.<br><br><b>Exemplos:</b> upload para nuvem do atacante, exfiltração pelo canal de C2, compressão/cifra antes de enviar, uso de serviços legítimos.<br><br><b>Defesa:</b> DLP, limites de volume de saída, monitorar uploads anômalos, segmentar dados sensíveis.</div></div>
+    <div class="gi popc" data-t="14. Impact (Impacto)"><b>14. Impact</b> — destruir/alterar/indisponibilizar. <span class="more">ⓘ</span>
+      <div class="gx">O objetivo final de dano: afetar integridade ou disponibilidade.<br><br><b>Exemplos:</b> ransomware (cifrar dados), destruição/limpeza de dados, defacement, negação de serviço (DoS), manipulação de dados.<br><br><b>Defesa:</b> backups offline testados, plano de recuperação, imutabilidade, resposta a incidentes.</div></div>
   </div>
 
   <div class="mgroup" style="margin-top:26px"><span class="d"></span>6 · Metodologia de assessment (as 5 fases)</div>
@@ -1339,7 +1389,7 @@ PasswordAuthentication no   <span class="c"># preferir chaves</span>
       modal.classList.add('show');
     }
     function close(){ modal.classList.remove('show'); }
-    document.querySelectorAll('#concepts .gi.click').forEach(function(c){
+    document.querySelectorAll('#fund .popc').forEach(function(c){
       c.addEventListener('click',function(){ open(c); });
     });
     document.getElementById('cmClose').addEventListener('click',close);
