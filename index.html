@@ -6153,7 +6153,20 @@ Todas as técnicas só podem ser usadas em sistemas **autorizados** (laboratóri
 
 **O que é:** antes de atacar, você mapeia o alvo — portas, serviços e tecnologias. É o primeiro passo de qualquer teste.
 
-**Como fazer:**
+### E se você NÃO souber o endereço do alvo?
+
+No nosso lab já sabemos que é `localhost`. Mas num teste real você recebe só uma **faixa de IPs** (um escopo), e precisa **descobrir o alvo** primeiro:
+
+1. Descubra a **sua** rede: `ip a` — veja seu IP e a máscara (ex.: `192.168.56.0/24`).
+2. Ache os **hosts vivos** na faixa: `nmap -sn 192.168.56.0/24` ou `netdiscover -r 192.168.56.0/24` (este último usa ARP, acha até quem ignora ping).
+3. Identifique **qual** é o alvo pelo serviço: `nmap -p 80,443,3000,8080 --open 192.168.56.0/24` (quem tiver web aberto é candidato).
+4. Com o IP em mãos, siga o recon normal: `nmap -sV IP` e `whatweb http://IP`.
+
+Se te deram um **domínio** em vez de IP, resolva antes: `dig alvo.local +short` (ou `nslookup alvo.local`).
+
+> 💡 No lab os alvos sobem em containers no próprio Kali, por isso usamos `localhost`. Se um alvo estiver em **outra VM** (ex.: Metasploitable na rede host-only), é exatamente esse processo (passos 1→4) que você usa para encontrá-lo.
+
+**Como fazer (no nosso lab, com o endereço conhecido):**
 ```
 whatweb http://localhost:8081
 ```
