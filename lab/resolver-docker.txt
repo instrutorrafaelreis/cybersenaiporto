@@ -8,6 +8,27 @@ localhost nao abrem porque os containers nao subiram).
 
 
 ---------------------------------------------------------------------
+ 0) APT "Conexao falhou" / "Nao e possivel encontrar o pacote docker.io"
+---------------------------------------------------------------------
+
+Sintoma: o apt mostra "Conexao falhou [IP: ... 80]" e depois
+"E: Nao e possivel encontrar o pacote docker.io".
+
+Causa: a rede bloqueia HTTP (porta 80) e/ou a VM veio com um mirror
+so-HTTP (ex.: elmirror.cl). O apt nao consegue baixar o indice.
+
+Solucao: apontar o apt para o mirror oficial da Cloudflare (HTTPS) e
+atualizar. DIGITE (como root, sem sudo; se nao for root use sudo):
+
+    echo 'deb https://kali.download/kali kali-rolling main contrib non-free non-free-firmware' > /etc/apt/sources.list
+    apt update
+    bash setup-lab.sh
+
+(Depois do "apt update" deve aparecer "https://kali.download ..." sem
+"Conexao falhou". O setup-lab.sh ja faz isso sozinho na versao nova.)
+
+
+---------------------------------------------------------------------
  1) INSTALAR O DOCKER COMPOSE (direto do GitHub, via HTTPS)
 ---------------------------------------------------------------------
 

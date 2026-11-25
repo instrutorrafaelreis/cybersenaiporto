@@ -24,11 +24,14 @@ if [ ! -f "docker-compose.yml" ]; then
   exit 1
 fi
 
-# 1) Deixar o apt usar HTTPS (muitas redes bloqueiam HTTP/porta 80)
-echo "[*] Ajustando o apt para HTTPS (evita travar em redes que bloqueiam HTTP)..."
-for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
-  [ -f "$f" ] && $SUDO sed -i 's|http://http.kali.org|https://http.kali.org|g; s|http://kali.download|https://kali.download|g' "$f" 2>/dev/null || true
-done
+# 1) Forcar o apt para o mirror oficial da Cloudflare via HTTPS.
+#    Muitas redes (escola/empresa) bloqueiam HTTP (porta 80), e algumas
+#    instalacoes do Kali vem com mirrors so-HTTP (ex.: elmirror.cl) que
+#    falham nessas redes. Apontar para https://kali.download resolve os
+#    dois casos de uma vez.
+echo "[*] Apontando o apt para o mirror oficial (HTTPS / Cloudflare)..."
+$SUDO cp /etc/apt/sources.list /etc/apt/sources.list.bak 2>/dev/null || true
+echo 'deb https://kali.download/kali kali-rolling main contrib non-free non-free-firmware' | $SUDO tee /etc/apt/sources.list >/dev/null
 
 echo "[*] Atualizando a lista de pacotes (pode pedir a sua senha)..."
 $SUDO apt-get update -y || true
