@@ -54,6 +54,14 @@ nmap -sV -p 8081,3000,8080,8082 localhost
 ```
 Confirma os serviços rodando em cada porta.
 
+**E se eu não souber as portas?** Aqui eu listei as portas porque **nós** definimos os alvos no `docker-compose` (8081, 3000, 8080, 8082) — foi um atalho do lab. Normalmente você **não** sabe; aí quem descobre é o nmap:
+
+- **Padrão** (as 1000 portas mais comuns): `nmap -sV IP` — sem `-p`, ele já varre as mais usadas.
+- **Todas** as 65535 portas (completo): `nmap -p- IP` — mais lento, mas não deixa passar serviço em porta incomum.
+- **Rápido e completo:** `nmap -p- --min-rate 1000 -T4 IP` para achar as portas abertas, depois `nmap -sV -p PORTAS_ABERTAS IP` só nelas.
+
+Regra: **porta conhecida → use `-p`; porta desconhecida → descubra com `-p-` (ou o scan padrão) e só então rode o `-sV`.**
+
 **O que observar:** anote a tecnologia de cada alvo. Saber que é PHP + MySQL já diz que **SQL Injection** é um caminho provável.
 
 ---
