@@ -63,6 +63,35 @@ Acesse pelo navegador do Kali:
 
 
 ---------------------------------------------------------------------
+ ERRO 404 OU "zsh: bad pattern: [200~"  (COLAR GRUDOU CARACTERES)
+---------------------------------------------------------------------
+
+Sintoma: a URL terminou com "~" (ex.: ...x86_64~) e deu "404 Not Found",
+ou apareceu "zsh: bad pattern: ^[[200~".
+
+Causa: isso acontece quando voce COLA no terminal. Ele gruda marcas de
+colar ([200~ no inicio e ~ no fim), corrompendo o comando/URL.
+
+Solucao A (mais facil) - rebaixar o script ja corrigido e rodar:
+
+    cd ~/lab
+    wget -O setup-lab.sh https://raw.githubusercontent.com/instrutorrafaelreis/cybersenaiporto/main/lab/setup-lab.sh
+    bash setup-lab.sh
+
+Solucao B - instalar o Compose a mao, DIGITANDO a URL e terminando
+EXATAMENTE em "x86_64" (sem "~" no final):
+
+    cd ~/lab
+    wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+    chmod +x /usr/local/bin/docker-compose
+    docker-compose version
+    docker-compose up -d
+
+DICA: DIGITE os comandos em vez de colar. Para nomes de arquivo, depois
+de escrever o comeco use a tecla TAB para completar.
+
+
+---------------------------------------------------------------------
  COMANDOS UTEIS
 ---------------------------------------------------------------------
 
