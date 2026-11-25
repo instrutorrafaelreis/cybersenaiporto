@@ -1,0 +1,87 @@
+=====================================================================
+ RESOLVER DOCKER / COMPOSE - Cyber SENAI Porto (Lab Tudo-em-Um)
+=====================================================================
+
+Use este arquivo quando o setup-lab.sh falhar na parte do Docker Compose
+(ex.: "sudo: docker-compose: comando nao encontrado" ou os sites em
+localhost nao abrem porque os containers nao subiram).
+
+
+---------------------------------------------------------------------
+ 1) INSTALAR O DOCKER COMPOSE (direto do GitHub, via HTTPS)
+---------------------------------------------------------------------
+
+Entre na pasta do lab:
+
+    cd ~/lab
+
+Baixe o Compose v2 para dentro do /usr/local/bin:
+
+    wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+
+De permissao de execucao:
+
+    chmod +x /usr/local/bin/docker-compose
+
+Teste se funcionou (deve mostrar "Docker Compose version v2..."):
+
+    docker-compose version
+
+OBS: se voce NAO estiver como root, coloque "sudo" na frente dos
+comandos acima (sudo wget ... / sudo chmod ...). Como root (prompt "#"),
+NAO use sudo.
+
+
+---------------------------------------------------------------------
+ 2) SUBIR OS ALVOS
+---------------------------------------------------------------------
+
+    cd ~/lab
+    docker-compose up -d
+
+Se aparecer "Cannot connect to the Docker daemon", inicie o Docker e
+tente de novo:
+
+    systemctl start docker
+    docker-compose up -d
+
+
+---------------------------------------------------------------------
+ 3) CONFERIR
+---------------------------------------------------------------------
+
+    docker ps
+
+Devem aparecer 5 containers:
+    lab-dvwa   lab-juice-shop   lab-webgoat   lab-wordpress   lab-wp-db
+
+Acesse pelo navegador do Kali:
+    DVWA        ->  http://localhost:8081    (admin / password)
+    Juice Shop  ->  http://localhost:3000
+    WebGoat     ->  http://localhost:8080/WebGoat
+    WordPress   ->  http://localhost:8082
+
+
+---------------------------------------------------------------------
+ COMANDOS UTEIS
+---------------------------------------------------------------------
+
+    docker ps                 # ver o que esta rodando
+    docker-compose down       # desligar tudo (rode dentro de ~/lab)
+    docker-compose up -d      # subir de novo
+    docker logs lab-dvwa      # ver o log de um container (troque o nome)
+
+
+---------------------------------------------------------------------
+ POR QUE ISSO ACONTECE (para explicar a turma)
+---------------------------------------------------------------------
+
+- No Kali NAO existe o pacote "docker-compose-plugin" (ele e do
+  repositorio oficial da Docker, nao do Kali). Por isso usamos a versao
+  "docker-compose" (com hifen) ou o binario do GitHub.
+- Quando voce esta logado como ROOT, usar "sudo" reseta o PATH e pode
+  nao achar o docker-compose. Como root, rode os comandos SEM sudo.
+- Muitas redes de escola/empresa bloqueiam HTTP (porta 80), que e o que
+  o apt do Kali usa. HTTPS (443) passa - por isso baixamos o Compose do
+  GitHub por HTTPS e ajustamos o apt para HTTPS no setup-lab.sh.
+=====================================================================
