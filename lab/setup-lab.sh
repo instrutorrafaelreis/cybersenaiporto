@@ -2,7 +2,8 @@
 # =====================================================================
 # Cyber SENAI Porto - Lab Tudo-em-Um (Kali + Docker)
 # Instala o Docker + Compose e sobe TODOS os alvos de treino numa unica
-# VM Kali. Feito para rodar do zero, mesmo em redes que bloqueiam HTTP.
+# VM Kali. Feito para rodar do zero, mesmo em redes que bloqueiam HTTP,
+# e funciona tanto como root quanto com um usuario normal (sudo).
 #
 # Uso:
 #   1) mkdir -p ~/lab && cd ~/lab
@@ -13,6 +14,9 @@
 
 echo "[*] Cyber SENAI Porto - preparando o laboratorio tudo-em-um..."
 
+# Usa sudo so quando NAO for root (como root, sudo atrapalha o PATH)
+if [ "$(id -u)" -eq 0 ]; then SUDO=""; else SUDO="sudo"; fi
+
 # 0) O docker-compose.yml precisa estar na mesma pasta
 if [ ! -f "docker-compose.yml" ]; then
   echo "[!] docker-compose.yml nao encontrado nesta pasta."
@@ -20,25 +24,22 @@ if [ ! -f "docker-compose.yml" ]; then
   exit 1
 fi
 
-# 1) Deixar o apt usar HTTPS.
-#    Muitas redes (escola/empresa) bloqueiam HTTP (porta 80). Como o Kali
-#    usa HTTP por padrao, o apt trava com "Conexao expirou". HTTPS (443)
-#    costuma passar, entao trocamos os mirrors para https.
+# 1) Deixar o apt usar HTTPS (muitas redes bloqueiam HTTP/porta 80)
 echo "[*] Ajustando o apt para HTTPS (evita travar em redes que bloqueiam HTTP)..."
 for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
-  [ -f "$f" ] && sudo sed -i 's|http://http.kali.org|https://http.kali.org|g; s|http://kali.download|https://kali.download|g' "$f" 2>/dev/null || true
+  [ -f "$f" ] && $SUDO sed -i 's|http://http.kali.org|https://http.kali.org|g; s|http://kali.download|https://kali.download|g' "$f" 2>/dev/null || true
 done
 
 echo "[*] Atualizando a lista de pacotes (pode pedir a sua senha)..."
-sudo apt-get update -y || true
+$SUDO apt-get update -y || true
 
 # 2) Docker Engine
 if ! command -v docker >/dev/null 2>&1; then
   echo "[*] Instalando o Docker (docker.io)..."
-  sudo apt-get install -y docker.io
+  $SUDO apt-get install -y docker.io
 fi
-sudo systemctl enable --now docker 2>/dev/null || true
-sudo usermod -aG docker "$USER" 2>/dev/null || true
+$SUDO systemctl enable --now docker 2>/dev/null || true
+[ -n "$SUDO" ] && $SUDO usermod -aG docker "$USER" 2>/dev/null || true
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "[!] Nao consegui instalar o Docker."
@@ -46,29 +47,39 @@ if ! command -v docker >/dev/null 2>&1; then
   exit 1
 fi
 
-# 3) Docker Compose: tenta nesta ordem ate achar um que funcione
-#    (a) plugin v2 ja instalado   -> comando:  docker compose
-#    (b) docker-compose ja existe -> comando:  docker-compose
-#    (c) instalar docker-compose pelo apt (Kali tem este pacote)
-#    (d) baixar o binario do Compose v2 direto do GitHub (HTTPS)
+# 3) Docker Compose: escolhe um que REALMENTE executa (nao so que existe)
+#    Ordem: plugin v2 -> docker-compose -> apt -> binario do GitHub (HTTPS)
+COMPOSE=""
 if docker compose version >/dev/null 2>&1; then
   COMPOSE="docker compose"
-elif command -v docker-compose >/dev/null 2>&1; then
-  COMPOSE="docker-compose"
-elif sudo apt-get install -y docker-compose >/dev/null 2>&1 && command -v docker-compose >/dev/null 2>&1; then
+elif docker-compose version >/dev/null 2>&1; then
   COMPOSE="docker-compose"
 else
-  echo "[*] Baixando o Docker Compose v2 do GitHub (HTTPS)..."
-  sudo wget -qO /usr/local/bin/docker-compose \
-    https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
-  sudo chmod +x /usr/local/bin/docker-compose
-  COMPOSE="docker-compose"
+  $SUDO apt-get install -y docker-compose >/dev/null 2>&1 || true
+  hash -r 2>/dev/null || true
+  if docker-compose version >/dev/null 2>&1; then
+    COMPOSE="docker-compose"
+  else
+    echo "[*] Baixando o Docker Compose v2 do GitHub (HTTPS)..."
+    $SUDO wget -qO /usr/local/bin/docker-compose \
+      https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+    $SUDO chmod +x /usr/local/bin/docker-compose
+    hash -r 2>/dev/null || true
+    COMPOSE="docker-compose"
+  fi
+fi
+
+# Verificacao final: o Compose escolhido precisa rodar de fato
+if ! $SUDO $COMPOSE version >/dev/null 2>&1; then
+  echo "[!] O Docker Compose nao esta executando corretamente."
+  echo "    Teste manualmente:  $COMPOSE version"
+  exit 1
 fi
 echo "[*] Usando o Compose: '$COMPOSE'"
 
 # 4) Sobe os alvos (baixa as imagens do Docker Hub via HTTPS na 1a vez)
 echo "[*] Subindo os containers (na primeira vez demora alguns minutos)..."
-sudo $COMPOSE up -d
+$SUDO $COMPOSE up -d
 
 # 5) Mostra os enderecos
 echo ""
@@ -79,7 +90,6 @@ echo "    Juice Shop  ->  http://localhost:3000"
 echo "    WebGoat     ->  http://localhost:8080/WebGoat"
 echo "    WordPress   ->  http://localhost:8082"
 echo "------------------------------------------------------------"
-echo "  Nos tutoriais, troque o IP de exemplo por 'localhost' + a porta."
-echo "  Ver status:  sudo docker ps"
-echo "  Desligar:    sudo $COMPOSE down"
+echo "  Confira:   $SUDO docker ps"
+echo "  Desligar:  $SUDO $COMPOSE down"
 echo "============================================================"
