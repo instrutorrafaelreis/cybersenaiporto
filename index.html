@@ -397,6 +397,7 @@
     <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">CTF / Pentest</span></button>
     <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">Application Security</span></button>
     <button class="pbtn" data-prova="ferramentas" type="button">🧰 Ferramentas <span class="st">Arsenal &amp; Kali</span></button>
+    <button class="pbtn" data-prova="instrutor" type="button">🔒 Instrutor <span class="st">Restrito</span></button>
   </div>
 </nav>
 
@@ -6030,6 +6031,309 @@ API_KEY = base64.b64decode(<span class="s">"ZmxhZ3toYXJkY29kZWRfc2VjcmV0c19hcmVf
   <div class="disc" style="margin-top:20px">⚖️ <b>Uso ético:</b> todo este arsenal é para uso <b>autorizado</b> — laboratórios, ambientes próprios e a competição. Usar estas ferramentas contra sistemas sem permissão é crime. O profissional WorldSkills domina a técnica <b>e</b> a responsabilidade.</div>
 </div>
 </div>
+<div class="prova-content" id="instrutor">
+<style>
+  #instrutor .lockbox{max-width:440px;margin:56px auto;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:34px 28px}
+  #instrutor .lockbox input{width:100%;box-sizing:border-box;margin:14px 0 10px;padding:12px 14px;border-radius:11px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--txt);font-size:15px;outline:none}
+  #instrutor .lockbox input:focus{border-color:var(--acc)}
+  #instrutor .lockbox button{width:100%;padding:12px;border-radius:11px;border:none;background:var(--acc);color:#07241a;font-weight:700;font-size:15px;cursor:pointer}
+  #instrutor #inst-err{color:#ff6b6b;min-height:18px;font-size:13px;margin-top:8px}
+  #instrutor .mdbox{max-width:860px;margin:0 auto;line-height:1.6;color:var(--txt)}
+  #instrutor .mdbox h1{font-size:24px;margin:18px 0 8px}
+  #instrutor .mdbox h2{font-size:19px;margin:26px 0 8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  #instrutor .mdbox h3{font-size:16px;margin:18px 0 6px;color:#9fe6c7}
+  #instrutor .mdbox h4{font-size:14px;margin:12px 0 4px;color:var(--mut)}
+  #instrutor .mdbox p{margin:8px 0}
+  #instrutor .mdbox ul,#instrutor .mdbox ol{margin:8px 0 8px 4px;padding-left:22px}
+  #instrutor .mdbox li{margin:4px 0}
+  #instrutor .mdbox pre{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow:auto;font-size:12.5px;margin:8px 0}
+  #instrutor .mdbox code{background:rgba(0,0,0,.28);border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:12px;color:#9fe6c7}
+  #instrutor .mdbox pre code{background:none;border:none;padding:0;color:inherit}
+  #instrutor .mdbox blockquote{border-left:3px solid var(--acc);margin:8px 0;padding:4px 12px;color:var(--mut2);background:rgba(255,255,255,.02)}
+  #instrutor .mdbox hr{border:none;border-top:1px solid var(--line);margin:18px 0}
+</style>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · Área restrita</div>
+    <h1>🔒 Instrutor: <span class="g">tutorial e prova</span></h1>
+    <p class="sub">Material do instrutor. Cadeado leve (client-side) — não é segurança forte; o gabarito é distribuído à parte.</p>
+  </div>
+</header>
+<div class="wrap">
+  <div id="inst-lock"><div class="lockbox">
+    <div style="font-size:42px">🔒</div>
+    <h2 style="margin:6px 0">Área do Instrutor</h2>
+    <p class="sub" style="margin:4px 0 0">Informe a senha para ver o tutorial e a prova.</p>
+    <input type="password" id="inst-pass" placeholder="senha" autocomplete="off" spellcheck="false">
+    <button id="inst-btn" type="button">Entrar</button>
+    <div id="inst-err"></div>
+  </div></div>
+  <div id="inst-content" style="display:none">
+    <div class="atabs" id="insttabs">
+      <span class="atab active" data-it="it-tut"><span class="ic">📘</span> Tutorial</span>
+      <span class="atab" data-it="it-prova"><span class="ic">📝</span> Prova</span>
+    </div>
+    <div class="apanel active" id="it-tut"><div class="mdbox" id="mount-tut"></div></div>
+    <div class="apanel" id="it-prova"><div class="mdbox" id="mount-prova"></div>
+      <div class="disc" style="margin-top:16px">📄 O <b>gabarito</b> não fica aqui (material sensível). Ele é distribuído à parte pelo instrutor.</div>
+    </div>
+  </div>
+</div>
+<script type="text/plain" id="md-tut"># Tutorial Passo a Passo — Primeiros Ataques no Lab Web
+### Cyber SENAI Porto · WorldSkills Cyber Security · DVWA + Juice Shop
+
+> **Para o aluno aprender.** Cada ataque segue a mesma lógica das provas:
+> **o que é (conceito) → como fazer → o que observar → como corrigir.**
+> Uso **autorizado** apenas: este é um laboratório local, de treino.
+
+---
+
+## Parte 0 — Preparar o ambiente (5 min)
+
+1. Confirme que o lab está no ar (no terminal do Kali):
+   ```
+   docker ps
+   ```
+   Devem aparecer: `lab-dvwa`, `lab-juice-shop`, `lab-webgoat`, `lab-wordpress`, `lab-wp-db`.
+
+2. Abra o **Firefox** no Kali e acesse o **DVWA**: `http://localhost:8081`
+   - Login: **admin** / **password**
+   - Clique em **Create / Reset Database** (botão no fim da página) e logue de novo.
+   - Vá em **DVWA Security** (menu esquerdo) e selecione **Low**. (Comece fácil; depois suba.)
+
+3. Abra também o **Juice Shop**: `http://localhost:3000` (vamos usar na Parte 6).
+
+> 💡 Dica: deixe o **Burp Suite** aberto em paralelo (Proxy → Intercept Off, só para ver o histórico das requisições). Opcional, mas ajuda a entender o que acontece.
+
+---
+
+## Parte 1 — Reconhecimento (10 min)
+
+**O que é:** antes de atacar, você mapeia o alvo — portas, serviços e tecnologias. É o primeiro passo de qualquer teste.
+
+**Como fazer:**
+```
+whatweb http://localhost:8081
+```
+Veja o servidor (Apache), a linguagem (PHP) e o framework.
+
+```
+nmap -sV -p 8081,3000,8080,8082 localhost
+```
+Confirma os serviços rodando em cada porta.
+
+**O que observar:** anote a tecnologia de cada alvo. Saber que é PHP + MySQL já diz que **SQL Injection** é um caminho provável.
+
+---
+
+## Parte 2 — SQL Injection (SQLi) no DVWA (20 min)
+
+**O que é:** a aplicação monta uma consulta SQL juntando a sua entrada **sem tratar**. Você injeta SQL e muda o sentido da consulta. CWE-89.
+
+### 2.1 Testar manualmente
+1. No DVWA, vá em **SQL Injection**.
+2. No campo **User ID**, digite `1` e clique em Submit — retorna 1 usuário.
+3. Agora digite:
+   ```
+   1' OR '1'='1
+   ```
+   e Submit. **O que observar:** retornou **vários** usuários — a condição `'1'='1'` é sempre verdadeira. Isso confirma a injeção.
+
+### 2.2 Automatizar com sqlmap
+1. Copie a URL da página (ex.): `http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit`
+2. Pegue o **cookie**: no Firefox, F12 → **Storage/Armazenamento → Cookies** → copie `PHPSESSID` e `security`.
+3. No terminal:
+   ```
+   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=XXXX; security=low" --batch --dbs
+   ```
+   **O que observar:** o sqlmap confirma a injeção e lista os bancos (ex.: `dvwa`).
+4. Extraia os usuários e senhas:
+   ```
+   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=XXXX; security=low" --batch -D dvwa -T users --dump
+   ```
+   **O que observar:** aparece a tabela `users` com `user` e `password` (hash **MD5**). Guarde o hash do **admin**.
+
+### 2.3 Quebrar o hash (bônus)
+```
+echo 'HASH_DO_ADMIN' > hash.txt
+hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt
+```
+(Se o rockyou estiver zipado: `gunzip /usr/share/wordlists/rockyou.txt.gz`.)
+
+### 2.4 Como corrigir 🟢
+Use **consultas parametrizadas** (prepared statements) — o dado nunca vira código:
+```php
+$stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
+$stmt->execute([$id]);
+```
+
+---
+
+## Parte 3 — XSS Refletido no DVWA (15 min)
+
+**O que é:** a aplicação devolve a sua entrada na página **sem escapar**, e o navegador executa como HTML/JS. CWE-79.
+
+**Como fazer:**
+1. No DVWA, vá em **XSS (Reflected)**.
+2. No campo de nome, digite:
+   ```
+   <script>alert('XSS')<\/script>
+   ```
+   e Submit. **O que observar:** aparece a caixinha de alerta — seu script rodou no navegador.
+3. Teste uma variação sem `<script>` (para entender filtros):
+   ```
+   <img src=x onerror=alert('XSS')>
+   ```
+
+**Impacto:** com XSS dá para roubar cookies de sessão, redirecionar, etc.
+
+**Como corrigir 🟢:** **escape a saída** por contexto (ex.: `htmlspecialchars()` em PHP) e use `Content-Security-Policy`.
+
+---
+
+## Parte 4 — Command Injection no DVWA (15 min)
+
+**O que é:** a aplicação passa a sua entrada para um **comando do sistema** sem tratar. Você anexa um segundo comando. CWE-78.
+
+**Como fazer:**
+1. No DVWA, vá em **Command Injection**.
+2. No campo de IP, digite um IP normal: `127.0.0.1` → ele faz um ping.
+3. Agora digite:
+   ```
+   127.0.0.1; cat /etc/passwd
+   ```
+   **O que observar:** além do ping, aparece o conteúdo do `/etc/passwd` — você executou um comando no servidor.
+4. Teste também `127.0.0.1 && whoami`.
+
+**Como corrigir 🟢:** nunca montar comando com entrada do usuário; usar APIs seguras / listas de argumentos e validar a entrada (allowlist).
+
+---
+
+## Parte 5 — File Inclusion / LFI no DVWA (15 min)
+
+**O que é:** a aplicação inclui um arquivo cujo caminho vem da sua entrada, sem validar. Você lê arquivos do servidor. CWE-98.
+
+**Como fazer:**
+1. No DVWA, vá em **File Inclusion**.
+2. Repare na URL: `...?page=include.php`.
+3. Troque o parâmetro por um arquivo do sistema:
+   ```
+   http://localhost:8081/vulnerabilities/fi/?page=/etc/passwd
+   ```
+   **O que observar:** o conteúdo do `/etc/passwd` aparece na página.
+4. Teste "path traversal": `?page=../../../../etc/passwd`
+
+**Como corrigir 🟢:** nunca incluir caminho vindo do usuário; usar **allowlist** de arquivos permitidos e caminho absoluto fixo.
+
+---
+
+## Parte 6 — Juice Shop: login como admin via SQLi (15 min)
+
+**O que é:** mesmo princípio da Parte 2, agora numa aplicação moderna (SPA).
+
+**Como fazer:**
+1. Abra `http://localhost:3000` e vá em **Account → Login**.
+2. No campo **Email**, digite:
+   ```
+   ' OR 1=1--
+   ```
+   No campo **Password**, digite qualquer coisa. Clique em **Log in**.
+   **O que observar:** você entra **como o primeiro usuário (admin)** — a injeção burlou a autenticação.
+3. Explore o **placar de desafios**: `http://localhost:3000/#/score-board` (achar o placar já é um desafio!).
+
+**Como corrigir 🟢:** consultas parametrizadas + **nunca** autenticar comparando string montada com a entrada.
+
+---
+
+## Encerramento
+
+- Suba a dificuldade do DVWA (**Medium** → **High**) e veja como os mesmos ataques exigem técnicas melhores (bypass de filtros).
+- Fixe a lógica: **toda** injeção nasce de **misturar dado com código** — e a defesa é sempre **separar** (parametrizar / escapar / validar).
+- Para a competição, treine **velocidade**: reconhecer a falha e explorar rápido, documentando cada passo (print + comando) para o relatório.
+
+➡️ Quando você dominar isto, parta para o **WebGoat** (`http://localhost:8080/WebGoat`), que traz lições guiadas mais avançadas.
+</script>
+<script type="text/plain" id="md-prova"># Prova Prática — Lab Web (DVWA + Juice Shop)
+### Cyber SENAI Porto · WorldSkills Cyber Security
+
+**Aluno(a):** ______________________________  **Data:** ____/____/______
+
+---
+
+## Instruções
+
+- Ambiente: laboratório **local** no Kali (DVWA em `http://localhost:8081`, Juice Shop em `http://localhost:3000`).
+- Antes de começar, confirme o lab no ar: `docker ps` (5 containers).
+- No DVWA, deixe **DVWA Security = Low** (salvo quando a tarefa pedir outro nível).
+- **Duração sugerida:** 2 horas.
+- **Entrega:** para cada tarefa, envie **(a)** o(s) comando(s) ou payload(s) usados e **(b)** um **print** que comprove o resultado.
+- **Uso ético:** estas técnicas só podem ser usadas em sistemas autorizados. Fora do lab, é crime.
+
+**Pontuação total: 100 pontos.**
+
+---
+
+## Tarefa 1 — Reconhecimento (10 pts)
+
+Identifique a **tecnologia** que roda no alvo `http://localhost:8081`.
+- Informe o **servidor web**, a **linguagem** e qualquer **versão** que encontrar.
+- Entregue o comando usado e o print da saída.
+
+---
+
+## Tarefa 2 — SQL Injection (25 pts)
+
+Na página **SQL Injection** do DVWA:
+- **(a)** Comprove a injeção manualmente (mostre um payload que retorne mais de um usuário). **(10 pts)**
+- **(b)** Extraia a tabela de usuários do banco `dvwa` e informe o **hash da senha do usuário `admin`**. **(15 pts)**
+
+Entregue os comandos/payloads e os prints.
+
+---
+
+## Tarefa 3 — Cross-Site Scripting (XSS) (15 pts)
+
+Na página **XSS (Reflected)** do DVWA:
+- Faça o navegador **executar um alerta** (`alert`) a partir da sua entrada.
+- Entregue o **payload** usado e o print com a caixa de alerta aberta.
+
+---
+
+## Tarefa 4 — Command Injection (20 pts)
+
+Na página **Command Injection** do DVWA:
+- Além do ping normal, **leia o arquivo `/etc/passwd`** do servidor.
+- Entregue o payload usado e o print mostrando o conteúdo (a linha do `root` deve aparecer).
+
+---
+
+## Tarefa 5 — File Inclusion / LFI (15 pts)
+
+Na página **File Inclusion** do DVWA:
+- **Leia um arquivo do sistema** (ex.: `/etc/passwd`) explorando o parâmetro `page`.
+- Entregue a URL usada e o print do conteúdo exibido.
+
+---
+
+## Tarefa 6 — Juice Shop: burlar o login (15 pts)
+
+No Juice Shop (`http://localhost:3000`):
+- Entre **como administrador sem saber a senha**, usando injeção no formulário de login.
+- Entregue o payload usado e o print já **logado** (o e-mail do admin deve aparecer no topo).
+
+---
+
+## Bônus (+10 pts) — Quebra de senha
+
+Pegue o **hash do admin** da Tarefa 2 e **recupere a senha em texto claro** (dicionário).
+- Entregue o comando e o print mostrando a senha encontrada.
+
+---
+
+### Para cada tarefa, lembre-se de entregar: COMANDO/PAYLOAD + PRINT da evidência.
+### Boa prova! 🛡️
+</script>
+</div>
 <footer>
   <div class="wrap">
     Cyber SENAI Porto · Instrutor Rafael Reis · Guia de campo de Security Assessment · atualizado em 24/11/2026.<br>
@@ -9543,6 +9847,77 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     rp.classList.add('active');
     info.textContent=matches.length+' resultado(s) para "'+v+'"';
   });
+})();
+</script>
+<script>
+/* ===== Aba Instrutor: cadeado leve (client-side) + render do material ===== */
+(function(){
+  // Senha da area restrita (estilo "json"). TROQUE AQUI.
+  // AVISO: cadeado leve - o conteudo fica no codigo-fonte da pagina.
+  var INSTRUTOR_AUTH = { senha: "senai54" };
+
+  var lock=document.getElementById('inst-lock');
+  var content=document.getElementById('inst-content');
+  if(!lock||!content) return;
+  var pass=document.getElementById('inst-pass');
+  var btn=document.getElementById('inst-btn');
+  var err=document.getElementById('inst-err');
+  var rendered=false;
+
+  function render(){
+    if(rendered) return; rendered=true;
+    var t=document.getElementById('md-tut'), p=document.getElementById('md-prova');
+    document.getElementById('mount-tut').innerHTML = mdToHtml(t?t.textContent:'');
+    document.getElementById('mount-prova').innerHTML = mdToHtml(p?p.textContent:'');
+  }
+  function unlock(){ lock.style.display='none'; content.style.display=''; render(); try{sessionStorage.setItem('inst_ok','1');}catch(e){} }
+  function check(){
+    if((pass.value||'')===INSTRUTOR_AUTH.senha){ err.textContent=''; unlock(); }
+    else { err.textContent='Senha incorreta.'; pass.value=''; }
+  }
+  if(btn){ btn.addEventListener('click',check); }
+  if(pass){ pass.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); check(); } }); }
+  try{ if(sessionStorage.getItem('inst_ok')==='1') unlock(); }catch(e){}
+
+  // sub-abas (Tutorial / Prova)
+  document.querySelectorAll('#insttabs .atab').forEach(function(t){
+    t.addEventListener('click',function(){
+      document.querySelectorAll('#insttabs .atab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('#inst-content .apanel').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active'); var el=document.getElementById(t.getAttribute('data-it')); if(el) el.classList.add('active');
+    });
+  });
+
+  // ---- mini renderizador de Markdown ----
+  function mdToHtml(src){
+    src = src.split('<\\/script>').join('<\/script>'); // desfaz o escape do embed
+    var fences=[];
+    src = src.replace(/```([\s\S]*?)```/g, function(m,c){ fences.push(c.replace(/^\n/,'').replace(/\n$/,'')); return '\u0000F'+(fences.length-1)+'\u0000'; });
+    function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function inl(t){ t=esc(t); t=t.replace(/`([^`]+)`/g,'<code>$1</code>'); t=t.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>'); return t; }
+    var lines=src.split('\n'), out=[], inUl=false, inOl=false;
+    function closeL(){ if(inUl){out.push('</ul>');inUl=false;} if(inOl){out.push('</ol>');inOl=false;} }
+    for(var i=0;i<lines.length;i++){
+      var ln=lines[i], t=ln.trim();
+      var fm=t.match(/^\u0000F(\d+)\u0000$/);
+      if(fm){ closeL(); out.push('<pre>'+esc(fences[+fm[1]])+'</pre>'); continue; }
+      if(/^#### /.test(ln)){ closeL(); out.push('<h4>'+inl(ln.slice(5))+'</h4>'); continue; }
+      if(/^### /.test(ln)){ closeL(); out.push('<h3>'+inl(ln.slice(4))+'</h3>'); continue; }
+      if(/^## /.test(ln)){ closeL(); out.push('<h2>'+inl(ln.slice(3))+'</h2>'); continue; }
+      if(/^# /.test(ln)){ closeL(); out.push('<h1>'+inl(ln.slice(2))+'</h1>'); continue; }
+      if(/^---\s*$/.test(ln)){ closeL(); out.push('<hr>'); continue; }
+      if(/^>\s?/.test(ln)){ closeL(); out.push('<blockquote>'+inl(ln.replace(/^>\s?/,''))+'</blockquote>'); continue; }
+      var mo=ln.match(/^\s*\d+\.\s+(.*)$/);
+      if(mo){ if(!inOl){closeL();out.push('<ol>');inOl=true;} out.push('<li>'+inl(mo[1])+'</li>'); continue; }
+      var mu=ln.match(/^\s*[-*]\s+(.*)$/);
+      if(mu){ if(!inUl){closeL();out.push('<ul>');inUl=true;} out.push('<li>'+inl(mu[1])+'</li>'); continue; }
+      if(t===''){ closeL(); continue; }
+      if(/^\|.*\|$/.test(t)){ closeL(); out.push('<p>'+inl(ln)+'</p>'); continue; }
+      closeL(); out.push('<p>'+inl(ln)+'</p>');
+    }
+    closeL();
+    return out.join('\n');
+  }
 })();
 </script>
 </body>
