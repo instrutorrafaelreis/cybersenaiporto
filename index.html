@@ -396,6 +396,7 @@
     <button class="pbtn" data-prova="provaD" type="button">Prova D <span class="st">Blue Team &amp; SIEM</span></button>
     <button class="pbtn" data-prova="provaE" type="button">Prova E <span class="st">CTF / Pentest</span></button>
     <button class="pbtn" data-prova="provaF" type="button">Prova F <span class="st">Application Security</span></button>
+    <button class="pbtn" data-prova="ferramentas" type="button">🧰 Ferramentas <span class="st">Arsenal &amp; Kali</span></button>
   </div>
 </nav>
 
@@ -5988,6 +5989,47 @@ API_KEY = base64.b64decode(<span class="s">"ZmxhZ3toYXJkY29kZWRfc2VjcmV0c19hcmVf
   </div>
 </div>
 
+<div class="prova-content" id="ferramentas">
+<style>
+  #ferramentas .tsearch{display:flex;gap:10px;align-items:center;margin:18px 0 6px;flex-wrap:wrap}
+  #ferramentas .tsearch input{flex:1;min-width:240px;background:var(--card);border:1px solid var(--line);color:var(--txt);
+    border-radius:11px;padding:11px 14px;font-size:14px;outline:none}
+  #ferramentas .tsearch input:focus{border-color:var(--acc)}
+  #ferramentas .tsearch .tinfo{font-size:12px;color:var(--mut2)}
+  #ferramentas .gi.tool{cursor:pointer;transition:border-color .15s,transform .05s}
+  #ferramentas .gi.tool:hover{border-color:var(--acc2);transform:translateY(-1px)}
+  #ferramentas .gi.tool b{font-size:14px}
+  #ferramentas .gi.tool .tsub{font-size:11.5px;color:var(--mut2);margin-top:5px;line-height:1.45}
+  #ferramentas .gi.tool .more{opacity:.5}
+  #ferramentas .tmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-size:12px;color:var(--mut2)}
+  #ferramentas .tpv{font-size:10px;letter-spacing:.04em;color:var(--mut);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+  #ferramentas .atab .tcount{font-size:10px;opacity:.6;margin-left:3px}
+  #ferramentas .cmb a{color:var(--acc)}
+  #ferramentas .os.multi{background:rgba(99,179,237,.14);color:#63b3ed;border-color:rgba(99,179,237,.35)}
+  #ferramentas .os.web{background:rgba(180,160,255,.14);color:#b4a0ff;border-color:rgba(180,160,255,.35)}
+  #ferramentas .tempty{color:var(--mut2);padding:20px 4px;font-size:13px}
+</style>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Cyber SENAI Porto · WorldSkills Skill 54 · Arsenal de Ferramentas</div>
+    <h1>🧰 Ferramentas: <span class="g">domine o arsenal antes da prova</span></h1>
+    <p class="sub">O catálogo completo de ferramentas, plataformas e referências usadas nas Provas A–F — organizado por função, do jeito que o Kali Linux organiza o dele. Clique em qualquer ferramenta para ver <b>o que é, para que serve, um exemplo de comando e o site oficial</b>. A ideia é o aluno aprender o <b>conceito e a ferramenta</b> antes de entrar nos exercícios.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="disc" style="border-color:var(--acc)">💿 <b>Sobre o Kali Linux</b> — distribuição baseada em Debian com ~600 ferramentas de pentest, forense e auditoria já prontas, mantida pela OffSec. As ferramentas vêm agrupadas em <b>metapacotes</b> instaláveis por função: <code class="inl">sudo apt install kali-tools-web</code> (ou <code class="inl">-information-gathering</code>, <code class="inl">-passwords</code>, <code class="inl">-wireless</code>, <code class="inl">-forensics</code>…). Imagens: <b>kali-linux-default</b> (top10 + conjunto headless: Hashcat, Gobuster, FFUF, Nikto, WPScan + gráficas como Zenmap e Autopsy), <b>kali-linux-large</b> (adiciona OWASP ZAP, Ghidra, SecLists e BeEF) e <b>kali-linux-everything</b> (tudo). Dica WorldSkills: use o Kali como estação de ataque e treine em ambientes próprios ou no <b>kali-linux-labs</b>.</div>
+
+  <div class="tsearch">
+    <input type="text" id="tq" placeholder="🔎 Buscar ferramenta (ex.: nmap, sqlmap, wazuh, volatility, hashcat...)" autocomplete="off" spellcheck="false">
+    <span class="tinfo" id="tinfo"></span>
+  </div>
+
+  <div id="tmount"></div>
+
+  <div class="disc" style="margin-top:20px">⚖️ <b>Uso ético:</b> todo este arsenal é para uso <b>autorizado</b> — laboratórios, ambientes próprios e a competição. Usar estas ferramentas contra sistemas sem permissão é crime. O profissional WorldSkills domina a técnica <b>e</b> a responsabilidade.</div>
+</div>
+</div>
 <footer>
   <div class="wrap">
     Cyber SENAI Porto · Instrutor Rafael Reis · Guia de campo de Security Assessment · atualizado em 24/11/2026.<br>
@@ -9062,6 +9104,258 @@ document.querySelectorAll('#provaA .jumpcard').forEach(function(j){
       });
     });
   }
+})();
+</script>
+<script>
+/* ===== Aba Ferramentas: arsenal (render + busca + modal) ===== */
+(function(){
+  var mount=document.getElementById('tmount'); if(!mount) return;
+
+  var CATS=[
+    ['recon','🔍 Recon & Enumeração'],
+    ['web','🌐 Web & API'],
+    ['exploit','🏴‍☠️ Exploração · AD · Reverse · Pwn'],
+    ['pass','🔑 Senhas & Cripto'],
+    ['forense','🧬 Forense & Malware'],
+    ['wifi','📡 Wireless'],
+    ['mitm','🎭 Sniffing & MITM'],
+    ['social','🪝 Eng. Social / Phishing'],
+    ['blue','🕵️ Blue Team / SIEM'],
+    ['harden','🛡️ Hardening & Auditoria'],
+    ['appsec','🧪 AppSec / DevSecOps'],
+    ['report','📄 Reporting'],
+    ['ref','🎓 Plataformas & Referências']
+  ];
+
+  var DATA=`
+Nmap|multi|A,B,C,E|recon|Scanner de rede e portas|Descobrir hosts, portas, serviços e versões — o 1º passo de todo recon|nmap -sC -sV -p- -T4 alvo|nmap.org
+Masscan|lin|E|recon|Scanner de portas ultrarrápido|Varrer faixas enormes de IP em segundos|masscan -p1-65535 10.0.0.0/8 --rate 10000|github.com/robertdavidgraham/masscan
+Netdiscover|lin|E|recon|Descoberta ARP na LAN|Listar hosts vivos numa rede local|netdiscover -r 192.168.1.0/24|kali.org/tools/netdiscover
+theHarvester|lin|E|recon|OSINT de e-mails e subdomínios|Coletar e-mails, hosts e nomes de uma empresa|theHarvester -d empresa.com -b all|github.com/laramies/theHarvester
+Recon-ng|lin|E|recon|Framework de OSINT modular|Reconhecimento com várias fontes num só lugar|recon-ng|github.com/lanmaster53/recon-ng
+Maltego|multi|E|recon|OSINT gráfico (grafos)|Mapear relações entre pessoas, domínios e infra|interface gráfica|maltego.com
+Amass|lin|E|recon|Enumeração de subdomínios|Mapear a superfície externa via DNS|amass enum -d empresa.com|github.com/owasp-amass/amass
+dnsrecon|lin|E|recon|Enumeração de DNS|Zone transfer e brute de subdomínios|dnsrecon -d empresa.com|github.com/darkoperator/dnsrecon
+enum4linux-ng|lin|A,E|recon|Enumeração SMB/Windows|Usuários, shares e políticas via SMB/RPC|enum4linux-ng -A alvo|github.com/cddmp/enum4linux-ng
+smbclient|lin|E|recon|Cliente SMB|Listar e baixar de compartilhamentos SMB|smbclient -L //alvo -N|samba.org
+WhatWeb|lin|E|recon|Fingerprint de tecnologias web|Identificar CMS, servidor e frameworks de um site|whatweb https://alvo|github.com/urbanadventurer/WhatWeb
+Gobuster|lin|B,E|recon|Brute de diretórios/DNS/vhost|Descobrir caminhos e subdomínios ocultos|gobuster dir -u http://alvo -w wordlist|github.com/OJ/gobuster
+ffuf|lin|B,E|recon|Fuzzer web ultrarrápido|Fuzzing de diretórios, parâmetros e vhosts|ffuf -u http://alvo/FUZZ -w wordlist|github.com/ffuf/ffuf
+Burp Suite|multi|B,E,F|web|Proxy de interceptação web|Interceptar/alterar requisições e escanear|interface gráfica (Proxy + Repeater)|portswigger.net/burp
+OWASP ZAP|multi|E,F|web|Scanner web (DAST) open source|Scan passivo e ativo de aplicações web|zap-baseline.py -t https://alvo|zaproxy.org
+sqlmap|lin|B,E|web|Exploração automática de SQLi|Detectar e explorar injeção SQL|sqlmap -u "http://alvo/item?id=1" --batch|sqlmap.org
+Nuclei|lin|E,F|web|Scanner por templates YAML|Checar CVEs e misconfigs em massa|nuclei -u https://alvo -t cves/|github.com/projectdiscovery/nuclei
+Nikto|lin|B|web|Scanner de servidor web|Achar arquivos e configs perigosas conhecidas|nikto -h http://alvo|cirt.net/Nikto2
+WPScan|lin|B,E|web|Scanner de WordPress|Enumerar plugins, temas e usuários vulneráveis|wpscan --url https://alvo|wpscan.com
+commix|lin|E|web|Command injection automático|Detectar e explorar injeção de comando|commix -u "http://alvo/ping?ip=1"|github.com/commixproject/commix
+wfuzz|lin|E|web|Fuzzer web|Brute de parâmetros, auth e diretórios|wfuzz -w wl -u http://alvo/FUZZ|github.com/xmendez/wfuzz
+BeEF|lin|E|web|Browser Exploitation Framework|Controlar navegadores via gancho de XSS|beef-xss|beefproject.com
+Metasploit|multi|B,E|exploit|Framework de exploração|Explorar, gerar payloads e pós-exploração|msfconsole|metasploit.com
+msfvenom|lin|E|exploit|Gerador de payloads|Criar shells e backdoors para exploração|msfvenom -p linux/x64/shell_reverse_tcp LHOST=ip LPORT=443 -f elf|metasploit.com
+searchsploit|lin|B,E|exploit|Busca offline no Exploit-DB|Achar exploit público para um serviço/versão|searchsploit vsftpd 2.3.4|exploit-db.com
+Impacket|lin|E|exploit|Suíte de scripts de rede/AD|Kerberoast, DCSync e exec remoto (SMB/WMI)|impacket-GetUserSPNs dominio/user -request|github.com/fortra/impacket
+CrackMapExec / NetExec|lin|E|exploit|Canivete suíço de redes AD|Spray de senha, enum e exec em massa|nxc smb 10.0.0.0/24 -u u -p p|github.com/Pennyw0rth/NetExec
+Evil-WinRM|lin|E|exploit|Shell WinRM para Windows|Shell interativo via WinRM pós-credencial|evil-winrm -i alvo -u user -p pass|github.com/Hackplayers/evil-winrm
+BloodHound|multi|E|exploit|Mapa de ataque do Active Directory|Achar caminhos até Domain Admin em grafos|bloodhound-python -d dominio -c All|github.com/SpecterOps/BloodHound
+Mimikatz|win|C,E|exploit|Extração de credenciais|Dump de hashes e tickets da memória (LSASS)|sekurlsa::logonpasswords|github.com/gentilkiwi/mimikatz
+Responder|lin|A,E|exploit|Envenenamento LLMNR/NBT-NS|Capturar hashes NetNTLM na rede|responder -I eth0|github.com/lgandx/Responder
+proxychains|lin|E|exploit|Encadeamento de proxies|Pivotar o tráfego por um host comprometido|proxychains nmap -sT alvo|github.com/haad/proxychains
+PowerSploit|win|E|exploit|Pós-exploração em PowerShell|Coleção de módulos de recon/privesc/persist|Invoke-AllChecks|github.com/PowerShellMafia/PowerSploit
+Ghidra|multi|E|exploit|Engenharia reversa (NSA)|Descompilar e analisar binários|interface gráfica|ghidra-sre.org
+radare2 / Cutter|multi|E|exploit|RE em CLI e GUI|Disassembly, debug e patch de binários|r2 -A ./bin|rada.re
+pwntools|lin|E|exploit|Framework de exploit em Python|Automatizar exploração de binários (pwn)|from pwn import *|github.com/Gallopsled/pwntools
+gdb (GEF/pwndbg)|lin|E|exploit|Debugger de binários|Depurar, achar offsets e analisar crash|gdb ./bin|sourceware.org/gdb
+checksec|lin|E|exploit|Proteções do binário|Ver NX, PIE, canário e RELRO|checksec --file=./bin|github.com/slimm609/checksec.sh
+ROPgadget / ropper|lin|E|exploit|Busca de gadgets ROP|Montar cadeias ROP para burlar o NX|ROPgadget --binary ./bin|github.com/JonathanSalwan/ROPgadget
+apktool|multi|E|exploit|Desmontador de APK Android|Decompilar recursos e smali de apps|apktool d app.apk|apktool.org
+jadx|multi|E|exploit|Decompilador Android|Ver código Java de um APK|jadx-gui app.apk|github.com/skylot/jadx
+linpeas / winpeas|multi|B|exploit|Scanner de privesc local|Enumerar vetores de escalonamento no host|./linpeas.sh|github.com/peass-ng/PEASS-ng
+pspy|lin|B|exploit|Espião de processos sem root|Ver cron e processos de outros usuários|./pspy64|github.com/DominicBreuker/pspy
+Hashcat|multi|B,E,F|pass|Quebra de hash por GPU|Cracking rápido (dicionário, regras, bruta)|hashcat -m 0 hash.txt rockyou.txt|hashcat.net
+John the Ripper|multi|B,C,E|pass|Quebra de senha versátil|Crackear shadow, zip, documentos etc.|john --wordlist=rockyou.txt hash.txt|openwall.com/john
+Hydra|lin|E|pass|Brute force de login online|Testar credenciais em SSH/HTTP/FTP…|hydra -l admin -P wl ssh://alvo|github.com/vanhauser-thc/thc-hydra
+Medusa|lin|E|pass|Brute force paralelo|Alternativa rápida e modular ao Hydra|medusa -h alvo -u u -P wl -M ssh|github.com/jmk-foofus/medusa
+CeWL|lin|E|pass|Gerador de wordlist do alvo|Criar dicionário com palavras do próprio site|cewl https://alvo -w wl.txt|github.com/digininja/CeWL
+Crunch|lin|E|pass|Gerador de wordlists|Criar listas por padrão e charset|crunch 8 8 -t @@@@%%%%|github.com/crunchsec/crunch
+hashid|lin|E|pass|Identificador de hash|Descobrir o algoritmo antes de crackear|hashid '$1$abc...'|github.com/psypanda/hashID
+SecLists|multi|B,E|pass|Coleção de wordlists|Dicionários de senhas, dirs e payloads prontos|ls /usr/share/seclists|github.com/danielmiessler/SecLists
+fcrackzip|lin|E|pass|Quebra de senha de ZIP|Brute/dicionário em arquivos .zip|fcrackzip -D -p rockyou.txt f.zip|github.com/hyc/fcrackzip
+CyberChef|multi|C,E,F|pass|Canivete suíço de dados|Decode/encode e cripto em cadeia (base64, hex…)|interface web|gchq.github.io/CyberChef
+RsaCtfTool|lin|E|pass|Ataques a RSA fraco|Recuperar chave privada em desafios RSA|RsaCtfTool --publickey key.pub --private|github.com/RsaCtfTool/RsaCtfTool
+xortool|lin|E|pass|Análise de cifra XOR|Achar a chave de um XOR|xortool arquivo.bin|github.com/hellman/xortool
+OpenSSL|multi|A,F|pass|Toolkit de cripto e TLS|Gerar chaves/certs, cifrar e testar TLS|openssl s_client -connect alvo:443|openssl.org
+Volatility 3|multi|C,E|forense|Forense de memória RAM|Processos, conexões e injeções de um dump|vol -f mem.raw windows.pslist|github.com/volatilityfoundation/volatility3
+Autopsy / Sleuth Kit|multi|C|forense|Forense de disco|Timeline, carving e análise de imagem|fls -r imagem.dd|sleuthkit.org
+Wireshark|multi|A,C,E|forense|Analisador de pacotes (GUI)|Inspecionar tráfego capturado em detalhe|interface gráfica|wireshark.org
+tshark|multi|C,E|forense|Wireshark em linha de comando|Filtrar e extrair dados de um PCAP|tshark -r cap.pcap -Y http|wireshark.org
+Zeek|lin|C,D|forense|Monitor de rede (NSM)|Gerar logs ricos de conexões para análise|zeek -r cap.pcap|zeek.org
+binwalk|lin|E|forense|Análise de firmware e arquivos|Achar e extrair dados embutidos|binwalk -e firmware.bin|github.com/ReFirmLabs/binwalk
+foremost / scalpel|lin|C|forense|File carving por assinatura|Recuperar arquivos apagados de uma imagem|foremost -i imagem.dd -o saida/|github.com/korczis/foremost
+bulk_extractor|lin|C|forense|Extração em massa de artefatos|E-mails, URLs e cartões de uma imagem|bulk_extractor -o saida/ imagem.dd|github.com/simsong/bulk_extractor
+exiftool|multi|C,E|forense|Leitor de metadados|Ler e limpar EXIF de fotos e documentos|exiftool foto.jpg|exiftool.org
+steghide|lin|E|forense|Esteganografia|Esconder/extrair dados em imagem e áudio|steghide extract -sf img.jpg|steghide.sourceforge.net
+zsteg|lin|E|forense|Stego em PNG/BMP|Achar dados ocultos em bits LSB|zsteg img.png|github.com/zed-0xff/zsteg
+YARA|multi|C,D|forense|Regras de detecção de malware|Caçar arquivos por padrões e assinaturas|yara regra.yar /caminho/|virustotal.github.io/yara
+Guymager|lin|C|forense|Aquisição de imagem forense|Criar imagem de disco com hash (GUI)|interface gráfica|guymager.sourceforge.io
+Chainsaw|multi|C|forense|Análise de logs EVTX|Caçar ameaças em logs do Windows com Sigma|chainsaw hunt Logs/ -s sigma/|github.com/WithSecureLabs/chainsaw
+Aircrack-ng|lin|-|wifi|Suíte de pentest Wi-Fi|Capturar handshake e quebrar WEP/WPA|aircrack-ng cap.cap -w rockyou.txt|aircrack-ng.org
+Wifite|lin|-|wifi|Automação de ataque Wi-Fi|Atacar redes próximas automaticamente|wifite|github.com/derv82/wifite2
+Reaver|lin|-|wifi|Ataque ao WPS|Brute do PIN WPS para achar a senha|reaver -i wlan0mon -b BSSID|github.com/t6x/reaver-wps-fork-t6x
+Kismet|lin|-|wifi|Detector e sniffer wireless|Mapear redes e dispositivos sem fio|kismet|kismetwireless.net
+hcxdumptool|lin|-|wifi|Captura de PMKID|Capturar PMKID/handshake para o hashcat|hcxdumptool -i wlan0mon -o cap.pcapng|github.com/ZerBea/hcxdumptool
+Ettercap|lin|-|mitm|MITM clássico|ARP spoofing e interceptação na LAN|ettercap -T -M arp|ettercap-project.org
+Bettercap|lin|-|mitm|Framework MITM moderno|Spoof, sniff e inject em rede, Wi-Fi e BLE|bettercap -iface eth0|bettercap.org
+mitmproxy|multi|-|mitm|Proxy HTTP(S) interativo|Interceptar e alterar tráfego HTTPS|mitmproxy|mitmproxy.org
+tcpdump|multi|C,D|mitm|Sniffer em linha de comando|Capturar pacotes para análise posterior|tcpdump -i eth0 -w cap.pcap|tcpdump.org
+macchanger|lin|-|mitm|Troca de endereço MAC|Anonimizar ou burlar filtro por MAC|macchanger -r eth0|github.com/alobbs/macchanger
+SET (setoolkit)|lin|-|social|Social-Engineer Toolkit|Phishing, clonagem de site e payloads|setoolkit|trustedsec.com
+Gophish|multi|-|social|Plataforma de phishing|Campanhas de phishing com métricas|interface gráfica|getgophish.com
+King Phisher|lin|-|social|Simulação de phishing|Campanhas e treino de conscientização|king-phisher|github.com/rsmusllp/king-phisher
+Wazuh|multi|A,C,D|blue|SIEM/XDR open source|Coletar logs, detectar, FIM e resposta ativa|wazuh-logtest|wazuh.com
+Sigma|multi|C,D|blue|Regras de detecção portáveis|Escrever uma regra e converter p/ qualquer SIEM|sigmac -t es-qs regra.yml|github.com/SigmaHQ/sigma
+osquery|multi|D|blue|Endpoint consultável como SQL|Perguntar o estado do host via SQL|osqueryi "SELECT * FROM processes"|osquery.io
+Suricata|multi|A,C,D|blue|IDS/IPS de rede|Detecção por assinatura + eve.json|suricata -i eth0|suricata.io
+Snort|multi|A,D|blue|IDS/IPS clássico|Regras de detecção de intrusão de rede|snort -A console -i eth0|snort.org
+Elastic / Kibana|multi|C,D|blue|Stack de busca e SIEM|Ingerir, correlacionar e visualizar logs|interface gráfica|elastic.co/security
+Splunk|multi|C,D|blue|Plataforma SIEM/análise|Busca e correlação de logs (SPL)|interface gráfica|splunk.com
+CrowdSec|multi|D|blue|IPS colaborativo|Detectar e bloquear IPs maliciosos|cscli decisions list|crowdsec.net
+Canarytokens|multi|D|blue|Iscas de deception|Plantar iscas que alertam ao serem tocadas|interface web|canarytokens.org
+Shuffle|multi|D|blue|SOAR open source|Automatizar a resposta com playbooks|interface gráfica|shuffler.io
+Atomic Red Team|multi|D|blue|Emulação de adversário|Testar detecções com TTPs do ATT&CK|Invoke-AtomicTest T1059|github.com/redcanaryco/atomic-red-team
+AIDE|lin|D|blue|FIM por baseline|Detectar alterações em arquivos críticos|aide --check|aide.github.io
+fail2ban|lin|A,D|blue|Bloqueio reativo por log|Banir IPs após tentativas falhas|fail2ban-client status|github.com/fail2ban/fail2ban
+Sysmon|win|A,C,D|blue|Telemetria do Windows|Logar criação de processo, rede e handles|sysmon -i config.xml|learn.microsoft.com/sysinternals
+Lynis|lin|A,D|harden|Auditoria de hardening|Avaliar a postura de segurança do host|lynis audit system|cisofy.com/lynis
+OpenSCAP|lin|A,D|harden|Compliance via SCAP|Checar o sistema contra perfis CIS/STIG|oscap xccdf eval perfil.xml|open-scap.org
+CIS Benchmarks|multi|A,D|harden|Padrões de configuração segura|Guia de hardening por sistema/serviço|documento de referência|cisecurity.org/cis-benchmarks
+PingCastle|win|A|harden|Auditoria de Active Directory|Gerar nota de risco do AD|PingCastle.exe|pingcastle.com
+HardeningKitty|win|A|harden|Hardening de Windows|Avaliar e aplicar baseline no Windows|Invoke-HardeningKitty|github.com/scipag/HardeningKitty
+testssl.sh|lin|A|harden|Teste de TLS/SSL|Checar protocolos e ciphers de um serviço|testssl.sh https://alvo|testssl.sh
+pfSense|multi|A|harden|Firewall/roteador|Segmentar a rede e filtrar o tráfego|interface gráfica|pfsense.org
+Semgrep|multi|F|appsec|SAST multi-linguagem|Achar padrões inseguros no código-fonte|semgrep --config auto .|semgrep.dev
+CodeQL|multi|F|appsec|SAST semântico|Consultar o fluxo de dados do código|codeql database analyze db consulta.ql|codeql.github.com
+Bandit|lin|B,F|appsec|SAST para Python|Achar falhas comuns em código Python|bandit -r app/|github.com/PyCQA/bandit
+Trivy|multi|F|appsec|Scanner SCA/IaC/container|CVEs em dependências, imagens e IaC|trivy fs .|trivy.dev
+Grype|multi|F|appsec|Scanner de vulnerabilidades|Casar dependências e SBOM com CVEs|grype dir:.|github.com/anchore/grype
+Syft|multi|F|appsec|Gerador de SBOM|Inventariar os componentes do projeto|syft dir:. -o cyclonedx-json|github.com/anchore/syft
+gitleaks|multi|F|appsec|Scanner de segredos|Achar chaves no código e no histórico git|gitleaks detect --source .|github.com/gitleaks/gitleaks
+trufflehog|multi|F|appsec|Segredos verificados|Achar e validar segredos realmente vivos|trufflehog git file://.|github.com/trufflesecurity/trufflehog
+Checkov|multi|F|appsec|Scanner de IaC|Misconfig em Terraform, K8s e Docker|checkov -d .|checkov.io
+cosign (Sigstore)|multi|F|appsec|Assinatura de artefatos|Assinar e verificar imagens e proveniência|cosign verify registro/app|sigstore.dev
+Snyk|multi|F|appsec|SCA/SAST comercial|Achar e priorizar vulns em deps e código|snyk test|snyk.io
+Faraday|multi|-|report|IDE de pentest colaborativa|Centralizar achados e gerar relatório|faraday-client|faradaysec.com
+Dradis|multi|-|report|Relatórios de segurança|Agregar resultados e exportar o relatório|interface gráfica|dradisframework.com
+CherryTree|multi|-|report|Notas hierárquicas|Documentar o engajamento e as evidências|cherrytree|github.com/giuspen/cherrytree
+Kali Linux|web|A,B,C,E,F|ref|Distribuição de pentest|~600 ferramentas de ataque/forense prontas|kali.org|kali.org
+Kali Docs & Labs|web|A,B,C,E,F|ref|Documentação e laboratórios|Aprender e praticar em ambientes prontos|kali.org/docs|kali.org/docs
+MITRE ATT&CK|web|B,D|ref|Base de táticas e técnicas|Mapear e nomear o comportamento do adversário|attack.mitre.org|attack.mitre.org
+GTFOBins|web|B|ref|Abuso de binários Unix|Achar como escalar via binário sudo/SUID|gtfobins.github.io|gtfobins.github.io
+LOLBAS|web|B|ref|Binários nativos do Windows|Abusar de binários legítimos no Windows|lolbas-project.github.io|lolbas-project.github.io
+HackTricks|web|B|ref|Wiki de metodologia|Passo a passo de pentest por serviço|book.hacktricks.wiki|book.hacktricks.wiki
+PayloadsAllTheThings|web|B,E|ref|Coleção de payloads|Payloads e bypasses por categoria|github.com/swisskyrepo|github.com/swisskyrepo/PayloadsAllTheThings
+Exploit-DB|web|B|ref|Base de exploits públicos|Achar PoC/exploit para um serviço|exploit-db.com|exploit-db.com
+OWASP|web|E,F|ref|Fundação de AppSec|Top 10, ASVS, WSTG e Cheat Sheets|owasp.org|owasp.org
+OWASP Juice Shop|web|F|ref|App vulnerável para treino|Praticar exploração e defesa web|owasp.org/juice-shop|owasp.org/www-project-juice-shop
+PortSwigger Academy|web|B,F|ref|Labs web gratuitos|Treinar vulnerabilidades web guiado|portswigger.net/web-security|portswigger.net/web-security
+TryHackMe|web|B,E|ref|Treino guiado por salas|Aprender na prática por tema|tryhackme.com|tryhackme.com
+Hack The Box|web|B,E|ref|Máquinas e labs de pentest|Praticar em alvos realistas|hackthebox.com|hackthebox.com
+VulnHub|web|B|ref|VMs vulneráveis|Baixar máquinas para praticar offline|vulnhub.com|vulnhub.com
+OverTheWire|web|B|ref|Wargames de fundamentos|Aprender base de Linux/segurança jogando|overthewire.org|overthewire.org/wargames
+NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)|csrc.nist.gov|csrc.nist.gov
+`;
+
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var OSLABEL={lin:['lin','LINUX'],win:['win','WIN'],multi:['multi','MULTI'],web:['web','WEB/REF']};
+  function osBadge(os){ var o=OSLABEL[os]||OSLABEL.multi; return '<span class="os '+o[0]+'">'+o[1]+'</span>'; }
+
+  var TOOLS=[];
+  DATA.trim().split('\n').forEach(function(ln){
+    var p=ln.split('|'); if(p.length<8) return;
+    TOOLS.push({n:p[0].trim(),os:p[1].trim(),pv:p[2].trim(),c:p[3].trim(),w:p[4].trim(),u:p[5].trim(),ex:p[6].trim(),site:p[7].trim()});
+  });
+
+  // modal
+  var modal=document.getElementById('cModal'),
+      mTitle=document.getElementById('cmTitle'),
+      mBody=document.getElementById('cmBody');
+  function openTool(t){
+    mTitle.textContent=t.n;
+    var pv = (t.pv==='-'?'—':t.pv.split(',').map(function(x){return 'Prova '+x.trim();}).join(' · '));
+    var url = t.site.indexOf('http')===0 ? t.site : 'https://'+t.site;
+    mBody.innerHTML =
+      '<div class="tmeta">'+osBadge(t.os)+'<span class="tpv">'+pv+'</span></div>'+
+      '<p><b>O que é:</b> '+esc(t.w)+'.</p>'+
+      '<p><b>Para que serve:</b> '+esc(t.u)+'.</p>'+
+      '<div class="h faz" style="margin:12px 0 6px"><span class="d"></span>Exemplo</div>'+
+      '<pre>'+esc(t.ex)+'</pre>'+
+      '<p style="margin-top:12px">🌐 <a href="'+url+'" target="_blank" rel="noopener noreferrer">'+esc(t.site)+'</a></p>';
+    modal.classList.add('show');
+  }
+
+  function cardEl(t){
+    var el=document.createElement('div');
+    el.className='gi click tool';
+    el.setAttribute('data-name',t.n.toLowerCase());
+    el.setAttribute('data-kw',(t.n+' '+t.w+' '+t.u).toLowerCase());
+    el.innerHTML='<b>'+esc(t.n)+'</b> '+osBadge(t.os)+'<div class="tsub">'+esc(t.w)+'</div><span class="more">ⓘ</span>';
+    el.addEventListener('click',function(){ openTool(t); });
+    return el;
+  }
+
+  // build tabs + panels
+  var bar=document.createElement('div'); bar.className='atabs'; bar.id='tbar';
+  CATS.forEach(function(c,i){
+    var items=TOOLS.filter(function(t){return t.c===c[0];});
+    var s=document.createElement('span');
+    s.className='atab'+(i===0?' active':''); s.setAttribute('data-tp','tp-'+c[0]);
+    s.innerHTML=c[1]+' <span class="tcount">'+items.length+'</span>';
+    bar.appendChild(s);
+  });
+  mount.appendChild(bar);
+
+  CATS.forEach(function(c,i){
+    var p=document.createElement('div'); p.className='apanel'+(i===0?' active':''); p.id='tp-'+c[0];
+    var g=document.createElement('div'); g.className='gloss';
+    TOOLS.filter(function(t){return t.c===c[0];}).forEach(function(t){ g.appendChild(cardEl(t)); });
+    p.appendChild(g); mount.appendChild(p);
+  });
+
+  // results panel (busca)
+  var rp=document.createElement('div'); rp.className='apanel'; rp.id='tp-results';
+  var rg=document.createElement('div'); rg.className='gloss'; rp.appendChild(rg);
+  mount.appendChild(rp);
+
+  // sub-tab switching
+  bar.querySelectorAll('.atab').forEach(function(tab){
+    tab.addEventListener('click',function(){
+      bar.querySelectorAll('.atab').forEach(function(x){x.classList.remove('active');});
+      mount.querySelectorAll('.apanel').forEach(function(x){x.classList.remove('active');});
+      tab.classList.add('active');
+      var el=document.getElementById(tab.getAttribute('data-tp')); if(el) el.classList.add('active');
+    });
+  });
+
+  // busca/filtro
+  var q=document.getElementById('tq'), info=document.getElementById('tinfo');
+  info.textContent=TOOLS.length+' ferramentas no arsenal';
+  q.addEventListener('input',function(){
+    var v=q.value.trim().toLowerCase();
+    if(!v){
+      bar.style.display=''; rp.classList.remove('active');
+      mount.querySelectorAll('.apanel').forEach(function(x){x.classList.remove('active');});
+      var act=bar.querySelector('.atab.active'); if(act){ var el=document.getElementById(act.getAttribute('data-tp')); if(el) el.classList.add('active'); }
+      info.textContent=TOOLS.length+' ferramentas no arsenal';
+      return;
+    }
+    bar.style.display='none';
+    mount.querySelectorAll('.apanel').forEach(function(x){x.classList.remove('active');});
+    rg.innerHTML='';
+    var matches=TOOLS.filter(function(t){ return (t.n+' '+t.w+' '+t.u).toLowerCase().indexOf(v)>=0; });
+    matches.forEach(function(t){ rg.appendChild(cardEl(t)); });
+    if(!matches.length) rg.innerHTML='<div class="tempty">Nenhuma ferramenta encontrada para "'+esc(v)+'".</div>';
+    rp.classList.add('active');
+    info.textContent=matches.length+' resultado(s) para "'+v+'"';
+  });
 })();
 </script>
 </body>
