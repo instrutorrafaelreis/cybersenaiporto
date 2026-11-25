@@ -37,10 +37,17 @@ else
   echo "[*] Compose nao encontrado. Tentando instalar..."
   if sudo apt install -y docker-compose-plugin >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
     COMPOSE="docker compose"
-  else
-    echo "[*] Plugin indisponivel no Kali. Instalando a versao standalone (docker-compose)..."
-    sudo apt install -y docker-compose
+  elif sudo apt install -y docker-compose >/dev/null 2>&1 && command -v docker-compose >/dev/null 2>&1; then
     COMPOSE="docker-compose"
+  else
+    # Plano B: apt indisponivel (ex.: rede bloqueia HTTP porta 80).
+    # Baixa o plugin Compose v2 direto do GitHub por HTTPS (443).
+    echo "[*] apt indisponivel. Baixando o Compose v2 do GitHub (HTTPS)..."
+    sudo mkdir -p /usr/local/lib/docker/cli-plugins
+    sudo wget -qO /usr/local/lib/docker/cli-plugins/docker-compose \
+      https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+    sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+    COMPOSE="docker compose"
   fi
 fi
 echo "[*] Usando o Compose: '$COMPOSE'"
