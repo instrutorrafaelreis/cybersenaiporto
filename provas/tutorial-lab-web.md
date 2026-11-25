@@ -152,10 +152,20 @@ Vá aumentando o número. Quando der **erro** (ex.: no `3`), significa que a con
 
 O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado), então você fornece o **cookie da sessão**.
 
-**Pegar o cookie (passo a passo):**
-1. Esteja logado no DVWA no Firefox.
-2. Pressione **F12** → aba **Armazenamento** (Firefox) ou **Application** (Chrome) → **Cookies** → clique no `http://localhost:8081`.
-3. Copie o **valor** de `PHPSESSID` (ex.: `abc123...`) e confirme que existe `security = low`.
+**Pegar o cookie — jeito mais fácil (pelo Console):**
+1. Esteja **logado** no DVWA no Firefox.
+2. Pressione **F12**. Ele abre no **Inspetor** por padrão — clique na aba **Console** (no topo do painel das ferramentas de desenvolvedor).
+3. Na linha de digitação (com o `>`), escreva e dê **Enter**:
+   ```
+   document.cookie
+   ```
+4. Ele imprime a string completa dos cookies, por exemplo:
+   ```
+   "language=en; cookieconsent_status=dismiss; PHPSESSID=h2tcr4rn6vqisv5ptmjpn76of1; security=low"
+   ```
+5. Dessa string, use só as **duas** partes que importam: **`PHPSESSID=...`** e **`security=low`** (pode ignorar `language` e `cookieconsent`).
+
+**Alternativa (pela aba Armazenamento):** com o F12 aberto, clique na aba **Armazenamento** (se ela não aparecer, clique na setinha **`>>`** no fim das abas para ver as escondidas) → abra **Cookies** → clique em **`http://localhost:8081`** → copie o valor de **`PHPSESSID`** e confirme que há **`security = low`**.
 
 **Rodar o sqlmap (de forma progressiva):**
 
