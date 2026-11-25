@@ -1,8 +1,8 @@
 # Cyber SENAI Porto — Lab Tudo-em-Um (alvos de treino em containers)
 # Sobe todos os alvos web dentro de UMA unica VM Kali.
-#   Subir:    sudo docker compose up -d
+#   Subir:    sudo docker compose up -d     (no Kali, se nao houver o plugin: sudo docker-compose up -d)
 #   Status:   sudo docker ps
-#   Desligar: sudo docker compose down
+#   Desligar: sudo docker compose down       (ou: sudo docker-compose down)
 #
 # Alvos e portas (acesse pelo navegador do proprio Kali em http://localhost:PORTA):
 #   DVWA       -> 8081   (login admin / password)
