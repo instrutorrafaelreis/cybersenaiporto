@@ -6066,6 +6066,30 @@ API_KEY = base64.b64decode(<span class="s">"ZmxhZ3toYXJkY29kZWRfc2VjcmV0c19hcmVf
   #instrutor .mdbox pre code{background:none;border:none;padding:0;color:inherit}
   #instrutor .mdbox blockquote{border-left:3px solid var(--acc);margin:8px 0;padding:4px 12px;color:var(--mut2);background:rgba(255,255,255,.02)}
   #instrutor .mdbox hr{border:none;border-top:1px solid var(--line);margin:18px 0}
+  /* widgets de autoavaliação da prova */
+  #instrutor .pcheck{border:1px solid var(--line);border-left:3px solid var(--acc2);border-radius:10px;
+    background:rgba(86,199,232,.045);padding:14px 16px;margin:14px 0 20px}
+  #instrutor .pcheck .pchead{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--acc2);margin-bottom:10px}
+  #instrutor .pcheck .q{margin:12px 0}
+  #instrutor .pcheck .q:first-of-type{margin-top:0}
+  #instrutor .pcheck label{display:block;font-size:13.5px;font-weight:600;color:var(--txt);margin-bottom:6px}
+  #instrutor .pcheck .row{display:flex;gap:8px;flex-wrap:wrap}
+  #instrutor .pcheck input{flex:1;min-width:220px;box-sizing:border-box;padding:10px 12px;border-radius:9px;
+    border:1px solid var(--line);background:rgba(0,0,0,.28);color:var(--txt);font-family:var(--mono);font-size:13px;outline:none}
+  #instrutor .pcheck input:focus{border-color:var(--acc2)}
+  #instrutor .pcheck input.good{border-color:var(--acc)}
+  #instrutor .pcheck input.bad{border-color:var(--crit)}
+  #instrutor .pcheck button{padding:10px 18px;border-radius:9px;border:none;background:var(--acc2);color:#04212b;
+    font-weight:700;font-size:13px;cursor:pointer;font-family:var(--sans)}
+  #instrutor .pcheck button:hover{filter:brightness(1.07)}
+  #instrutor .pcheck .fb{min-height:18px;font-size:13px;font-weight:600;margin-top:7px}
+  #instrutor .pcheck .fb.ok{color:var(--acc)}
+  #instrutor .pcheck .fb.no{color:var(--crit)}
+  #instrutor .pcheck .hint{font-size:13px;color:var(--txt);background:rgba(243,181,74,.08);
+    border:1px solid rgba(243,181,74,.3);border-radius:8px;padding:8px 11px;margin-top:7px;line-height:1.5}
+  #instrutor .pcheck .hint code{font-family:var(--mono);background:rgba(0,0,0,.3);border:1px solid var(--line);
+    padding:1px 5px;border-radius:4px;font-size:12px;color:var(--warn)}
 </style>
 <header>
   <div class="wrap">
@@ -10312,6 +10336,99 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     var s=document.getElementById('md-sobre'); if(document.getElementById('mount-sobre')) document.getElementById('mount-sobre').innerHTML = mdToHtml(s?s.textContent:'');
     document.getElementById('mount-tut').innerHTML = mdToHtml(t?t.textContent:'');
     document.getElementById('mount-prova').innerHTML = mdToHtml(p?p.textContent:'');
+    buildProvaChecks();
+  }
+
+  /* ===== Autoavaliação da prova: campo de resposta + validação + dica ===== */
+  // Respostas exatas ficam como SHA-256 (fallback base64) para não aparecerem em texto puro.
+  var H_ADMIN='3f2cd8e57b096fe7e4a78a5627e34ca3f885ad65a56e61c287cf4211bbc5949f';
+  var B_ADMIN='NWY0ZGNjM2I1YWE3NjVkNjFkODMyN2RlYjg4MmNmOTk=';
+  var H_PASS='5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
+  var B_PASS='cGFzc3dvcmQ=';
+  function norm(v){ return (v||'').trim().toLowerCase(); }
+  async function sha256(s){
+    var b=new TextEncoder().encode(s);
+    var h=await crypto.subtle.digest('SHA-256',b);
+    return Array.from(new Uint8Array(h)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  }
+  function checkExact(v, hash, b64){
+    var n=norm(v);
+    if(window.crypto && crypto.subtle){
+      return sha256(n).then(function(h){ return h===hash; });
+    }
+    try{ return Promise.resolve(n===atob(b64)); }catch(e){ return Promise.resolve(false); }
+  }
+  var TASKS=[
+    {m:/^tarefa\s*1/i, qs:[
+      {label:'Tecnologias do alvo (servidor + linguagem)', ph:'ex.: Apache, PHP 8.x',
+       test:function(v){ v=norm(v); return v.indexOf('apache')>=0 && v.indexOf('php')>=0; },
+       hint:'Rode <code>whatweb http://localhost:8081</code>. A resposta precisa citar o servidor (<b>Apache</b>) e a linguagem (<b>PHP</b>).'}]},
+    {m:/^tarefa\s*2/i, qs:[
+      {label:'(a) Payload que retorna vários usuários', ph:"ex.: 1\u0027 OR \u00271\u0027=\u00271",
+       test:function(v){ return /'\s*or\s+('?1'?\s*=\s*'?1'?|1\s*=\s*1)/i.test(v); },
+       hint:'No campo <b>User ID</b>, injete uma condição sempre verdadeira, como <code>1\u0027 OR \u00271\u0027=\u00271</code>.'},
+      {label:'(b) Hash (MD5) da senha do admin', ph:'32 caracteres hexadecimais',
+       exact:[H_ADMIN,B_ADMIN],
+       hint:'É o valor da coluna <code>password</code> do usuário <code>admin</code> na tabela <code>users</code> — um MD5 de 32 caracteres (extraído via UNION ou sqlmap).'}]},
+    {m:/^tarefa\s*3/i, qs:[
+      {label:'Payload de XSS', ph:"ex.: <script>alert(1)<\/script>",
+       test:function(v){ return /alert/i.test(v) && /<script|onerror|onload|<svg|<img/i.test(v); },
+       hint:'Tem que executar <code>alert(...)</code>. Ex.: <code>&lt;script&gt;alert(\u0027XSS\u0027)&lt;/script&gt;</code> ou <code>&lt;img src=x onerror=alert(1)&gt;</code>.'}]},
+    {m:/^tarefa\s*4/i, qs:[
+      {label:'Payload de Command Injection', ph:'ex.: 127.0.0.1; cat /etc/passwd',
+       test:function(v){ return norm(v).indexOf('/etc/passwd')>=0 && /[;&|]|\n/.test(v); },
+       hint:'Encadeie um segundo comando com <code>;</code> (ou <code>&&</code>) e leia o arquivo: <code>127.0.0.1; cat /etc/passwd</code>.'}]},
+    {m:/^tarefa\s*5/i, qs:[
+      {label:'URL/parâmetro da LFI', ph:'ex.: ?page=/etc/passwd',
+       test:function(v){ v=norm(v); return v.indexOf('/etc/passwd')>=0 && (v.indexOf('page=')>=0 || v.indexOf('../')>=0); },
+       hint:'Troque o valor do parâmetro <code>page</code> por um arquivo do sistema: <code>?page=/etc/passwd</code> (ou use <code>../</code> para subir de pasta).'}]},
+    {m:/^tarefa\s*6/i, qs:[
+      {label:'Payload de login no Juice Shop', ph:"ex.: \u0027 OR 1=1--",
+       test:function(v){ return /'\s*\)?\s*or\s+1\s*=\s*1/i.test(v); },
+       hint:'No campo <b>Email</b>, injete <code>\u0027 OR 1=1--</code> e uma senha qualquer.'}]},
+    {m:/^b[o\u00f4\u00f3]nus/i, qs:[
+      {label:'Senha do admin em texto claro', ph:'a palavra recuperada',
+       exact:[H_PASS,B_PASS],
+       hint:'Quebre o MD5 com <code>hashcat -m 0</code> + <code>rockyou.txt</code>. A senha do admin é uma palavra bem comum.'}]}
+  ];
+  function buildQ(q){
+    var d=document.createElement('div'); d.className='q';
+    var lab=document.createElement('label'); lab.textContent=q.label; d.appendChild(lab);
+    var row=document.createElement('div'); row.className='row';
+    var inp=document.createElement('input'); inp.type='text'; inp.placeholder=q.ph||''; inp.spellcheck=false; inp.setAttribute('autocomplete','off');
+    var btn=document.createElement('button'); btn.type='button'; btn.textContent='Verificar';
+    row.appendChild(inp); row.appendChild(btn); d.appendChild(row);
+    var fb=document.createElement('div'); fb.className='fb'; d.appendChild(fb);
+    var hint=document.createElement('div'); hint.className='hint'; hint.style.display='none'; hint.innerHTML='\uD83D\uDCA1 '+q.hint; d.appendChild(hint);
+    function verdict(okFlag){
+      if(okFlag){ fb.className='fb ok'; fb.textContent='\u2713 Correto!'; hint.style.display='none'; inp.classList.remove('bad'); inp.classList.add('good'); }
+      else { fb.className='fb no'; fb.textContent='\u2717 Ainda não \u2014 veja a dica abaixo.'; hint.style.display=''; inp.classList.remove('good'); inp.classList.add('bad'); }
+    }
+    function run(){
+      var v=inp.value||''; if(!v.trim()){ fb.className='fb'; fb.textContent=''; return; }
+      if(q.exact){ checkExact(v,q.exact[0],q.exact[1]).then(verdict); }
+      else { verdict(!!q.test(v)); }
+    }
+    btn.addEventListener('click',run);
+    inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } });
+    return d;
+  }
+  function buildProvaChecks(){
+    var root=document.getElementById('mount-prova'); if(!root) return;
+    if(root.querySelector('.pcheck')) return;
+    root.querySelectorAll('h2').forEach(function(h){
+      var txt=(h.textContent||'').trim();
+      var cfg=null;
+      for(var i=0;i<TASKS.length;i++){ if(TASKS[i].m.test(txt)){ cfg=TASKS[i]; break; } }
+      if(!cfg) return;
+      var w=document.createElement('div'); w.className='pcheck';
+      var head=document.createElement('div'); head.className='pchead'; head.textContent='\u270D\uFE0F Responda e verifique';
+      w.appendChild(head);
+      cfg.qs.forEach(function(q){ w.appendChild(buildQ(q)); });
+      var node=h, target=null;
+      while(node.nextElementSibling){ node=node.nextElementSibling; if(node.tagName==='HR'){ target=node; break; } if(node.tagName==='H2'){ break; } }
+      if(target) root.insertBefore(w,target); else root.appendChild(w);
+    });
   }
   function unlock(){ lock.style.display='none'; content.style.display=''; render(); try{sessionStorage.setItem('inst_ok','1');}catch(e){} }
   function check(){
