@@ -6289,16 +6289,23 @@ Agora a condição `'1'='1'` é **sempre verdadeira** → o banco devolve **todo
 
 ### 2.2 Testar do zero (passo a passo)
 
-1. No DVWA (nível **Low**), vá em **SQL Injection**.
-2. **Comportamento normal:** no campo **User ID**, digite `1` e Submit.
+> **⚠️ Onde testar (leia antes de começar).** Os payloads de SQLi **NÃO** vão no terminal do Kali — eles são digitados **no navegador (Firefox)**, dentro do **próprio site do DVWA**. Para chegar no lugar certo:
+> 1. No Firefox, abra `http://localhost:8081` e faça login (**admin** / **password**).
+> 2. No menu da **esquerda**, clique em **SQL Injection**.
+> 3. A página mostra uma caixinha de texto com o rótulo **User ID** e um botão **Submit**. **É nessa caixinha que você digita cada payload abaixo** e clica em **Submit** a cada teste.
+> 4. O resultado aparece **logo abaixo do formulário**, na mesma página.
+>
+> 👉 **Como saber onde cada coisa vai, no tutorial todo:** se o passo mostra um **campo** (User ID, Email…) ou uma **URL**, é no **navegador**. Se mostra um comando tipo `nmap`, `sqlmap` ou `hashcat`, é no **terminal**. Os payloads do **2.2 e 2.3** são todos no **campo User ID** do navegador.
+
+1. **Comportamento normal:** no campo **User ID**, digite `1` e clique em **Submit**.
    *O que esperar:* aparece **1 usuário** (`First name` / `Surname`). Guarde essa imagem mental do "normal".
-3. **Testar se é injetável** — digite só uma aspa e Submit:
+2. **Testar se é injetável** — no mesmo campo **User ID**, digite só uma aspa e Submit:
    ```
    1'
    ```
    *Para que serve:* uma aspa sozinha **quebra** a sintaxe da query. Se o campo for vulnerável, o banco reclama.
    *O que esperar:* um **erro de SQL** (`You have an error in your SQL syntax...`) ou o resultado some. Erro = você quebrou a sintaxe = **é injetável**. (Se não der erro, o campo pode estar tratando a entrada.)
-4. **Confirmar a injeção** (condição sempre verdadeira):
+3. **Confirmar a injeção** (condição sempre verdadeira) — de novo no campo **User ID**:
    ```
    1' OR '1'='1
    ```
@@ -6310,6 +6317,8 @@ Agora a condição `'1'='1'` é **sempre verdadeira** → o banco devolve **todo
 ### 2.3 Extrair dados de verdade com UNION (a parte importante)
 
 Confirmar a falha é só o começo. Para **extrair dados** usamos a técnica **UNION SELECT**, que "cola" o resultado de uma segunda consulta (sua) no resultado da primeira. Para funcionar, a sua consulta precisa ter o **mesmo número de colunas** que a original. Vamos descobrir isso em etapas — cada payload tem um objetivo claro.
+
+> 💡 **Lembre:** todos os payloads abaixo continuam indo no **mesmo campo User ID** da página SQL Injection do DVWA, no **navegador** (não no terminal). Digite um, clique em **Submit**, veja o resultado abaixo do formulário, e passe para o próximo.
 
 **Passo 1 — Descobrir quantas colunas a consulta tem** (com `ORDER BY`).
 
