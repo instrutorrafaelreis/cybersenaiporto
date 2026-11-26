@@ -248,6 +248,11 @@ O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado)
    "language=en; cookieconsent_status=dismiss; PHPSESSID=h2tcr4rn6vqisv5ptmjpn76of1; security=low"
    ```
 4. Dessa string, use só as **duas** partes que importam: **`PHPSESSID=...`** e **`security=low`** (pode ignorar `language` e `cookieconsent`).
+5. **⚠️ ATENÇÃO — é esse valor que você vai colar nos comandos.** Em **todos** os comandos do sqlmap abaixo aparece `PHPSESSID=SEU_PHPSESSID`. Isso é só um **texto de exemplo** (um "preencha aqui"). Você **precisa trocar** o `SEU_PHPSESSID` pelo **seu** valor real (o que apareceu no passo 3). Veja a diferença:
+   - ❌ **Errado** (deixou o exemplo como está): `--cookie="PHPSESSID=SEU_PHPSESSID; security=low"`
+   - ✅ **Certo** (colou o seu valor real): `--cookie="PHPSESSID=h2tcr4rn6vqisv5ptmjpn76of1; security=low"`
+
+   Se rodar **sem trocar**, o sqlmap não fica logado, é jogado para a tela de login e vai dizer que "nada é injetável" — mesmo o alvo sendo vulnerável.
 
 **Alternativa (pela aba Armazenamento):** com o F12 aberto, clique na aba **Armazenamento** (se não aparecer, clique na setinha **`>>`** no fim das abas) → abra **Cookies** → clique em **`http://localhost:8081`** → copie o valor de **`PHPSESSID`** e confirme que há **`security = low`**.
 
@@ -259,7 +264,7 @@ O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado)
 
 **Rodar o sqlmap (um passo de cada vez):**
 
-A ideia é ir **montando o comando aos poucos**: cada passo pega o comando anterior e **acrescenta parâmetros no final**. Rode tudo **no terminal** do Kali e troque `SEU_PHPSESSID` pelo valor que você pegou no cookie.
+A ideia é ir **montando o comando aos poucos**: cada passo pega o comando anterior e **acrescenta parâmetros no final**. Rode tudo **no terminal** do Kali. ⚠️ **Em TODOS os comandos abaixo, troque o `SEU_PHPSESSID` pelo seu valor real** (o do passo do cookie, logo acima) — se deixar o texto de exemplo, não vai funcionar.
 
 **O que cada parâmetro significa:** `-u` = a URL/alvo · `--cookie` = sua sessão (logado) · `--batch` = responde as perguntas sozinho · `--dbs` = liste os bancos · `-D` = escolha um banco · `--tables` = liste as tabelas · `-T` = escolha uma tabela · `--columns` = liste as colunas · `-C` = escolha colunas · `--dump` = extraia os dados.
 
