@@ -7,7 +7,7 @@
 
 ## Instruções
 
-- Mesmo laboratório (containers Docker no Kali): DVWA `http://localhost:8081`, Juice Shop `http://localhost:3000`, WordPress `http://localhost:8082`, WebGoat `http://localhost:8080/WebGoat`.
+- Mesmo laboratório (containers Docker no Kali): DVWA `http://localhost:8081`, Juice Shop `http://localhost:3000`, WordPress `http://localhost:8082`, WebGoat `http://localhost:8085/WebGoat`.
 - Confirme o lab: `docker ps` (5 containers). Parado? `cd ~/lab && docker compose up -d`.
 - No DVWA, mude **DVWA Security = High**. Aqui os filtros são **agressivos** — você precisa de técnicas de **bypass** e de ferramentas automatizadas.
 - Use **Burp Suite**, **sqlmap** e **wpscan** conforme a tarefa.
