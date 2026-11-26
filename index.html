@@ -6111,11 +6111,19 @@ API_KEY = base64.b64decode(<span class="s">"ZmxhZ3toYXJkY29kZWRfc2VjcmV0c19hcmVf
     <div class="atabs" id="insttabs">
       <span class="atab active" data-it="it-sobre"><span class="ic">ℹ️</span> Sobre</span>
       <span class="atab" data-it="it-tut"><span class="ic">📘</span> Tutorial</span>
-      <span class="atab" data-it="it-prova"><span class="ic">📝</span> Prova</span>
+      <span class="atab" data-it="it-prova"><span class="ic">🟢</span> Prova Fácil</span>
+      <span class="atab" data-it="it-prova-med"><span class="ic">🟡</span> Prova Média</span>
+      <span class="atab" data-it="it-prova-hard"><span class="ic">🔴</span> Prova Difícil</span>
     </div>
     <div class="apanel active" id="it-sobre"><div class="mdbox" id="mount-sobre"></div></div>
     <div class="apanel" id="it-tut"><div class="mdbox" id="mount-tut"></div></div>
     <div class="apanel" id="it-prova"><div class="mdbox" id="mount-prova"></div>
+      <div class="disc" style="margin-top:16px">📄 O <b>gabarito</b> não fica aqui (material sensível). Ele é distribuído à parte pelo instrutor.</div>
+    </div>
+    <div class="apanel" id="it-prova-med"><div class="mdbox" id="mount-prova-med"></div>
+      <div class="disc" style="margin-top:16px">📄 O <b>gabarito</b> não fica aqui (material sensível). Ele é distribuído à parte pelo instrutor.</div>
+    </div>
+    <div class="apanel" id="it-prova-hard"><div class="mdbox" id="mount-prova-hard"></div>
       <div class="disc" style="margin-top:16px">📄 O <b>gabarito</b> não fica aqui (material sensível). Ele é distribuído à parte pelo instrutor.</div>
     </div>
   </div>
@@ -6797,6 +6805,162 @@ Pegue o **hash do admin** da Tarefa 2 e **recupere a senha em texto claro** (dic
 ---
 
 ### Para cada tarefa, lembre-se de entregar: COMANDO/PAYLOAD + PRINT da evidência.
+### Boa prova! 🛡️
+</script>
+<script type="text/plain" id="md-prova-med"># Prova Prática — Lab Web · Nível MÉDIO (DVWA Medium + Juice Shop)
+### Cyber SENAI Porto · WorldSkills Cyber Security
+
+**Aluno(a):** ______________________________  **Data:** ____/____/______
+
+---
+
+## Instruções
+
+- Mesmo laboratório de sempre (os containers Docker no Kali): DVWA `http://localhost:8081`, Juice Shop `http://localhost:3000`.
+- Confirme o lab no ar: `docker ps` (5 containers). Se estiver parado: `cd ~/lab && docker compose up -d`.
+- No DVWA, mude **DVWA Security = Medium** (menu da esquerda).
+- No nível Medium há **filtros e proteções**: os payloads do nível Low **não funcionam mais**. O objetivo desta prova é **contornar os filtros**.
+- Ferramenta recomendada: **Burp Suite** (ou as DevTools do Firefox) para interceptar e editar requisições, já que o Medium usa POST / dropdowns.
+- **Entrega:** para cada tarefa, **(a)** o comando/payload usado e **(b)** um **print** da evidência.
+- **Uso ético:** apenas no laboratório autorizado.
+
+**Pontuação total: 100 pontos.**
+
+---
+
+## Tarefa 1 — Reconhecimento ativo (10 pts)
+
+Faça uma **enumeração de diretórios/arquivos** do alvo `http://localhost:8081` com uma ferramenta de brute-force de caminhos (gobuster, ffuf ou dirb).
+- Informe o **comando** usado e pelo menos um caminho interessante encontrado (ex.: `/config`, `/login.php`).
+
+---
+
+## Tarefa 2 — SQL Injection no Medium (25 pts)
+
+No Medium, o campo **User ID** vai por **POST** e a entrada passa por `mysql_real_escape_string()` — ou seja, a **aspa é neutralizada**. Mas o `id` é usado **sem aspas** na query, então dá para injetar **sem usar aspas**.
+- **(a)** Intercepte a requisição (Burp) e envie um payload **numérico** que retorne mais de um usuário. **(10 pts)**
+- **(b)** Extraia a tabela de usuários e informe o **hash (MD5) da senha do `admin`**. **(15 pts)**
+
+---
+
+## Tarefa 3 — XSS Refletido no Medium (15 pts)
+
+No Medium, o filtro remove a string `<script>` (minúscula e exata).
+- Faça o `alert` disparar **contornando** esse filtro (dica: maiúsculas/minúsculas misturadas, ou um vetor que não use a tag `<script>`).
+- Entregue o **payload** e o print do alerta.
+
+---
+
+## Tarefa 4 — Command Injection no Medium (20 pts)
+
+No Medium, o filtro remove `;` e `&&`.
+- Mesmo assim, **leia o `/etc/passwd`** usando um operador que **não** foi bloqueado.
+- Entregue o payload e o print com a linha do `root`.
+
+---
+
+## Tarefa 5 — File Inclusion no Medium (15 pts)
+
+No Medium, o filtro troca `../` e bloqueia `http://`.
+- Mesmo assim, **leia o `/etc/passwd`** (dica: o filtro não bloqueia **caminho absoluto**).
+- Entregue a URL/parâmetro usado e o print do conteúdo.
+
+---
+
+## Tarefa 6 — Juice Shop: admin (15 pts)
+
+No Juice Shop (`http://localhost:3000`):
+- **(a)** Entre **como administrador** por injeção no login (sem saber a senha). **(8 pts)**
+- **(b)** Informe o **e-mail do usuário admin** que você passou a controlar. **(7 pts)**
+
+---
+
+## Bônus (+10 pts) — Quebra de senha de outro usuário
+
+Pegue o hash de **outro** usuário do DVWA (ex.: `gordonb`) e **recupere a senha em texto claro** com dicionário.
+- Entregue o comando e a senha encontrada.
+
+---
+
+### Entrega por tarefa: COMANDO/PAYLOAD + PRINT da evidência.
+### Boa prova! 🛡️
+</script>
+<script type="text/plain" id="md-prova-hard"># Prova Prática — Lab Web · Nível DIFÍCIL (DVWA High + WordPress + Juice Shop)
+### Cyber SENAI Porto · WorldSkills Cyber Security
+
+**Aluno(a):** ______________________________  **Data:** ____/____/______
+
+---
+
+## Instruções
+
+- Mesmo laboratório (containers Docker no Kali): DVWA `http://localhost:8081`, Juice Shop `http://localhost:3000`, WordPress `http://localhost:8082`, WebGoat `http://localhost:8080/WebGoat`.
+- Confirme o lab: `docker ps` (5 containers). Parado? `cd ~/lab && docker compose up -d`.
+- No DVWA, mude **DVWA Security = High**. Aqui os filtros são **agressivos** — você precisa de técnicas de **bypass** e de ferramentas automatizadas.
+- Use **Burp Suite**, **sqlmap** e **wpscan** conforme a tarefa.
+- **Entrega:** para cada tarefa, **(a)** o(s) comando(s)/payload(s) e **(b)** o **print** da evidência.
+- **Uso ético:** apenas no laboratório autorizado.
+
+**Pontuação total: 100 pontos.**
+
+---
+
+## Tarefa 1 — Enumeração do WordPress (10 pts)
+
+O container WordPress está em `http://localhost:8082`.
+- Use o **wpscan** para **enumerar os usuários** do WordPress.
+- Entregue o comando usado e a lista de usuários encontrada.
+
+---
+
+## Tarefa 2 — SQL Injection no High (25 pts)
+
+No High, a query usa `LIMIT 1` e a entrada vai por outra janela (sem resposta imediata). O truque é **comentar** o resto da query para anular o `LIMIT`.
+- **(a)** Monte um payload com **UNION** e um **comentário** (`#` ou `-- -`) que extraia dados mesmo com o `LIMIT 1`. **(15 pts)**
+- **(b)** Extraia e informe o **hash (MD5) da senha do `admin`**. **(10 pts)**
+
+---
+
+## Tarefa 3 — SQL Injection cego / automatizado (20 pts)
+
+Nem toda injeção devolve o dado na tela (injeção **cega**).
+- Use o **sqlmap** aumentando a agressividade (ex.: `--level` / `--risk`) para detectar e **extrair** os dados da injeção, mesmo cega.
+- Entregue o comando completo e o print do dump.
+
+---
+
+## Tarefa 4 — XSS no High (15 pts)
+
+No High, um filtro por **expressão regular** bloqueia as variações de `<script>`.
+- Dispare o `alert` usando um **vetor que não seja a tag `<script>`**.
+- Entregue o payload e o print do alerta.
+
+---
+
+## Tarefa 5 — Command Injection no High (15 pts)
+
+No High, a blacklist cobre vários operadores — mas deixa escapar um caso específico de **pipe**.
+- **Leia o `/etc/passwd`** contornando a blacklist (dica: atenção ao **espaço** depois do operador).
+- Entregue o payload e o print.
+
+---
+
+## Tarefa 6 — File Inclusion no High (15 pts)
+
+No High, a aplicação exige que o nome do arquivo **comece com `file`** (`fnmatch("file*", ...)`).
+- **Leia o `/etc/passwd`** respeitando essa regra (dica: o esquema `file://`).
+- Entregue a URL/parâmetro usado e o print.
+
+---
+
+## Bônus (+15 pts) — Juice Shop + quebra de hash
+
+- **(a)** No Juice Shop, abra o **painel de desafios** (score board) — informe a **URL** que leva até ele. **(7 pts)**
+- **(b)** Quebre o hash de um usuário secundário do DVWA (ex.: `gordonb`) e informe a **senha em texto claro**. **(8 pts)**
+
+---
+
+### Entrega por tarefa: COMANDO/PAYLOAD + PRINT da evidência.
 ### Boa prova! 🛡️
 </script>
 </div>
@@ -10336,7 +10500,12 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     var s=document.getElementById('md-sobre'); if(document.getElementById('mount-sobre')) document.getElementById('mount-sobre').innerHTML = mdToHtml(s?s.textContent:'');
     document.getElementById('mount-tut').innerHTML = mdToHtml(t?t.textContent:'');
     document.getElementById('mount-prova').innerHTML = mdToHtml(p?p.textContent:'');
-    buildProvaChecks();
+    var pm=document.getElementById('md-prova-med'), ph=document.getElementById('md-prova-hard');
+    if(document.getElementById('mount-prova-med')) document.getElementById('mount-prova-med').innerHTML = mdToHtml(pm?pm.textContent:'');
+    if(document.getElementById('mount-prova-hard')) document.getElementById('mount-prova-hard').innerHTML = mdToHtml(ph?ph.textContent:'');
+    buildProvaChecks('mount-prova', TASKS_LOW);
+    buildProvaChecks('mount-prova-med', TASKS_MED);
+    buildProvaChecks('mount-prova-hard', TASKS_HARD);
   }
 
   /* ===== Autoavaliação da prova: campo de resposta + validação + dica ===== */
@@ -10345,6 +10514,10 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
   var B_ADMIN='NWY0ZGNjM2I1YWE3NjVkNjFkODMyN2RlYjg4MmNmOTk=';
   var H_PASS='5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
   var B_PASS='cGFzc3dvcmQ=';
+  var H_JUICE='6f9073139703211126b225355954f4890c8cd2aef90864856b5e89f222d60f55';
+  var B_JUICE='YWRtaW5AanVpY2Utc2gub3A=';
+  var H_ABC='6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090';
+  var B_ABC='YWJjMTIz';
   function norm(v){ return (v||'').trim().toLowerCase(); }
   async function sha256(s){
     var b=new TextEncoder().encode(s);
@@ -10358,7 +10531,7 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     }
     try{ return Promise.resolve(n===atob(b64)); }catch(e){ return Promise.resolve(false); }
   }
-  var TASKS=[
+  var TASKS_LOW=[
     {m:/^tarefa\s*1/i, qs:[
       {label:'Tecnologias do alvo (servidor + linguagem)', ph:'ex.: Apache, PHP 8.x',
        test:function(v){ v=norm(v); return v.indexOf('apache')>=0 && v.indexOf('php')>=0; },
@@ -10391,6 +10564,81 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
        exact:[H_PASS,B_PASS],
        hint:'Quebre o MD5 com <code>hashcat -m 0</code> + <code>rockyou.txt</code>. A senha do admin é uma palavra bem comum.'}]}
   ];
+
+  var TASKS_MED=[
+    {m:/^tarefa\s*1/i, qs:[
+      {label:'Comando de enumeração de diretórios', ph:'ex.: gobuster dir -u http://localhost:8081 -w ...',
+       test:function(v){ return /(gobuster|ffuf|dirb|dirbuster|wfuzz|feroxbuster)/i.test(v); },
+       hint:'Use um brute-forcer de caminhos: <code>gobuster</code>, <code>ffuf</code> ou <code>dirb</code> apontando para <code>http://localhost:8081</code> com uma wordlist.'}]},
+    {m:/^tarefa\s*2/i, qs:[
+      {label:'(a) Payload SQLi numérico (sem aspas)', ph:'ex.: 1 UNION SELECT user,password FROM users',
+       test:function(v){ return /(union\s+select|\bor\s+1\s*=\s*1)/i.test(v); },
+       hint:'No Medium o <code>id</code> é usado sem aspas — injete sem aspas: <code>1 OR 1=1</code> ou <code>0 UNION SELECT user,password FROM users</code>.'},
+      {label:'(b) Hash (MD5) da senha do admin', ph:'32 caracteres hexadecimais',
+       exact:[H_ADMIN,B_ADMIN],
+       hint:'O hash do <code>admin</code> na tabela <code>users</code> é o mesmo em qualquer nível de dificuldade — um MD5 de 32 caracteres.'}]},
+    {m:/^tarefa\s*3/i, qs:[
+      {label:'Payload de XSS que burla o filtro', ph:'ex.: <img src=x onerror=alert(1)>',
+       test:function(v){ if(!/alert/i.test(v)) return false; if(/(onerror|onload|<svg|<img)/i.test(v)) return true; var mm=v.match(/<\s*(scr\w*ipt)/i); return !!(mm && /[A-Z]/.test(mm[1])); },
+       hint:'O filtro remove <code>&lt;script&gt;</code> minúsculo e exato. Burle com maiúsculas (<code>&lt;ScRiPt&gt;</code>) ou um vetor sem script: <code>&lt;img src=x onerror=alert(1)&gt;</code>.'}]},
+    {m:/^tarefa\s*4/i, qs:[
+      {label:'Payload de Command Injection', ph:'ex.: 127.0.0.1| cat /etc/passwd',
+       test:function(v){ return /\/etc\/passwd/.test(v) && (/\|/.test(v) || /(^|[^&])&([^&]|$)/.test(v)); },
+       hint:'O Medium remove <code>;</code> e <code>&&</code>, mas não o <b>pipe</b>: <code>127.0.0.1| cat /etc/passwd</code>.'}]},
+    {m:/^tarefa\s*5/i, qs:[
+      {label:'URL/parâmetro da LFI', ph:'ex.: ?page=/etc/passwd',
+       test:function(v){ v=norm(v); return v.indexOf('/etc/passwd')>=0; },
+       hint:'O Medium troca <code>../</code>, mas não bloqueia <b>caminho absoluto</b>: <code>?page=/etc/passwd</code>.'}]},
+    {m:/^tarefa\s*6/i, qs:[
+      {label:'(a) Payload de login no Juice Shop', ph:"ex.: \u0027 OR 1=1--",
+       test:function(v){ return /'\s*\)?\s*or\s+1\s*=\s*1/i.test(v); },
+       hint:'No campo <b>Email</b>, injete <code>\u0027 OR 1=1--</code> e uma senha qualquer.'},
+      {label:'(b) E-mail do usuário admin do Juice Shop', ph:'ex.: ____@juice-sh.op',
+       exact:[H_JUICE,B_JUICE],
+       hint:'Depois de logar, o e-mail do admin aparece no topo. É o endereço padrão do admin do Juice Shop (termina em <code>@juice-sh.op</code>).'}]},
+    {m:/^b[o\u00f4\u00f3]nus/i, qs:[
+      {label:'Senha em texto claro do gordonb', ph:'a palavra recuperada',
+       exact:[H_ABC,B_ABC],
+       hint:'Quebre o MD5 do <code>gordonb</code> com <code>hashcat -m 0</code> + <code>rockyou.txt</code>.'}]}
+  ];
+
+  var TASKS_HARD=[
+    {m:/^tarefa\s*1/i, qs:[
+      {label:'Comando wpscan para enumerar usuários', ph:'ex.: wpscan --url http://localhost:8082 --enumerate u',
+       test:function(v){ return /wpscan/i.test(v) && /(enumerate|-e\s*u|\busers?\b|8082)/i.test(v); },
+       hint:'Use o <code>wpscan</code> contra o WordPress: <code>wpscan --url http://localhost:8082 --enumerate u</code>.'}]},
+    {m:/^tarefa\s*2/i, qs:[
+      {label:'(a) Payload UNION + comentário (anula o LIMIT)', ph:"ex.: \u0027 UNION SELECT user,password FROM users #",
+       test:function(v){ return /union\s+select/i.test(v) && /(#|--)/.test(v); },
+       hint:'No High há <code>LIMIT 1</code>. Use <b>UNION</b> e <b>comente</b> o resto: <code>\u0027 UNION SELECT user,password FROM users #</code>.'},
+      {label:'(b) Hash (MD5) da senha do admin', ph:'32 caracteres hexadecimais',
+       exact:[H_ADMIN,B_ADMIN],
+       hint:'Mesmo hash de sempre do <code>admin</code> — um MD5 de 32 caracteres.'}]},
+    {m:/^tarefa\s*3/i, qs:[
+      {label:'Comando sqlmap (injeção cega/agressiva)', ph:'ex.: sqlmap -u "..." --cookie="..." --level 3 --risk 2 --dump',
+       test:function(v){ return /sqlmap/i.test(v) && /(--level|--risk|--technique|blind|--dump)/i.test(v); },
+       hint:'Aumente a agressividade do sqlmap para pegar injeção cega: <code>--level 3 --risk 2</code> (e <code>--dump</code> para extrair).'}]},
+    {m:/^tarefa\s*4/i, qs:[
+      {label:'Payload de XSS (sem a tag script)', ph:'ex.: <svg onload=alert(1)>',
+       test:function(v){ return /alert/i.test(v) && /(onerror|onload|<svg|<img)/i.test(v); },
+       hint:'O regex do High bloqueia as variações de <code>&lt;script&gt;</code>. Use outro vetor: <code>&lt;svg onload=alert(1)&gt;</code> ou <code>&lt;img src=x onerror=alert(1)&gt;</code>.'}]},
+    {m:/^tarefa\s*5/i, qs:[
+      {label:'Payload de Command Injection (pipe sem espaço)', ph:'ex.: 127.0.0.1|cat /etc/passwd',
+       test:function(v){ return /\/etc\/passwd/.test(v) && /\|\S/.test(v); },
+       hint:'A blacklist do High deixa escapar o <b>pipe sem espaço</b> depois: <code>127.0.0.1|cat /etc/passwd</code>.'}]},
+    {m:/^tarefa\s*6/i, qs:[
+      {label:'URL/parâmetro da LFI (esquema file://)', ph:'ex.: ?page=file:///etc/passwd',
+       test:function(v){ return /\/etc\/passwd/.test(v) && /file/i.test(v); },
+       hint:'O High exige que o nome comece com <code>file</code> (<code>fnmatch("file*")</code>). Use o esquema: <code>?page=file:///etc/passwd</code>.'}]},
+    {m:/^b[o\u00f4\u00f3]nus/i, qs:[
+      {label:'(a) URL do painel de desafios do Juice Shop', ph:'ex.: http://localhost:3000/#/score-board',
+       test:function(v){ return /score-?board/i.test(v); },
+       hint:'O score board fica em <code>http://localhost:3000/#/score-board</code>.'},
+      {label:'(b) Senha em texto claro do gordonb', ph:'a palavra recuperada',
+       exact:[H_ABC,B_ABC],
+       hint:'Quebre o MD5 do <code>gordonb</code> com <code>hashcat -m 0</code> + <code>rockyou.txt</code>.'}]}
+  ];
+
   function buildQ(q){
     var d=document.createElement('div'); d.className='q';
     var lab=document.createElement('label'); lab.textContent=q.label; d.appendChild(lab);
@@ -10413,13 +10661,13 @@ NIST|web|A,F|ref|Padrões de segurança|CSF, SSDF e SP 800-53 (controles e SDLC)
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } });
     return d;
   }
-  function buildProvaChecks(){
-    var root=document.getElementById('mount-prova'); if(!root) return;
+  function buildProvaChecks(mountId, tasks){
+    var root=document.getElementById(mountId); if(!root||!tasks) return;
     if(root.querySelector('.pcheck')) return;
     root.querySelectorAll('h2').forEach(function(h){
       var txt=(h.textContent||'').trim();
       var cfg=null;
-      for(var i=0;i<TASKS.length;i++){ if(TASKS[i].m.test(txt)){ cfg=TASKS[i]; break; } }
+      for(var i=0;i<tasks.length;i++){ if(tasks[i].m.test(txt)){ cfg=tasks[i]; break; } }
       if(!cfg) return;
       var w=document.createElement('div'); w.className='pcheck';
       var head=document.createElement('div'); head.className='pchead'; head.textContent='\u270D\uFE0F Responda e verifique';
