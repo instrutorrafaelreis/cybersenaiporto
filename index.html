@@ -6532,28 +6532,85 @@ Com isso, mesmo que o usuário digite `1' OR '1'='1`, o banco procura **literalm
 
 ---
 
-## Parte 3 — XSS Refletido no DVWA (15 min)
+## Parte 3 — XSS Refletido no DVWA (20 min)
 
-**O que é:** a aplicação devolve a sua entrada na página **sem escapar**, e o navegador executa como HTML/JS. CWE-79.
+**O que é:** XSS (*Cross-Site Scripting*) acontece quando a aplicação **devolve a sua entrada dentro da página sem escapar**, e o navegador executa esse texto como se fosse HTML/JavaScript do próprio site. Resultado: você roda **o seu** código no navegador de quem abrir a página. É a CWE-79.
 
-**Explorar:**
-1. No DVWA, vá em **XSS (Reflected)**.
-2. No campo de nome, digite e Submit:
-   ```
-   <script>alert('XSS')<\/script>
-   ```
-   *Para que serve:* injeta um script na página; se a entrada não for escapada, o navegador o executa.
-   *O que esperar:* aparece a **caixinha de alerta** — seu script rodou no navegador. É a prova do XSS.
-3. Teste uma variação sem `<script>` (para entender filtros):
-   ```
-   <img src=x onerror=alert('XSS')>
-   ```
-   *Para que serve:* força um erro de imagem que dispara o `onerror` — útil quando a tag `<script>` é bloqueada.
-   *O que esperar:* o mesmo alerta, por um caminho diferente.
+Há dois tipos principais (volto neles no 3.7):
+- **Refletido** (o desta parte): o código volta na **resposta imediata** da requisição (ex.: um parâmetro na URL). Precisa que a vítima clique num link preparado.
+- **Armazenado**: o código fica **salvo no servidor** (ex.: um comentário) e dispara para **todo mundo** que abrir a página. Mais perigoso.
 
-**Impacto:** com XSS dá para roubar cookies de sessão, redirecionar a vítima, etc.
+> **⚠️ Onde testar:** no **navegador (Firefox)**, dentro do DVWA — **não** no terminal. Abra `http://localhost:8081` logado, nível **Low**, e no menu da esquerda clique em **XSS (Reflected)**. A página tem um campo **"What's your name?"** com um botão **Submit** — é aí que você digita os payloads abaixo.
 
-**Como corrigir 🟢:** **escape a saída** por contexto (ex.: `htmlspecialchars()` em PHP) e use `Content-Security-Policy`.
+### 3.1 Entender o que acontece por baixo
+
+Quando você digita um nome e dá Submit, o DVWA monta a resposta colando a sua entrada no meio do HTML, assim:
+```html
+<pre>Hello SEU_NOME</pre>
+```
+Se você digitar `Rafael`, vira `<pre>Hello Rafael</pre>` — inofensivo. Mas se a sua entrada **for** HTML/JS, ela entra como **código de verdade** na página. É exatamente isso que vamos explorar.
+
+### 3.2 Comportamento normal (o "antes")
+
+No campo **What's your name?**, digite um nome comum e Submit:
+```
+Rafael
+```
+*O que esperar:* a página responde `Hello Rafael`. Guarde essa referência do "normal".
+
+### 3.3 Confirmar o XSS (o alerta clássico)
+
+Agora, no mesmo campo, digite e Submit:
+```
+<script>alert('XSS')<\/script>
+```
+*Para que serve:* injeta uma tag `<script>` na página. Se a entrada não for escapada, o navegador a executa como parte do site.
+*O que esperar:* uma **caixinha de alerta** com "XSS" aparece na tela. Isso prova que **o seu JavaScript rodou** — a falha existe. 🎯
+
+### 3.4 Ver a injeção no código-fonte (por que funcionou)
+
+Feche o alerta, aperte **F12** → aba **Inspetor** (ou `Ctrl+U` para o código-fonte) e procure o trecho do "Hello". Você vai ver:
+```html
+<pre>Hello <script>alert('XSS')<\/script></pre>
+```
+*O que observar:* a sua tag virou **HTML de verdade** dentro da página — não é mais texto. Essa é a diferença entre **dado** e **código**: o DVWA tratou a sua entrada como código. (Numa aplicação segura apareceria escapado, como `&lt;script&gt;...`, ou seja, texto inofensivo na tela.)
+
+### 3.5 Variação sem `<script>` (para driblar filtros)
+
+Alguns filtros bloqueiam a palavra `script`. Dá para executar JS por outros caminhos. No campo, digite:
+```
+<img src=x onerror=alert('XSS')>
+```
+*Para que serve:* cria uma imagem com endereço inválido (`src=x`); quando o navegador falha ao carregá-la, dispara o evento `onerror`, que roda o seu JS — **sem** usar a tag `<script>`.
+*O que esperar:* o mesmo alerta, por um caminho que um filtro ingênuo não pega. Outras variações úteis de conhecer: `<svg onload=alert(1)>` e `<body onload=alert(1)>`.
+
+### 3.6 Entender o impacto real (por que XSS é grave)
+
+O alerta é só a prova de conceito. O perigo é que o seu JS roda **com os privilégios da vítima** no site. Para sentir isso no lab, digite:
+```
+<script>alert(document.cookie)<\/script>
+```
+*O que esperar:* o alerta mostra o **cookie de sessão** da vítima (ex.: o `PHPSESSID`). Repare: o script conseguiu **ler o cookie**. Num ataque real, em vez de mostrar num alerta, o atacante **enviaria** esse cookie para um servidor dele e o usaria para **se passar pela vítima** (sequestro de sessão), sem nunca saber a senha. Com XSS também dá para redirecionar a vítima para uma página falsa, alterar o conteúdo (phishing) ou registrar o que ela digita.
+
+> 💡 É por isso que cookies de sessão devem ter a flag **`HttpOnly`**: ela impede justamente que o `document.cookie` enxergue o cookie pelo JavaScript, cortando esse roubo mesmo quando há XSS.
+
+### 3.7 Refletido × Armazenado (a diferença na prática)
+
+Olhe a URL depois do Submit: `.../vulnerabilities/xss_r/?name=<script>...`. O payload está **na URL** — é **refletido**: se você mandar esse link para alguém logado, o XSS dispara no navegador da pessoa. Já no **XSS (Stored)** do DVWA (o campo de mensagem do *guestbook*), o payload fica **salvo no servidor** e dispara sozinho para **qualquer um** que abrir a página. Teste lá depois: digite `<script>alert('stored')<\/script>` na mensagem, salve, e veja o alerta voltar toda vez que a página recarrega — inclusive para outros usuários.
+
+### 3.8 Como corrigir 🟢
+
+A raiz é a mesma de toda injeção: **misturar dado com código**. A correção é **escapar a saída** conforme o contexto, para a entrada do usuário virar **texto**, nunca HTML:
+```php
+// 🔴 Vulnerável — joga a entrada crua no HTML
+echo "Hello " . $_GET['name'];
+
+// 🟢 Seguro — escapa os caracteres especiais de HTML
+echo "Hello " . htmlspecialchars($_GET['name'], ENT_QUOTES, 'UTF-8');
+```
+Com `htmlspecialchars`, o `<` vira `&lt;` e o `>` vira `&gt;` — então `<script>` aparece como **texto na tela**, sem executar. Camadas extras: **Content-Security-Policy** (restringe de onde o JS pode rodar) e a flag **HttpOnly** nos cookies (protege a sessão mesmo se houver XSS).
+
+> 🎯 **Desafio extra:** suba o DVWA para **Medium** e **High** e veja os filtros aparecerem — você vai precisar das variações do 3.5 (sem `<script>`) para contornar. É assim que se treina para a prova.
 
 ---
 
