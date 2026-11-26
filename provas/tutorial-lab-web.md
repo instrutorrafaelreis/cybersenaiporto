@@ -15,6 +15,18 @@
    ```
    Devem aparecer: `lab-dvwa`, `lab-juice-shop`, `lab-webgoat`, `lab-wordpress`, `lab-wp-db`.
 
+   **Não apareceu nada, ou faltam containers? Inicie os serviços.** É normal estarem desligados depois de reiniciar a VM:
+   ```
+   # 1) garante que o serviço do Docker está ligado
+   sudo systemctl start docker
+
+   # 2) entra na pasta do lab e sobe os alvos
+   cd ~/lab
+   docker compose up -d        # se der "command not found", use: docker-compose up -d
+   ```
+   Espere alguns segundos e rode `docker ps` de novo — os 5 containers devem aparecer com status **Up**.
+   > 💡 O `up -d` sobe em segundo plano e **reaproveita** as imagens já baixadas, então é rápido (não baixa tudo de novo). Para desligar no fim do dia: `docker compose down` (os dados do DVWA/WordPress continuam salvos para a próxima vez).
+
 2. Abra o **Firefox** no Kali e acesse o **DVWA**: `http://localhost:8081`
    - Login: **admin** / **password**
    - Clique em **Create / Reset Database** (botão no fim da página) e logue de novo.
