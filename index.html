@@ -6389,6 +6389,12 @@ O **sqlmap** faz tudo isso sozinho. Mas ele precisa se passar por você (logado)
 
 **Alternativa (pela aba Armazenamento):** com o F12 aberto, clique na aba **Armazenamento** (se não aparecer, clique na setinha **`>>`** no fim das abas) → abra **Cookies** → clique em **`http://localhost:8081`** → copie o valor de **`PHPSESSID`** e confirme que há **`security = low`**.
 
+> ⚠️ **Erro mais comum — "all tested parameters do not appear to be injectable".** Se o sqlmap testar tudo e dizer que **nada é injetável**, procure no começo da saída uma linha assim:
+> ```
+> got a 302 redirect to 'http://localhost:8081/login.php'. Do you want to follow? [Y/n]
+> ```
+> Esse **302 → login.php** significa que o sqlmap **não está logado**. Quase sempre é porque você deixou o `PHPSESSID=SEU_PHPSESSID` **literal** (o texto de exemplo) em vez do **seu** cookie de verdade. Sem login, o DVWA manda toda requisição para a tela de login — todas as páginas ficam iguais e o sqlmap conclui (certo) que não há injeção ali. **Correção:** pegue o valor real do `PHPSESSID` (passo do Console acima, com `document.cookie`) e troque `SEU_PHPSESSID` por ele. Dica: comece sempre pelo **Passo 1 (detecção)**, não pule direto para `--tables`.
+
 **Rodar o sqlmap (um passo de cada vez):**
 
 A ideia é ir **montando o comando aos poucos**: cada passo pega o comando anterior e **acrescenta parâmetros no final**. Rode tudo **no terminal** do Kali e troque `SEU_PHPSESSID` pelo valor que você pegou no cookie.
